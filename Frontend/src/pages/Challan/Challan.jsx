@@ -131,7 +131,7 @@ const Challan = () => {
         toast.success(response.message);
 
         // Update local state based on the correct identifier (use _id instead of id)
-        setChallansData((prevData) => prevData.filter((supplier) => supplier._id !== id));
+        setChallansData((prevData) => prevData.filter((supplier) => supplier.id !== id));
 
       } else {
         throw new Error(response.message);
@@ -155,15 +155,15 @@ const Challan = () => {
 
         // setChallansData((prevData) => {
         //   const updatedSuppliers = prevData.map((supplier) => {
-        //     // console.log(supplier._id === updateId ? response.supplier : supplier)
-        //     return supplier._id === updateId ? response.challan : supplier
+        //     // console.log(supplier.id === updateId ? response.supplier : supplier)
+        //     return supplier.id === updateId ? response.challan : supplier
         //   }
         //   );
         //   return updatedSuppliers;
         // });
         // Optimistically update UI
         const updatedsuppliers = challansData.map((supplier) =>
-          supplier._id === updateId ? response.challan : supplier
+          supplier.id === updateId ? response.challan : supplier
         );
 
         setChallansData(updatedsuppliers);
@@ -214,7 +214,7 @@ const Challan = () => {
   });
 
   const updateFormWithsupplierData = (supplierId, updatedsupplierData) => {
-    const mySupplierData = updatedsupplierData.find((element) => element._id === supplierId);
+    const mySupplierData = updatedsupplierData.find((element) => element.id === supplierId);
     console.log(mySupplierData, updatedsupplierData, 'existssssssssssssssssssssss');
 
     formik.setValues({
@@ -272,7 +272,7 @@ const Challan = () => {
       const newProduct = { product: productref, cut: cutref, qtyPcs: qty, qtyMtr: qtymeter, challanChartImages: productChartImageData, rate: rate || 0, unit: unit, overall: overall, remarkDesc: remark };
       formik.setValues(prevValues => ({
         ...prevValues,
-        supplier: productsData.find(product => product?._id === productref)?.supplierName?._id,
+        supplier: productsData.find(product => product?.id === productref)?.supplierName?.id,
         products: [...(prevValues?.products || []), newProduct] // Ensure products is initialized as an array
       }));
       setUnit("")
@@ -325,7 +325,7 @@ const Challan = () => {
     setqty(event.target.value);
     if (cutref) {
       let qtyMeter;
-      const cutvalue = cutData.find(cut => cut._id === cutref)
+      const cutvalue = cutData.find(cut => cut.id === cutref)
       if (cutvalue?.isNameNumerical) {
         qtyMeter = Math.floor(event.target.value * parseFloat(cutvalue?.name));
         setqtymeter(qtyMeter);
@@ -337,9 +337,9 @@ const Challan = () => {
   };
   const setproductchange = (value) => {
     console.log(value)
-    const rate = productsData?.filter(item => item?._id === value)[0]?.pricePerUnit?.magnitude;
-    const selectedProductCategory = productsData?.filter(item => item?._id === value)[0]?.category?._id || "";
-    const supplier_id = productsData?.find(item => item?._id === value)?.supplierName?._id || "";
+    const rate = productsData?.filter(item => item?.id === value)[0]?.pricePerUnit?.magnitude;
+    const selectedProductCategory = productsData?.filter(item => item?.id === value)[0]?.category?.id || "";
+    const supplier_id = productsData?.find(item => item?.id === value)?.supplierName?.id || "";
     console.log(selectedProductCategory)
     setproductref(value);
     setsupplierRef(supplier_id)
@@ -436,7 +436,7 @@ const Challan = () => {
       // console.log(newChallanNumber, "challan")
       setchallanNumber(newChallanNumber);
     }
-    // setcutData(attributeValueData.filter(attribute => attribute?.attributeRef?._id === (attributeData.find(attributename => attributename?.name === "cut")?._id))[0].valuesCombo)
+    // setcutData(attributeValueData.filter(attribute => attribute?.attributeRef?.id === (attributeData.find(attributename => attributename?.name === "cut")?.id))[0].valuesCombo)
   }, [onOpenChange, challansData]);
 
 
@@ -466,8 +466,8 @@ const Challan = () => {
   const [selectedKeys, setSelectedKeys] = useState(undefined);
 
   useEffect(() => {
-    console.log(attributeValueData?.filter(attributeValue => attributeValue?.attributeRef?._id === selectedKeys), "fitler")
-    setattributesvaluesData(attributeValueData?.filter(attributeValue => attributeValue?.attributeRef?._id === selectedKeys))
+    console.log(attributeValueData?.filter(attributeValue => attributeValue?.attributeRef?.id === selectedKeys), "fitler")
+    setattributesvaluesData(attributeValueData?.filter(attributeValue => attributeValue?.attributeRef?.id === selectedKeys))
   }, [selectedKeys])
 
 
@@ -626,9 +626,9 @@ const Challan = () => {
                                   }}
 
                                   onSelectionChange={(value) => onCustomerChange(value, "supplier")}
-                                  value={formik?.values?.customer?._id}
+                                  value={formik?.values?.customer?.id}
                                   defaultItems={customerData}
-                                  selectedKey={formik?.values?.customer?._id}
+                                  selectedKey={formik?.values?.customer?.id}
                                   inputProps={{
                                     classNames: {
                                       input: "ml-1 text-[#000] font-font1",
@@ -691,7 +691,7 @@ const Challan = () => {
                                   variant="flat"
                                 >
                                   {(item) => (
-                                    <AutocompleteItem key={item?._id} textValue={item?.name}>
+                                    <AutocompleteItem key={item?.id} textValue={item?.name}>
                                       <div className="flex justify-between items-center">
                                         <div className="flex gap-2 items-center">
                                           <div className="flex flex-col">
@@ -713,9 +713,9 @@ const Challan = () => {
                                   }}
 
                                   onSelectionChange={onSupplierChange}
-                                  value={formik?.values?.supplier?._id}
+                                  value={formik?.values?.supplier?.id}
                                   defaultItems={suppliersData}
-                                  selectedKey={formik?.values?.supplier?._id}
+                                  selectedKey={formik?.values?.supplier?.id}
                                   inputProps={{
                                     classNames: {
                                       input: "ml-1 text-[#000] font-font1",
@@ -778,7 +778,7 @@ const Challan = () => {
                                   variant="flat"
                                 >
                                   {(item) => (
-                                    <AutocompleteItem key={item?._id} textValue={item?.name}>
+                                    <AutocompleteItem key={item?.id} textValue={item?.name}>
                                       <div className="flex justify-between items-center">
                                         <div className="flex gap-2 items-center">
                                           <div className="flex flex-col">
@@ -806,7 +806,7 @@ const Challan = () => {
 
                                   onSelectionChange={(value) => setproductchange(value)}
                                   value={productref}
-                                  items={(supplierRef && productsData?.filter(product => product?.supplierName?._id === supplierRef) || [])}
+                                  items={(supplierRef && productsData?.filter(product => product?.supplierName?.id === supplierRef) || [])}
                                   selectedKey={productref}
                                   inputProps={{
                                     classNames: {
@@ -869,7 +869,7 @@ const Challan = () => {
                                   variant="flat"
                                 >
                                   {(item) => (
-                                    <AutocompleteItem key={item?._id} textValue={item?.productName}>
+                                    <AutocompleteItem key={item?.id} textValue={item?.productName}>
                                       <div className="flex justify-between items-center">
                                         <div className="flex gap-2 items-center">
                                           <div className="flex flex-col">
@@ -891,7 +891,7 @@ const Challan = () => {
 
                                   onSelectionChange={setcutref}
                                   value={cutref}
-                                  defaultItems={cutData?.filter(item => item?.ref?._id === productCategory) || cutData}
+                                  defaultItems={cutData?.filter(item => item?.ref?.id === productCategory) || cutData}
                                   // items={(productref && cutData?.filter(cut => cut?.ref === productref) || [] )}
                                   selectedKey={cutref}
                                   inputProps={{
@@ -955,7 +955,7 @@ const Challan = () => {
                                   variant="flat"
                                 >
                                   {(item) => (
-                                    <AutocompleteItem key={item?._id} textValue={item?.name}>
+                                    <AutocompleteItem key={item?.id} textValue={item?.name}>
                                       <div className="flex justify-between items-center">
                                         <div className="flex gap-2 items-center">
                                           <div className="flex flex-col">
@@ -1083,7 +1083,7 @@ const Challan = () => {
                                   variant="flat"
                                 >
                                   {(item) => (
-                                    <AutocompleteItem key={item?._id} textValue={item?.name}>
+                                    <AutocompleteItem key={item?.id} textValue={item?.name}>
                                       <div className="flex justify-between items-center">
                                         <div className="flex gap-2 items-center">
                                           <div className="flex flex-col">
@@ -1168,10 +1168,10 @@ const Challan = () => {
                                   return (
                                     <TableRow key={index}>
                                       <TableCell>
-                                        {productsData.find(product => product._id === object.product._id)?.productName}
+                                        {productsData.find(product => product.id === object.product.id)?.productName}
                                       </TableCell>
                                       <TableCell>
-                                        {cutData.find(product => product._id === object.cut._id)?.name}
+                                        {cutData.find(product => product.id === object.cut.id)?.name}
                                       </TableCell>
                                       <TableCell>
                                         {object.qtyPcs}
@@ -1320,7 +1320,7 @@ const Challan = () => {
                                         },
                                       }}
                                       aria-label="Select an "
-                                      placeholder={`Enter ${attributeData?.find(attribute => attribute._id === selectedKeys)?.name || "Select"}`}
+                                      placeholder={`Enter ${attributeData?.find(attribute => attribute.id === selectedKeys)?.name || "Select"}`}
                                       selectorButtonProps={{
                                         className: "hidden"
                                       }}
@@ -1339,7 +1339,7 @@ const Challan = () => {
                                               variant="light"
                                               className="capitalize h-[35px] text-[0.8rem] font-font1 font-[500]"
                                             >
-                                              {attributeData?.find(attribute => attribute._id === selectedKeys)?.name || "Select"}
+                                              {attributeData?.find(attribute => attribute.id === selectedKeys)?.name || "Select"}
                                             </Button>
                                           </DropdownTrigger>
                                           <DropdownMenu
@@ -1355,7 +1355,7 @@ const Challan = () => {
                                           >
                                             {
                                               attributeData?.map(attribute =>
-                                                <DropdownItem key={attribute?._id}>{attribute?.name}</DropdownItem>)
+                                                <DropdownItem key={attribute?.id}>{attribute?.name}</DropdownItem>)
                                             }
                                           </DropdownMenu>
                                         </Dropdown>
@@ -1419,7 +1419,7 @@ const Challan = () => {
                                 )
                               }
                             </div>
-                            <FillterTableData productref={productref} setproductchange={setproductchange} rows={supplierRef ? filteredProducts.filter(products => products?.supplierName?._id === supplierRef) : filteredProducts} columnsoffillter={columnsoffillter} />
+                            <FillterTableData productref={productref} setproductchange={setproductchange} rows={supplierRef ? filteredProducts.filter(products => products?.supplierName?.id === supplierRef) : filteredProducts} columnsoffillter={columnsoffillter} />
                             <Input size={'md'}
                               classNames={{
                                 label: "font-[600] font-font1",
@@ -1444,9 +1444,9 @@ const Challan = () => {
                                 }}
 
                                 onSelectionChange={(value) => onCustomerChange(value, "product")}
-                                value={formik?.values?.customer?._id}
+                                value={formik?.values?.customer?.id}
                                 defaultItems={customerData}
-                                selectedKey={formik?.values?.customer?._id}
+                                selectedKey={formik?.values?.customer?.id}
                                 inputProps={{
                                   classNames: {
                                     input: "ml-1 text-[#000] font-font1",
@@ -1509,7 +1509,7 @@ const Challan = () => {
                                 variant="flat"
                               >
                                 {(item) => (
-                                  <AutocompleteItem key={item?._id} textValue={item?.name}>
+                                  <AutocompleteItem key={item?.id} textValue={item?.name}>
                                     <div className="flex justify-between items-center">
                                       <div className="flex gap-2 items-center">
                                         <div className="flex flex-col">
@@ -1528,7 +1528,7 @@ const Challan = () => {
                                   label: "font-[600] font-font1",
                                   input: "font-[500] font-font1",
                                 }}
-                                value={productsData?.find(product => product?._id === productref)?.productName || "Click On Product"}
+                                value={productsData?.find(product => product?.id === productref)?.productName || "Click On Product"}
                                 readOnly
                                 className=" mt-5 flex-grow"
                               />
@@ -1540,7 +1540,7 @@ const Challan = () => {
                                   label: "font-[600] font-font1",
                                   input: "font-[500] font-font1",
                                 }}
-                                value={productsData?.find(product => product?._id === productref)?.supplierName?.name || "Click On Product"}
+                                value={productsData?.find(product => product?.id === productref)?.supplierName?.name || "Click On Product"}
                                 readOnly
                                 className="mt-5 flex-grow"
                               />
@@ -1575,7 +1575,7 @@ const Challan = () => {
 
                                 onSelectionChange={setcutref}
                                 value={cutref}
-                                defaultItems={cutData?.filter(item => item?.ref?._id === productCategory) || cutData}
+                                defaultItems={cutData?.filter(item => item?.ref?.id === productCategory) || cutData}
                                 // items={(productref && cutData?.filter(cut => cut?.ref === productref) || [] )}
                                 selectedKey={cutref}
                                 inputProps={{
@@ -1639,7 +1639,7 @@ const Challan = () => {
                                 variant="flat"
                               >
                                 {(item) => (
-                                  <AutocompleteItem key={item?._id} textValue={item?.name}>
+                                  <AutocompleteItem key={item?.id} textValue={item?.name}>
                                     <div className="flex justify-between items-center">
                                       <div className="flex gap-2 items-center">
                                         <div className="flex flex-col">
@@ -1680,7 +1680,7 @@ const Challan = () => {
                                 className='max-w-[15rem]'
                                 onChange={(e) => {if (cutref) {
                                   let qtyMeter;
-                                  const cutvalue = cutData.find(cut => cut._id === cutref)
+                                  const cutvalue = cutData.find(cut => cut.id === cutref)
                                   if (!cutvalue?.isNameNumerical) {
                                     setqtymeter(qtyMeter);
                                     setqty("");
@@ -1778,7 +1778,7 @@ const Challan = () => {
                                 variant="flat"
                               >
                                 {(item) => (
-                                  <AutocompleteItem key={item?._id} textValue={item?.name}>
+                                  <AutocompleteItem key={item?.id} textValue={item?.name}>
                                     <div className="flex justify-between items-center">
                                       <div className="flex gap-2 items-center">
                                         <div className="flex flex-col">
@@ -1864,10 +1864,10 @@ const Challan = () => {
                                   return (
                                     <TableRow key={index}>
                                       <TableCell>
-                                        {productsData.find(product => product._id === object.product._id)?.productName}
+                                        {productsData.find(product => product.id === object.product.id)?.productName}
                                       </TableCell>
                                       <TableCell>
-                                        {cutData.find(product => product._id === object.cut._id)?.name}
+                                        {cutData.find(product => product.id === object.cut.id)?.name}
                                       </TableCell>
                                       <TableCell>
                                         {object.qtyPcs}

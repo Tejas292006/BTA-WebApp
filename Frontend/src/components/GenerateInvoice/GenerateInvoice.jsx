@@ -80,7 +80,7 @@ const GenerateInvoice = () => {
 
   const yourArray = [...selectedKeys];
   const selectedChallanData = yourArray.map((entry) => {
-    return allChallanData.find((item) => item._id === entry);
+    return allChallanData.find((item) => item.id === entry);
   });
   const [selectedChallansProducts, setSelectedChallansProducts] = useState([]);
 
@@ -147,8 +147,8 @@ const GenerateInvoice = () => {
           }
 
           products.push({
-            id: newRow?.product?._id,
-            challanId: item._id,
+            id: newRow?.product?.id,
+            challanId: item.id,
             unit: newRow?.unit,
             product: newRow?.product?.productName || "NA",
             cut: newRow?.cut?.name || "NA",
@@ -233,7 +233,7 @@ const GenerateInvoice = () => {
       if (response.success) {
         toast.success(response.message);
         setInvoiceData((prevData) =>
-          prevData.filter((invoice) => invoice._id !== id)
+          prevData.filter((invoice) => invoice.id !== id)
         );
         navigate("/invoice");
       } else {
@@ -248,7 +248,7 @@ const GenerateInvoice = () => {
 
   const updateFormWithinvoiceData = (invoiceId, updatedinvoiceData) => {
     const invoiceDataexist = updatedinvoiceData.find(
-      (element) => element._id === invoiceId
+      (element) => element.id === invoiceId
     );
     setSelectedChallansProducts(invoiceDataexist?.products);
   };
@@ -289,7 +289,7 @@ const GenerateInvoice = () => {
 
         setInvoiceData((preValue) => {
           const updatedinvoices = preValue.map((invoice) => {
-            return invoice._id === updateId ? response.invoice : invoice;
+            return invoice.id === updateId ? response.invoice : invoice;
           });
           return updatedinvoices;
         });
@@ -467,7 +467,7 @@ const GenerateInvoice = () => {
 
 
   const fillterChallan = React.useMemo(() => {
-    return allChallanData.filter((item) => item.supplier._id === supplierRef && item.customer._id === customerRef && (item.products.filter(product => product.isProductDispatchedByInvoice === false)).length > 0 ? true : false)
+    return allChallanData.filter((item) => item.supplier.id === supplierRef && item.customer.id === customerRef && (item.products.filter(product => product.isProductDispatchedByInvoice === false)).length > 0 ? true : false)
   }, [supplierRef, customerRef]);
 
 
@@ -482,9 +482,9 @@ const GenerateInvoice = () => {
       toast.error("Put Product Details !")
       return;
     }
-    let product = productsData.find(p => p._id === selectedKeynewproduct);
+    let product = productsData.find(p => p.id === selectedKeynewproduct);
     const newProduct = {
-      id: product?._id,
+      id: product?.id,
       product: product?.productName || "NA",
       unit: product?.pricePerUnit?.unit?.name === "Pcs" ? "1" : "2",
       cut: selectedCut,
@@ -634,7 +634,7 @@ const GenerateInvoice = () => {
                         >
                           {(item) => (
                             <AutocompleteItem
-                              key={item?._id}
+                              key={item?.id}
                               textValue={item?.name}
                             >
                               <div className="flex justify-between items-center">
@@ -725,7 +725,7 @@ const GenerateInvoice = () => {
                         >
                           {(item) => (
                             <AutocompleteItem
-                              key={item?._id}
+                              key={item?.id}
                               textValue={item?.name}
                             >
                               <div className="flex justify-between items-center">
@@ -787,7 +787,7 @@ const GenerateInvoice = () => {
                           variant="flat"
                         >
                           {(item) => (
-                            <ListboxItem key={item._id} textValue={item._id}>
+                            <ListboxItem key={item.id} textValue={item.id}>
                               <div className="flex gap-2 items-center w-full ">
                                 <div class="bg-default/50 text-foreground flex items-center rounded-small justify-center w-7 h-7">
                                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#0850a4" height="1em"
@@ -845,8 +845,8 @@ const GenerateInvoice = () => {
 
                             onSelectionChange={(value) => setselectedKeynewproduct(value)}
                           >
-                            {productsData.filter((x) => x.supplierName._id === supplierRef).map((item) => (
-                              <AutocompleteItem key={item?._id} textValue={item?.productName}>
+                            {productsData.filter((x) => x.supplierName.id === supplierRef).map((item) => (
+                              <AutocompleteItem key={item?.id} textValue={item?.productName}>
                                 {item.productName}
                               </AutocompleteItem>
                             ))}

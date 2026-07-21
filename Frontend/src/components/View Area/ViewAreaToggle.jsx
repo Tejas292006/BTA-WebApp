@@ -26,7 +26,7 @@ const ViewAreaToggle = ({ section, id ,isOpen, onOpenChange, onClose }) => {
     }, [section]);
 
     React.useEffect(()=>{
-        const singleProductData = currentData.find((element) => element._id == id);
+        const singleProductData = currentData.find((element) => element.id == id);
         setUnitData(singleProductData);
     },[currentData,id])
 

@@ -7,7 +7,7 @@ export const transportDataState = atom({
     default : selector({
         key :  "transportSelector",
         get : async () => {
-            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/transport/get-all-transport`);
+            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/transport/get-all-transport`);
             return res.data.transports
         }
     })

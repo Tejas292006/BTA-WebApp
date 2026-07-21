@@ -93,13 +93,13 @@ const ProductPageForm = () => {
         try {
 
             // changed from todoListState to filteredTodoListState
-            const singleProductData = productsData.find((element) => element._id == productId);
+            const singleProductData = productsData.find((element) => element.id == productId);
             console.log(singleProductData)
             setProductChartImageData(singleProductData?.productColorChartData);
             formik.setValues({
-                supplierName: singleProductData?.supplierName && singleProductData?.supplierName?._id,
+                supplierName: singleProductData?.supplierName && singleProductData?.supplierName?.id,
                 productName: singleProductData?.productName || "",
-                category: singleProductData?.category && singleProductData?.category?._id,
+                category: singleProductData?.category && singleProductData?.category?.id,
                 productAttributes: singleProductData?.productAttributes?.map(attr => ({
                     attrType: attr.attrType,
                     attrValue: attr.attrValue
@@ -128,7 +128,7 @@ const ProductPageForm = () => {
 
     const updateDependentFields = (value) => {
         const updatedProductAttributes = productAttributeValueFirst.map(attr => ({
-            attrType: attr.attributeRef?._id || attr.attributeRef,
+            attrType: attr.attributeRef?.id || attr.attributeRef,
             attrValue: null
         }));
         formik.setValues({
@@ -315,7 +315,7 @@ const ProductPageForm = () => {
     const initialProductAttributes = useMemo(() => {
         // if (!updateId) {
         return productAttributeValueFirst.map(attr => ({
-            attrType: attr.attributeRef?._id || attr.attributeRef,
+            attrType: attr.attributeRef?.id || attr.attributeRef,
             attrValue: null
         }));
         // }
@@ -528,7 +528,7 @@ const ProductPageForm = () => {
                                                         <Autocomplete
                                                             selectedKey={formik.values.productAttributes[attrIndex]?.attrValue}
                                                             onSelectionChange={(value) => {
-                                                                formik.setFieldValue(`productAttributes[${attrIndex}].attrType`, attr.attributeRef?._id || attr.attributeRef)
+                                                                formik.setFieldValue(`productAttributes[${attrIndex}].attrType`, attr.attributeRef?.id || attr.attributeRef)
                                                                 // Find the matching attributesValue object based on the selected value
                                                                 const selectedAttributesValue = attr.valuesCombo.find(item => item.attributeValue === value);
 

@@ -29,7 +29,7 @@ export default function InvoiceReport3 () {
     console.log(invoiceData,"invoice data")
 
     const filteredProducts = useMemo(() => {
-        return productsData.filter((product) => product.supplierName._id === supplierFilter);
+        return productsData.filter((product) => product.supplierName.id === supplierFilter);
     }, [productsData, supplierFilter]);
 
     const filteredInvoices = useMemo(() => {
@@ -89,13 +89,13 @@ console.log('Array Invoices with Cumulative Balances:', Object.values(copiedGrou
         return (
             <div>
                 {displayProducts.map((product, index) => (
-                    <div key={index}>{productsData.find(p => p._id === product.id)?.productName}</div>
+                    <div key={index}>{productsData.find(p => p.id === product.id)?.productName}</div>
                 ))}
                 {remainingProducts.length > 0 && (
                     <Tooltip content={
                         <div>
                             {remainingProducts.map((product, index) => (
-                                <div key={index}>{productsData.find(p => p._id === product.id)?.productName}</div>
+                                <div key={index}>{productsData.find(p => p.id === product.id)?.productName}</div>
                             ))}
                         </div>
                     }>
@@ -139,7 +139,7 @@ console.log('Array Invoices with Cumulative Balances:', Object.values(copiedGrou
                         setProductFilter(''); // Reset product filter when supplier changes
                     }}
                 >
-                    {(supplier) => <AutocompleteItem key={supplier._id}>{supplier.name}</AutocompleteItem>}
+                    {(supplier) => <AutocompleteItem key={supplier.id}>{supplier.name}</AutocompleteItem>}
                 </Autocomplete>
                 <Autocomplete
                     label="Customer"
@@ -147,7 +147,7 @@ console.log('Array Invoices with Cumulative Balances:', Object.values(copiedGrou
                     defaultItems={customerData}
                     onSelectionChange={(customerId) => setCustomerFilter(customerId)}
                 >
-                    {(customer) => <AutocompleteItem key={customer._id}>{customer.name}</AutocompleteItem>}
+                    {(customer) => <AutocompleteItem key={customer.id}>{customer.name}</AutocompleteItem>}
                 </Autocomplete>
                 <Autocomplete
                     label="Product"
@@ -156,7 +156,7 @@ console.log('Array Invoices with Cumulative Balances:', Object.values(copiedGrou
                     onSelectionChange={(productId) => setProductFilter(productId)}
                     isDisabled={!supplierFilter}
                 >
-                    {(product) => <AutocompleteItem key={product._id}>{product.productName}</AutocompleteItem>}
+                    {(product) => <AutocompleteItem key={product.id}>{product.productName}</AutocompleteItem>}
                 </Autocomplete>
             </div>
 
@@ -180,10 +180,10 @@ console.log('Array Invoices with Cumulative Balances:', Object.values(copiedGrou
     // Filter adjustments related to the current invoice ID from customer payments
     const adjustments = customerPayment
         .flatMap((payment) => payment.adjustments) // Extract adjustments from all customer payments
-        .filter((adjustment) => adjustment.invoiceId.toString() === invoice?._id.toString()); // Match adjustments with the current invoice ID
+        .filter((adjustment) => adjustment.invoiceId.toString() === invoice?.id.toString()); // Match adjustments with the current invoice ID
      console.log(adjustments,"adjusments")
-    const particularInvoice = BalanceInvoice?.filter((c,i)=>(c?._id === invoice?._id))
-    const cust = customerLedger.filter((c,i)=>(c.invoiceRef === invoice?._id))
+    const particularInvoice = BalanceInvoice?.filter((c,i)=>(c?.id === invoice?.id))
+    const cust = customerLedger.filter((c,i)=>(c.invoiceRef === invoice?.id))
     const totalr = cust.reduce((acc,item)=>(acc+item.credit),0)
 
     // Render rows
@@ -192,8 +192,8 @@ console.log('Array Invoices with Cumulative Balances:', Object.values(copiedGrou
             {/* Display the invoice number and grand total in every row */}
             <TableCell>{invoice.invoiceNo}</TableCell>
             <TableCell>{invoice.invoiceDate}</TableCell>
-            <TableCell>{suppliersData.find(s => s._id === invoice.supplierRef)?.name}</TableCell>
-            <TableCell>{customerData.find(c => c._id === invoice.customerRef)?.name}</TableCell>
+            <TableCell>{suppliersData.find(s => s.id === invoice.supplierRef)?.name}</TableCell>
+            <TableCell>{customerData.find(c => c.id === invoice.customerRef)?.name}</TableCell>
             <TableCell>{invoice.grandTotal}</TableCell>
             <TableCell>{totalr}</TableCell>
             <TableCell>{adjustments?.[0]?.balance || particularInvoice?.[0]?.balance}</TableCell>

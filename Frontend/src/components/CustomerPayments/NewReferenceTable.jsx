@@ -8,7 +8,7 @@ export default function NewReferenceTable({ customerData, balanceUsed, currentBa
 
   useEffect(() => {
     if (currentSupplierId || currentCustomerId) {
-      const currentCustomer = customerData?.find(customer => customer._id === currentCustomerId);
+      const currentCustomer = customerData?.find(customer => customer.id === currentCustomerId);
       if (currentCustomer) {
         const supplierBalance = currentCustomer.supplierBalances.find(
           sb => sb.supplier.toString() === currentSupplierId
@@ -74,7 +74,7 @@ export default function NewReferenceTable({ customerData, balanceUsed, currentBa
         const updatedCustomer = response.data;
         setCustomerData(prevData =>
           prevData.map(customer =>
-            customer._id === updatedCustomer._id ? updatedCustomer : customer
+            customer.id === updatedCustomer.id ? updatedCustomer : customer
           )
         );
         setSupplierBalanceExists(true);

@@ -79,7 +79,7 @@ const Weave = () => {
                 toast.success(response.message);
 
                 // Update local state based on the correct identifier (use _id instead of id)
-                setWeaveData((prevData) => prevData.filter((weave) => weave._id !== id));
+                setWeaveData((prevData) => prevData.filter((weave) => weave.id !== id));
 
                 navigate('/inventory');
             } else {
@@ -94,7 +94,7 @@ const Weave = () => {
 
     // Update The weave
     const updateFormWithWeaveData = (WeaveId, updatedWeaveData) => {
-        const WeaveDataexist = updatedWeaveData.find((element) => element._id === WeaveId);
+        const WeaveDataexist = updatedWeaveData.find((element) => element.id === WeaveId);
         console.log(WeaveDataexist, updatedWeaveData, 'existssssssssssssssssssssss');
         setrefcat(() => (WeaveDataexist?.ref))
 
@@ -140,7 +140,7 @@ const Weave = () => {
                  
                 // Optimistically update UI
                 const updatedweaves = WeaveData.map((weave) =>
-                    weave._id === updateId ? response.weave : weave
+                    weave.id === updateId ? response.weave : weave
                 );
                 
                 setWeaveData(updatedweaves);
@@ -291,7 +291,7 @@ const Weave = () => {
                                                 variant="bordered"
                                             >
                                                 {(item) => (
-                                                    <AutocompleteItem key={item._id} textValue={item.name}>
+                                                    <AutocompleteItem key={item.id} textValue={item.name}>
                                                         <div className="flex justify-between items-center">
                                                             <div className="flex gap-2 items-center">
                                                                 <div className="flex flex-col">

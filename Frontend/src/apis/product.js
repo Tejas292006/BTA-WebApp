@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const CreateProduct = async (payload) => {
     try {
-        const response = await axios.post(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/products/create-product`, payload);
+        const response = await axios.post(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/products/create-product`, payload);
         return response.data;
 
     } catch (error) {
@@ -12,7 +12,7 @@ export const CreateProduct = async (payload) => {
 
 export const GetAllProducts = async () => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/products/get-all-products`);
+        const response = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/products/get-all-products`);
         return response.data;
 
     } catch (error) {
@@ -22,7 +22,7 @@ export const GetAllProducts = async () => {
 
 export const UploadImage = async (payload) => {
     try {
-        const response = await axios.post(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/products/upload-product-chart`, payload);
+        const response = await axios.post(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/products/upload-product-chart`, payload);
         return response.data;
 
     } catch (error) {
@@ -31,7 +31,7 @@ export const UploadImage = async (payload) => {
 }
 export const UploadImageChallan = async (payload) => {
     try {
-        const response = await axios.post(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/products/upload-challan-chart`, payload);
+        const response = await axios.post(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/products/upload-challan-chart`, payload);
         return response.data;
 
     } catch (error) {
@@ -41,7 +41,7 @@ export const UploadImageChallan = async (payload) => {
 
 export const GetProductById = async (id) => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/products/get-product-by-id/${id}`);
+        const response = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/products/get-product-by-id/${id}`);
         return response.data;
 
     } catch (error) {
@@ -51,7 +51,7 @@ export const GetProductById = async (id) => {
 
 export const UpdateProduct = async (id, payload) => {
     try {
-        const response = await axios.patch(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/products/edit-product/${id}`, payload);
+        const response = await axios.patch(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/products/edit-product/${id}`, payload);
         return response.data;
 
     } catch (error) {
@@ -61,7 +61,7 @@ export const UpdateProduct = async (id, payload) => {
 
 export const DeleteProduct = async (id) => {
     try {
-        const response = await axios.delete(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/products/delete-product/${id}`);
+        const response = await axios.delete(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/products/delete-product/${id}`);
 
         if (response.status === 204) {
             return { success: true, message: 'Product deleted successfully' };

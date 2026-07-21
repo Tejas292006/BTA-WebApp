@@ -89,7 +89,7 @@ const Transport = () => {
                 toast.success(response.message);
 
                 // Update local state based on the correct identifier (use _id instead of id)
-                settransportData((prevData) => prevData.filter((transport) => transport._id !== id));
+                settransportData((prevData) => prevData.filter((transport) => transport.id !== id));
 
                 navigate('/customers');
             } else {
@@ -103,7 +103,7 @@ const Transport = () => {
     }
 
     const updateFormWithtransportData = (transportId, updatedtransportData) => {
-        const transportDataexist = updatedtransportData.find((element) => element._id === transportId);
+        const transportDataexist = updatedtransportData.find((element) => element.id === transportId);
         console.log(transportDataexist, updatedtransportData, 'existssssssssssssssssssssss');
 
         formik.setValues({
@@ -150,7 +150,7 @@ const Transport = () => {
 
                 settransportData((preValue) => {
                     const updatedtransports = preValue.map((transport) => {
-                        return transport._id === updateId ? response.transport : transport
+                        return transport.id === updateId ? response.transport : transport
                     }
                     )
                     return updatedtransports;

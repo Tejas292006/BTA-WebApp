@@ -6,7 +6,7 @@ export const quickchallanDataState = atom({
   default: selector({
     key: "quickchallanAtomSelector",
     get: async () => {
-      const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/quickchallan/get-all-quickchallan`);
+      const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/quickchallan/get-all-quickchallan`);
       return res.data.quickchallans
     }
   })

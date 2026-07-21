@@ -50,7 +50,7 @@ export default function ChallanReport() {
             <Tooltip content={
                 <div>
                     {products.map((product, index) => (
-                        <div key={index}>{productsData.find(p => p._id === product.product)?.productName}</div>
+                        <div key={index}>{productsData.find(p => p.id === product.product)?.productName}</div>
                     ))}
                 </div>
             }>
@@ -89,7 +89,7 @@ export default function ChallanReport() {
                     defaultItems={suppliersData}
                     onSelectionChange={(supplierId) => setSupplierFilter(supplierId)}
                 >
-                    {(supplier) => <AutocompleteItem key={supplier._id}>{supplier.name}</AutocompleteItem>}
+                    {(supplier) => <AutocompleteItem key={supplier.id}>{supplier.name}</AutocompleteItem>}
                 </Autocomplete>
                 <Autocomplete
                     label="Customer"
@@ -97,7 +97,7 @@ export default function ChallanReport() {
                     defaultItems={customerData}
                     onSelectionChange={(customerId) => setCustomerFilter(customerId)}
                 >
-                    {(customer) => <AutocompleteItem key={customer._id}>{customer.name}</AutocompleteItem>}
+                    {(customer) => <AutocompleteItem key={customer.id}>{customer.name}</AutocompleteItem>}
                 </Autocomplete>
                 <Autocomplete
                     label="Product"
@@ -105,7 +105,7 @@ export default function ChallanReport() {
                     defaultItems={productsData}
                     onSelectionChange={(productId) => setProductFilter(productId)}
                 >
-                    {(product) => <AutocompleteItem key={product._id}>{product.productName}</AutocompleteItem>}
+                    {(product) => <AutocompleteItem key={product.id}>{product.productName}</AutocompleteItem>}
                 </Autocomplete>
                 <Autocomplete
                     label="Challan Type"
@@ -132,8 +132,8 @@ export default function ChallanReport() {
                         <TableRow key={index}>
                             <TableCell>{formatDate(challan.challanDate || challan.quickchallanDate)}</TableCell>
                             <TableCell>{challan.challanNo || challan.quickchallanNo}</TableCell>
-                            <TableCell>{suppliersData.find(s => s._id === challan.supplier)?.name}</TableCell>
-                            <TableCell>{customerData.find(c => c._id === challan.customer)?.name}</TableCell>
+                            <TableCell>{suppliersData.find(s => s.id === challan.supplier)?.name}</TableCell>
+                            <TableCell>{customerData.find(c => c.id === challan.customer)?.name}</TableCell>
                             <TableCell>{renderProductsCell(challan.products)}</TableCell>
                             <TableCell>{challan.totalBill || 'N/A'}</TableCell>
                             <TableCell>{challan.challanType}</TableCell>

@@ -87,7 +87,7 @@ const CustomerPage = () => {
                 toast.success(response.message);
 
                 // Update local state based on the correct identifier (use _id instead of id)
-                setcustomerData((prevData) => prevData.filter((customer) => customer._id !== id));
+                setcustomerData((prevData) => prevData.filter((customer) => customer.id !== id));
                    
                 navigate('/customers');
             } else {
@@ -101,7 +101,7 @@ const CustomerPage = () => {
     }
 
     const updateFormWithcustomerData = (customerId, updatedcustomerData) => {
-        const customerDataexist = updatedcustomerData.find((element) => element._id === customerId);
+        const customerDataexist = updatedcustomerData.find((element) => element.id === customerId);
         console.log(customerDataexist, updatedcustomerData, 'existssssssssssssssssssssss');
         formik.setValues({
           name: customerDataexist?.name,
@@ -147,7 +147,7 @@ const CustomerPage = () => {
 
                 // Optimistically update UI
                 const updatedcustomers = customerData.map((customer) =>{
-                    return customer._id === updateId ? response.customer : customer}
+                    return customer.id === updateId ? response.customer : customer}
                     )
                 setcustomerData(()=>{
                 

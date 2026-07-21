@@ -88,7 +88,7 @@ const Attribute = () => {
                 toast.success(response.message);
 
                 // Update local state based on the correct identifier (use _id instead of id)
-                setattributeData((prevData) => prevData.filter((attribute) => attribute._id !== id));
+                setattributeData((prevData) => prevData.filter((attribute) => attribute.id !== id));
 
                 navigate('/inventory');
             } else {
@@ -103,7 +103,7 @@ const Attribute = () => {
 
     const handleUpdate = (attributeId) => {
         try {
-            const attributeDataexist = attributeData.find((element) => element._id === attributeId);
+            const attributeDataexist = attributeData.find((element) => element.id === attributeId);
             console.log(attributeDataexist, 'existssssssssssssssssssssss');
 
             formik.setValues({
@@ -133,7 +133,7 @@ const Attribute = () => {
 
                 setattributeData((preValue) => {
                     const updatedattributes = preValue.map((attribute) => {
-                        return attribute._id === updateId ? response.attribute : attribute
+                        return attribute.id === updateId ? response.attribute : attribute
                     }
                     )
                     return updatedattributes;

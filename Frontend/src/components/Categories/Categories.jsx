@@ -87,7 +87,7 @@ const Categories = () => {
                 toast.success(response.message);
 
                 // Update local state based on the correct identifier (use _id instead of id)
-                setcategoryData((prevData) => prevData.filter((category) => category._id !== id));
+                setcategoryData((prevData) => prevData.filter((category) => category.id !== id));
 
                 navigate('/inventory');
             } else {
@@ -101,7 +101,7 @@ const Categories = () => {
     }
 
     const updateFormWithcategoryData = (categoryId, updatedcategoryData) => {
-        const categoryDataexist = updatedcategoryData.find((element) => element._id === categoryId);
+        const categoryDataexist = updatedcategoryData.find((element) => element.id === categoryId);
         console.log(categoryDataexist, updatedcategoryData, 'existssssssssssssssssssssss');
 
         formik.setValues({
@@ -147,7 +147,7 @@ const Categories = () => {
 
                 // Optimistically update UI
                 const updatedcategorys = categoryData.map((category) =>
-                    category._id === updateId ? response.category : category
+                    category.id === updateId ? response.category : category
                 );
 
                 setcategoryData(updatedcategorys);

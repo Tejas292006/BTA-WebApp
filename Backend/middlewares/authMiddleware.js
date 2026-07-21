@@ -15,7 +15,7 @@ const authMiddleware = (req, res, next) => {
 
     const decryptedToken = jwt.verify(token, process.env.SECRET);
 
-    req.body.userId = decryptedToken.userId;
+    req.userId = decryptedToken.userId;
     next();
   } catch (error) {
     res.status(401).json({

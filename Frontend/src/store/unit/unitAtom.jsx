@@ -7,7 +7,7 @@ export const unitDataState = atom({
     default : selector({
         key :  "unitSelector",
         get : async () => {
-            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/unit/get-all-unit`);
+            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/unit/get-all-unit`);
             return res.data.units
         }
     })

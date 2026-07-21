@@ -48,7 +48,7 @@ const AutoComplete = (props) => {
                 variant="flat"
             >
                 {(item) => (
-                    <AutocompleteItem key={item._id} textValue={item.name}>
+                    <AutocompleteItem key={item.id} textValue={item.name}>
                         <div className="flex justify-between items-center">
                             <div className="flex gap-2 items-center">
                                 <div className="flex flex-col">

@@ -6,7 +6,7 @@ export const challanDataState = atom({
   default: selector({
     key: "challanAtomSelector",
     get: async () => {
-      const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/challan/get-all-challan`);
+      const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/challan/get-all-challan`);
       return res.data.challans
     }
   })

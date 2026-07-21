@@ -27,13 +27,13 @@ export default function InvoiceReport2() {
     console.log(invoiceData,"invoivedata")
     console.log(customerLedger,"customerLedger")
     
-    const cust = customerLedger.filter((c,i)=>(c.invoiceRef === invoiceData[1]?._id))
+    const cust = customerLedger.filter((c,i)=>(c.invoiceRef === invoiceData[1]?.id))
     console.log(cust,"cust")
     const totalr = cust.reduce((acc,item)=>(acc+item.credit),0)
     console.log(totalr,"totalr")
 
     const filteredProducts = useMemo(() => {
-        return productsData.filter((product) => product.supplierName._id === supplierFilter);
+        return productsData.filter((product) => product.supplierName.id === supplierFilter);
     }, [productsData, supplierFilter]);
 
     const filteredInvoices = useMemo(() => {
@@ -61,13 +61,13 @@ export default function InvoiceReport2() {
         return (
             <div>
                 {displayProducts.map((product, index) => (
-                    <div key={index}>{productsData.find(p => p._id === product.id)?.productName}</div>
+                    <div key={index}>{productsData.find(p => p.id === product.id)?.productName}</div>
                 ))}
                 {remainingProducts.length > 0 && (
                     <Tooltip content={
                         <div>
                             {remainingProducts.map((product, index) => (
-                                <div key={index}>{productsData.find(p => p._id === product.id)?.productName}</div>
+                                <div key={index}>{productsData.find(p => p.id === product.id)?.productName}</div>
                             ))}
                         </div>
                     }>
@@ -111,7 +111,7 @@ export default function InvoiceReport2() {
                         setProductFilter(''); // Reset product filter when supplier changes
                     }}
                 >
-                    {(supplier) => <AutocompleteItem key={supplier._id}>{supplier.name}</AutocompleteItem>}
+                    {(supplier) => <AutocompleteItem key={supplier.id}>{supplier.name}</AutocompleteItem>}
                 </Autocomplete>
                 <Autocomplete
                     label="Customer"
@@ -119,7 +119,7 @@ export default function InvoiceReport2() {
                     defaultItems={customerData}
                     onSelectionChange={(customerId) => setCustomerFilter(customerId)}
                 >
-                    {(customer) => <AutocompleteItem key={customer._id}>{customer.name}</AutocompleteItem>}
+                    {(customer) => <AutocompleteItem key={customer.id}>{customer.name}</AutocompleteItem>}
                 </Autocomplete>
                 <Autocomplete
                     label="Product"
@@ -128,7 +128,7 @@ export default function InvoiceReport2() {
                     onSelectionChange={(productId) => setProductFilter(productId)}
                     isDisabled={!supplierFilter}
                 >
-                    {(product) => <AutocompleteItem key={product._id}>{product.productName}</AutocompleteItem>}
+                    {(product) => <AutocompleteItem key={product.id}>{product.productName}</AutocompleteItem>}
                 </Autocomplete>
             </div>
 
@@ -143,7 +143,7 @@ export default function InvoiceReport2() {
                 </TableHeader>
                 <TableBody>
                     {filteredInvoices.map((invoice, index) => {
-                        const cust = customerLedger.filter((c,i)=>(c.invoiceRef === invoice?._id))
+                        const cust = customerLedger.filter((c,i)=>(c.invoiceRef === invoice?.id))
                         const totalr = cust.reduce((acc,item)=>(acc+item.credit),0)
                     return ( <TableRow key={index}>
                             <TableCell>{formatDate(invoice.invoiceDate)}</TableCell>

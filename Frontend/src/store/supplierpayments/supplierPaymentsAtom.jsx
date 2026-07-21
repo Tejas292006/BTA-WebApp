@@ -7,7 +7,7 @@ export const supplierpaymentDataState = atom({
     default : selector({
         key :  "supplierpaymentSelector",
         get : async () => {
-            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/supplierpayment/get-all-supplierpayments`);
+            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/supplierpayment/get-all-supplierpayments`);
             return res.data.supplierpayments
         }
     })

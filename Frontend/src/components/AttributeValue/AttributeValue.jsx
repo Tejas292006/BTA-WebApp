@@ -90,7 +90,7 @@ const AttributeValue = () => {
   const createattributeValue = async (values) => {
     try {
 
-      //   const attributeRefData = attributeData.find((attr) => attr._id === refatt);
+      //   const attributeRefData = attributeData.find((attr) => attr.id === refatt);
       // if (!attributeRefData) {
       //   throw new Error("Attribute reference data not found.");
       // }
@@ -155,7 +155,7 @@ const AttributeValue = () => {
 
         // Update local state based on the correct identifier (use _id instead of id)
         setattributeValueData((prevData) =>
-          prevData.filter((attributeValue) => attributeValue._id !== id)
+          prevData.filter((attributeValue) => attributeValue.id !== id)
         );
 
         navigate("/inventory");
@@ -173,11 +173,11 @@ const AttributeValue = () => {
     try {
       console.log(attributeValueData, 'valuessssssssssssssssssssssssss')
       const attributeValueDataexist = attributeValueData.find(
-        (element) => element._id === attributeValueId
+        (element) => element.id === attributeValueId
       );
 
-      if (attributeValueDataexist?.attributeRef._id) {
-        setrefatt(() => attributeValueDataexist?.attributeRef._id);
+      if (attributeValueDataexist?.attributeRef.id) {
+        setrefatt(() => attributeValueDataexist?.attributeRef.id);
       } else {
         setrefatt(() => attributeValueDataexist?.attributeRef);
       }
@@ -186,10 +186,10 @@ const AttributeValue = () => {
       const valuesCombo = attributeValueDataexist?.valuesCombo; // Access the first element directly
       setcategoryAndValueInputs(() => (valuesCombo))
       let attributeRefData = null;
-      if (attributeValueDataexist?.attributeRef._id) {
-        attributeRefData = attributeData.find((attr) => attr._id === attributeValueDataexist?.attributeRef?._id);
+      if (attributeValueDataexist?.attributeRef.id) {
+        attributeRefData = attributeData.find((attr) => attr.id === attributeValueDataexist?.attributeRef?.id);
       } else {
-        attributeRefData = attributeData.find((attr) => attr._id === attributeValueDataexist?.attributeRef);
+        attributeRefData = attributeData.find((attr) => attr.id === attributeValueDataexist?.attributeRef);
       }
       console.log(attributeRefData)
       console.log(attributeValueDataexist)
@@ -230,7 +230,7 @@ const AttributeValue = () => {
         // Optimistically update UI
         const updatedattributeValues = attributeValueData.map(
           (attributeValue) =>
-            attributeValue._id === updateId
+            attributeValue.id === updateId
               ? response.attributeValue
               : attributeValue
         );
@@ -321,12 +321,12 @@ const AttributeValue = () => {
                         }}
                         onSelectionChange={(selectedId) => {
                           // Find the item in attributeData with the matching ID
-                          const selectedItem = attributeData.find(item => (item._id === selectedId));
+                          const selectedItem = attributeData.find(item => (item.id === selectedId));
                           if (selectedItem) {
                             // If the item is found, set refatt to an object containing both ID and name
                             // setrefatt({ id: selectedId, name: selectedItem.name });
                             console.log(selectedItem, 'vvvvvvvvvvvvvv')
-                            setrefatt(selectedItem._id)
+                            setrefatt(selectedItem.id)
                             setrefattName(selectedItem.name)
                           } else {
                             // Handle the case where the item is not found (optional)
@@ -402,7 +402,7 @@ const AttributeValue = () => {
                       >
                         {(item) => (
                           <AutocompleteItem
-                            key={item._id}
+                            key={item.id}
                             textValue={item.name}
                           >
                             <div className="flex justify-between items-center">
@@ -498,7 +498,7 @@ const AttributeValue = () => {
                             >
                               {(item) => (
                                 <AutocompleteItem
-                                  key={item._id}
+                                  key={item.id}
                                   textValue={item.name}
                                 >
                                   <div className="flex justify-between items-center">

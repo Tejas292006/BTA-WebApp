@@ -88,7 +88,7 @@ const Unit = () => {
                 toast.success(response.message);
 
                 // Update local state based on the correct identifier (use _id instead of id)
-                setunitData((prevData) => prevData.filter((unit) => unit._id !== id));
+                setunitData((prevData) => prevData.filter((unit) => unit.id !== id));
 
                 navigate('/inventory');
             } else {
@@ -102,7 +102,7 @@ const Unit = () => {
     }
 
     const updateFormWithunitData = (unitId, updatedunitData) => {
-        const unitDataexist = updatedunitData.find((element) => element._id === unitId);
+        const unitDataexist = updatedunitData.find((element) => element.id === unitId);
         console.log(unitDataexist, updatedunitData, 'existssssssssssssssssssssss');
 
         formik.setValues({
@@ -149,7 +149,7 @@ const Unit = () => {
 
                 setunitData((preValue) => {
                     const updatedunits = preValue.map((unit) => {
-                        return unit._id === updateId ? response.unit : unit
+                        return unit.id === updateId ? response.unit : unit
                     }
                     )
                     return updatedunits;

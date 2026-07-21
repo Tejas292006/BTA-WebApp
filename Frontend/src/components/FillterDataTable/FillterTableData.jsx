@@ -43,7 +43,7 @@ export default function FillterTableData({ rows, productref, setproductchange, c
             case "quality":
                 return (
                     <div className="flex flex-col">
-                        <p className="text-tiny capitalize font-font1 font-[600]">{user?.productAttributes.find(attribute => attribute?.attrType === attributeData?.find(attribute => attribute.name === "Quality")._id)?.attrValue || "NA"}</p>
+                        <p className="text-tiny capitalize font-font1 font-[600]">{user?.productAttributes.find(attribute => attribute?.attrType === attributeData?.find(attribute => attribute.name === "Quality").id)?.attrValue || "NA"}</p>
                     </div>
                 );
             default:
@@ -70,7 +70,7 @@ export default function FillterTableData({ rows, productref, setproductchange, c
                 loadingContent={<Spinner color="white" />}
             >
                 {(item) => (
-                    <TableRow key={item._id}>
+                    <TableRow key={item.id}>
                         {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                     </TableRow>
                 )}

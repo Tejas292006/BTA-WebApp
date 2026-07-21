@@ -7,7 +7,7 @@ export const customerpaymentDataState = atom({
     default : selector({
         key :  "customerpaymentSelector",
         get : async () => {
-            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/customerpayment/get-all-customerpayments`);
+            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/customerpayment/get-all-customerpayments`);
             return res.data.customerpayments
         }
     })

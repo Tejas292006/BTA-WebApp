@@ -88,7 +88,7 @@ const Design = () => {
                 toast.success(response.message);
 
                 // Update local state based on the correct identifier (use _id instead of id)
-                setdesignData((prevData) => prevData.filter((design) => design._id !== id));
+                setdesignData((prevData) => prevData.filter((design) => design.id !== id));
 
                 navigate('/inventory');
             } else {
@@ -102,7 +102,7 @@ const Design = () => {
     }
 
     const updateFormWithdesignData = (designId, updateddesignData) => {
-        const designDataexist = updateddesignData.find((element) => element._id === designId);
+        const designDataexist = updateddesignData.find((element) => element.id === designId);
         console.log(designDataexist, updateddesignData, 'existssssssssssssssssssssss');
         setrefcat(() => (designDataexist?.ref))
 
@@ -149,7 +149,7 @@ const Design = () => {
 
                 // Optimistically update UI
                 const updateddesigns = designData.map((design) =>
-                    design._id === updateId ? response.design : design
+                    design.id === updateId ? response.design : design
                 );
 
                 setdesignData(updateddesigns);
@@ -294,7 +294,7 @@ const Design = () => {
                                                 variant="bordered"
                                             >
                                                 {(item) => (
-                                                    <AutocompleteItem key={item._id} textValue={item.name}>
+                                                    <AutocompleteItem key={item.id} textValue={item.name}>
                                                         <div className="flex justify-between items-center">
                                                             <div className="flex gap-2 items-center">
                                                                 <div className="flex flex-col">

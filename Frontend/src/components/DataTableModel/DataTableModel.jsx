@@ -135,9 +135,9 @@ export default function DataTableModel({ columns, update, deleteItem, users, sta
             case "attributeref":
                 return (
                     <div className="flex flex-col">
-                        {/* <p className="text-bold text-tiny capitalize text-default-900">{attributeData.find(supplier => supplier?._id === user?.attributeRef)?.name}</p> */}
+                        {/* <p className="text-bold text-tiny capitalize text-default-900">{attributeData.find(supplier => supplier?.id === user?.attributeRef)?.name}</p> */}
                         <p className="text-bold text-tiny capitalize text-default-900">
-                            {user?.attributeRef._id ? user.attributeRef?.name : attributeData.find(supplier => supplier?._id === user?.attributeRef)?.name}
+                            {user?.attributeRef.id ? user.attributeRef?.name : attributeData.find(supplier => supplier?.id === user?.attributeRef)?.name}
                         </p>
                     </div>
                 );
@@ -237,10 +237,10 @@ export default function DataTableModel({ columns, update, deleteItem, users, sta
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu className='font-2 font-medium text-[#000]'>
-                                <DropdownItem onClick={() => openViewAreaToggle(user._id)}>View</DropdownItem>
-                                {section === "invoice" &&<DropdownItem onClick={() => navigate(`/invoice-preview/${user._id}`)}>Preview</DropdownItem>}
-                                <DropdownItem onClick={() => update(user._id)}>Edit</DropdownItem>
-                                <DropdownItem onClick={() => deleteItem(user._id) || alert(user._id)}>Delete</DropdownItem>
+                                <DropdownItem onClick={() => openViewAreaToggle(user.id)}>View</DropdownItem>
+                                {section === "invoice" &&<DropdownItem onClick={() => navigate(`/invoice-preview/${user.id}`)}>Preview</DropdownItem>}
+                                <DropdownItem onClick={() => update(user.id)}>Edit</DropdownItem>
+                                <DropdownItem onClick={() => deleteItem(user.id) || alert(user.id)}>Delete</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -432,7 +432,7 @@ export default function DataTableModel({ columns, update, deleteItem, users, sta
                 </TableHeader>
                 <TableBody emptyContent={"No users found"} items={sortedItems}>
                     {(item) => (
-                        <TableRow key={item._id}>
+                        <TableRow key={item.id}>
                             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                         </TableRow>
                     )}

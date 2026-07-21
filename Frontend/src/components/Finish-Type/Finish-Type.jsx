@@ -88,7 +88,7 @@ const Finishtype = () => {
                 toast.success(response.message);
 
                 // Update local state based on the correct identifier (use _id instead of id)
-                setfinishtypeData((prevData) => prevData.filter((finishtype) => finishtype._id !== id));
+                setfinishtypeData((prevData) => prevData.filter((finishtype) => finishtype.id !== id));
 
                 navigate('/inventory');
             } else {
@@ -102,7 +102,7 @@ const Finishtype = () => {
     }
 
     const updateFormWithfinishtypeData = (finishtypeId, updatedfinishtypeData) => {
-        const finishtypeDataexist = updatedfinishtypeData.find((element) => element._id === finishtypeId);
+        const finishtypeDataexist = updatedfinishtypeData.find((element) => element.id === finishtypeId);
         console.log(finishtypeDataexist, updatedfinishtypeData, 'existssssssssssssssssssssss');
         setrefcat(() => (finishtypeDataexist?.ref))
 
@@ -149,7 +149,7 @@ const Finishtype = () => {
 
                 // Optimistically update UI
                 const updatedfinishtypes = finishtypeData.map((finishtype) =>
-                    finishtype._id === updateId ? response.finishtype : finishtype
+                    finishtype.id === updateId ? response.finishtype : finishtype
                 );
 
                 setfinishtypeData(updatedfinishtypes);
@@ -294,7 +294,7 @@ const Finishtype = () => {
                                                 variant="bordered"
                                             >
                                                 {(item) => (
-                                                    <AutocompleteItem key={item._id} textValue={item.name}>
+                                                    <AutocompleteItem key={item.id} textValue={item.name}>
                                                         <div className="flex justify-between items-center">
                                                             <div className="flex gap-2 items-center">
                                                                 <div className="flex flex-col">

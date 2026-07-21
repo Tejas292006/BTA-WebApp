@@ -88,7 +88,7 @@ const Width = () => {
                 toast.success(response.message);
 
                 // Update local state based on the correct identifier (use _id instead of id)
-                setwidthData((prevData) => prevData.filter((width) => width._id !== id));
+                setwidthData((prevData) => prevData.filter((width) => width.id !== id));
 
                 navigate('/inventory');
             } else {
@@ -102,7 +102,7 @@ const Width = () => {
     }
 
     const updateFormWithwidthData = (widthId, updatedwidthData) => {
-        const widthDataexist = updatedwidthData.find((element) => element._id === widthId);
+        const widthDataexist = updatedwidthData.find((element) => element.id === widthId);
         console.log(widthDataexist, updatedwidthData, 'existssssssssssssssssssssss');
         setrefcat(() => (widthDataexist?.ref))
 
@@ -149,7 +149,7 @@ const Width = () => {
 
                 // Optimistically update UI
                 const updatedwidths = widthData.map((width) =>
-                    width._id === updateId ? response.width : width
+                    width.id === updateId ? response.width : width
                 );
 
                 setwidthData(updatedwidths);
@@ -294,7 +294,7 @@ const Width = () => {
                                                 variant="bordered"
                                             >
                                                 {(item) => (
-                                                    <AutocompleteItem key={item._id} textValue={item.name}>
+                                                    <AutocompleteItem key={item.id} textValue={item.name}>
                                                         <div className="flex justify-between items-center">
                                                             <div className="flex gap-2 items-center">
                                                                 <div className="flex flex-col">

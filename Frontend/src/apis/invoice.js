@@ -2,7 +2,7 @@ import axios from "axios"
 
 export const Createinvoice = async (payload) => {
     try {
-        const response = await axios.post(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/invoice/create-invoice`, payload);
+        const response = await axios.post(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/invoice/create-invoice`, payload);
         return response.data;
 
     } catch (error) {
@@ -12,7 +12,7 @@ export const Createinvoice = async (payload) => {
 
 export const GetinvoiceData = async () => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/invoice/get-all-invoice`);
+        const response = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/invoice/get-all-invoice`);
         return response.data;
 
     } catch (error) {
@@ -22,7 +22,7 @@ export const GetinvoiceData = async () => {
 
 export const GetinvoiceDataByID = async () => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/invoice/get-all-invoice`);
+        const response = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/invoice/get-all-invoice`);
         return response.data;
 
     } catch (error) {
@@ -32,7 +32,7 @@ export const GetinvoiceDataByID = async () => {
 export const Deleteinvoice = async (id) => {
     try {
 
-        const response = await axios.delete(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/invoice/delete-invoice/${id}`);
+        const response = await axios.delete(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/invoice/delete-invoice/${id}`);
         return response.data;
 
     } catch (error) {
@@ -42,7 +42,7 @@ export const Deleteinvoice = async (id) => {
 
 export const Updateinvoice = async (id, payload) => {
     try {
-        const response = await axios.put(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/invoice/update-invoice/${id}`, payload);
+        const response = await axios.put(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/invoice/update-invoice/${id}`, payload);
         return response.data;
 
     } catch (error) {

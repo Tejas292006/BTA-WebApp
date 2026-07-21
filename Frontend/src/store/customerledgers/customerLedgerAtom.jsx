@@ -7,7 +7,7 @@ export const customerledgerDataState = atom({
     default : selector({
         key :  "customerledgerSelector",
         get : async () => {
-            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/customerledger/get-all-customerledgers`);
+            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/customerledger/get-all-customerledgers`);
             return res.data.customerledgers
         }
     })

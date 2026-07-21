@@ -62,7 +62,7 @@ const ProductPage = () => {
                 toast.success(response.message);
                 console.log(response.message)
 
-                setProductsData((prevData) => prevData.filter((product) => product._id !== id));
+                setProductsData((prevData) => prevData.filter((product) => product.id !== id));
 
                 navigate('/inventory');
             } else {
@@ -82,7 +82,7 @@ const ProductPage = () => {
         try {
 
             // changed from todoListState to filteredTodoListState
-            const finishtypeData = FinishTypesData.find((element) => element._id == finishtypeId);
+            const finishtypeData = FinishTypesData.find((element) => element.id == finishtypeId);
 
             // Set the initial values for Formik
             formik.setValues({
@@ -113,7 +113,7 @@ const ProductPage = () => {
                 // Optimistically update UI
                 setFinishTypesData((prevData) => {
                     const updatedfinishtypes = prevData.map((finishtype) =>
-                        finishtype._id === updateId ? response.finishtype : finishtype
+                        finishtype.id === updateId ? response.finishtype : finishtype
                     );
                     return updatedfinishtypes;
                 });

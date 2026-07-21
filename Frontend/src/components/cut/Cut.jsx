@@ -88,7 +88,7 @@ const Cut = () => {
                 toast.success(response.message);
 
                 // Update local state based on the correct identifier (use _id instead of id)
-                setcutData((prevData) => prevData.filter((cut) => cut._id !== id));
+                setcutData((prevData) => prevData.filter((cut) => cut.id !== id));
 
                 navigate('/inventory');
             } else {
@@ -103,7 +103,7 @@ const Cut = () => {
     // Call updateFormWithCutData wherever needed
     const handleUpdate = (cutId) => {
         try {
-            const cutDataexist = cutData.find((element) => element._id === cutId);
+            const cutDataexist = cutData.find((element) => element.id === cutId);
             console.log(cutDataexist, 'existssssssssssssssssssssss');
             setrefcat(() => (cutDataexist?.ref))
     
@@ -133,7 +133,7 @@ const Cut = () => {
 
                 // Optimistically update UI
                 const updatedcuts = cutData.map((cut) =>
-                    cut._id === updateId ? response.cut : cut
+                    cut.id === updateId ? response.cut : cut
                 );
 
                 setcutData(updatedcuts);
@@ -279,7 +279,7 @@ const Cut = () => {
                                                 variant="bordered"
                                             >
                                                 {(item) => (
-                                                    <AutocompleteItem key={item._id} textValue={item.name}>
+                                                    <AutocompleteItem key={item.id} textValue={item.name}>
                                                         <div className="flex justify-between items-center">
                                                             <div className="flex gap-2 items-center">
                                                                 <div className="flex flex-col">

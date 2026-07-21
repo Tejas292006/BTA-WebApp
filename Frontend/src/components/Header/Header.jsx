@@ -24,7 +24,7 @@ const Header = ({ toggleSidebar }) => {
         onSubmit: async values => {
             values = await Object.assign(values, { avatar: file })
 
-            await updateUser(values, user._id).then(() => {
+            await updateUser(values, user.id).then(() => {
                 toast.success('user updated succesfully')
                 window.location.reload();
             }).catch((error) => {

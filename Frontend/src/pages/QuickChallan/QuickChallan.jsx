@@ -131,7 +131,7 @@ const quickchallan = () => {
         toast.success(response.message);
 
         // Update local state based on the correct identifier (use _id instead of id)
-        setquickchallansData((prevData) => prevData.filter((supplier) => supplier._id !== id));
+        setquickchallansData((prevData) => prevData.filter((supplier) => supplier.id !== id));
 
       } else {
         throw new Error(response.message);
@@ -155,15 +155,15 @@ const quickchallan = () => {
 
         // setquickchallansData((prevData) => {
         //   const updatedSuppliers = prevData.map((supplier) => {
-        //     // console.log(supplier._id === updateId ? response.supplier : supplier)
-        //     return supplier._id === updateId ? response.quickchallan : supplier
+        //     // console.log(supplier.id === updateId ? response.supplier : supplier)
+        //     return supplier.id === updateId ? response.quickchallan : supplier
         //   }
         //   );
         //   return updatedSuppliers;
         // });
         // Optimistically update UI
         const updatedsuppliers = quickchallansData.map((supplier) =>
-          supplier._id === updateId ? response.quickchallan : supplier
+          supplier.id === updateId ? response.quickchallan : supplier
         );
 
         setquickchallansData(updatedsuppliers);
@@ -215,14 +215,14 @@ const quickchallan = () => {
   });
 
   const updateFormWithsupplierData = (supplierId, updatedsupplierData) => {
-    const mySupplierData = updatedsupplierData.find((element) => element._id === supplierId);
+    const mySupplierData = updatedsupplierData.find((element) => element.id === supplierId);
     console.log(mySupplierData, updatedsupplierData, 'existssssssssssssssssssssss');
 
     formik.setValues({
       quickchallanNo: mySupplierData?.quickchallanNo,
       quickchallanDate: mySupplierData?.quickchallanDate,
       // totalBill: mySupplierData?.totalBill,
-      customer: mySupplierData?.customer._id,
+      customer: mySupplierData?.customer.id,
       products: mySupplierData?.products.map((product) => ({
         cut: product.cut,
         bales: product.bales,
@@ -232,7 +232,7 @@ const quickchallan = () => {
         remarkDesc: product.remarkDesc,
         total: product.totalBill,
       })),
-      supplier: mySupplierData?.supplier._id,
+      supplier: mySupplierData?.supplier.id,
       overallremarks: mySupplierData?.overallremarks,
       type: mySupplierData?.type,
       verified: mySupplierData?.verified,
@@ -272,7 +272,7 @@ const quickchallan = () => {
       const newProduct = { product: productref, cut: cutref, bales: bale, challanChartImages: productChartImageData, price: price || 0, unit: unit, remarkDesc: remark };
       formik.setValues(prevValues => ({
         ...prevValues,
-        supplier: productsData.find(product => product?._id === productref)?.supplierName?._id,
+        supplier: productsData.find(product => product?.id === productref)?.supplierName?.id,
         products: [...(prevValues?.products || []), newProduct] // Ensure products is initialized as an array
       }));
 
@@ -334,7 +334,7 @@ const quickchallan = () => {
     setbale(event.target.value);
     if (cutref) {
       let qtyMeter;
-      const cutvalue = cutData.find(cut => cut._id === cutref)
+      const cutvalue = cutData.find(cut => cut.id === cutref)
       if (cutvalue?.isNameNumerical) {
         qtyMeter = Math.floor(event.target.value * parseFloat(cutvalue?.name));
         setqtymeter(qtyMeter);
@@ -347,8 +347,8 @@ const quickchallan = () => {
 
   const setproductchange = (value) => {
     console.log(value)
-    const price = productsData?.filter(item => item?._id === value)[0]?.pricePerUnit?.magnitude;
-    const selectedProductCategory = productsData?.filter(item => item?._id === value)[0]?.category?._id || "";
+    const price = productsData?.filter(item => item?.id === value)[0]?.pricePerUnit?.magnitude;
+    const selectedProductCategory = productsData?.filter(item => item?.id === value)[0]?.category?.id || "";
     console.log(selectedProductCategory)
     setproductref(value);
     setProductCategory(selectedProductCategory);
@@ -356,7 +356,7 @@ const quickchallan = () => {
   };
 
   console.log(productCategory)
-  console.log(cutData?.filter(item => item?.ref?._id === productCategory))
+  console.log(cutData?.filter(item => item?.ref?.id === productCategory))
 
   const onSupplierChange = (value) => {
     setsupplierRef(value)
@@ -448,7 +448,7 @@ const quickchallan = () => {
       // console.log(newquickchallanNumber, "quickchallan")
       setquickchallanNumber(newquickchallanNumber);
     }
-    // setcutData(attributeValueData.filter(attribute => attribute?.attributeRef?._id === (attributeData.find(attributename => attributename?.name === "cut")?._id))[0].valuesCombo)
+    // setcutData(attributeValueData.filter(attribute => attribute?.attributeRef?.id === (attributeData.find(attributename => attributename?.name === "cut")?.id))[0].valuesCombo)
   }, [onOpenChange, quickchallansData]);
 
 
@@ -493,8 +493,8 @@ const quickchallan = () => {
   const [selectedKeys, setSelectedKeys] = useState(undefined);
 
   useEffect(() => {
-    console.log(attributeValueData?.filter(attributeValue => attributeValue?.attributeRef?._id === selectedKeys), "fitler")
-    setattributesvaluesData(attributeValueData?.filter(attributeValue => attributeValue?.attributeRef?._id === selectedKeys))
+    console.log(attributeValueData?.filter(attributeValue => attributeValue?.attributeRef?.id === selectedKeys), "fitler")
+    setattributesvaluesData(attributeValueData?.filter(attributeValue => attributeValue?.attributeRef?.id === selectedKeys))
   }, [selectedKeys])
 
 
@@ -712,7 +712,7 @@ const quickchallan = () => {
                                   variant="flat"
                                 >
                                   {(item) => (
-                                    <AutocompleteItem key={item?._id} textValue={item?.name}>
+                                    <AutocompleteItem key={item?.id} textValue={item?.name}>
                                       <div className="flex justify-between items-center">
                                         <div className="flex gap-2 items-center">
                                           <div className="flex flex-col">
@@ -799,7 +799,7 @@ const quickchallan = () => {
                                   variant="flat"
                                 >
                                   {(item) => (
-                                    <AutocompleteItem key={item?._id} textValue={item?.name}>
+                                    <AutocompleteItem key={item?.id} textValue={item?.name}>
                                       <div className="flex justify-between items-center">
                                         <div className="flex gap-2 items-center">
                                           <div className="flex flex-col">
@@ -827,7 +827,7 @@ const quickchallan = () => {
 
                                   onSelectionChange={(value) => setproductchange(value)}
                                   value={productref}
-                                  items={(supplierRef && productsData?.filter(product => product?.supplierName?._id === supplierRef) || [])}
+                                  items={(supplierRef && productsData?.filter(product => product?.supplierName?.id === supplierRef) || [])}
                                   selectedKey={productref}
                                   inputProps={{
                                     classNames: {
@@ -890,7 +890,7 @@ const quickchallan = () => {
                                   variant="flat"
                                 >
                                   {(item) => (
-                                    <AutocompleteItem key={item?._id} textValue={item?.productName}>
+                                    <AutocompleteItem key={item?.id} textValue={item?.productName}>
                                       <div className="flex justify-between items-center">
                                         <div className="flex gap-2 items-center">
                                           <div className="flex flex-col">
@@ -912,7 +912,7 @@ const quickchallan = () => {
 
                                   onSelectionChange={setcutref}
                                   value={cutref}
-                                  defaultItems={cutData?.filter(item => item?.ref?._id === productCategory) || cutData}
+                                  defaultItems={cutData?.filter(item => item?.ref?.id === productCategory) || cutData}
                                   // items={(productref && cutData?.filter(cut => cut?.ref === productref) || [] )}
                                   selectedKey={cutref}
                                   inputProps={{
@@ -976,7 +976,7 @@ const quickchallan = () => {
                                   variant="flat"
                                 >
                                   {(item) => (
-                                    <AutocompleteItem key={item?._id} textValue={item?.name}>
+                                    <AutocompleteItem key={item?.id} textValue={item?.name}>
                                       <div className="flex justify-between items-center">
                                         <div className="flex gap-2 items-center">
                                           <div className="flex flex-col">
@@ -1104,7 +1104,7 @@ const quickchallan = () => {
                                   variant="flat"
                                 >
                                   {(item) => (
-                                    <AutocompleteItem key={item?._id} textValue={item?.name}>
+                                    <AutocompleteItem key={item?.id} textValue={item?.name}>
                                       <div className="flex justify-between items-center">
                                         <div className="flex gap-2 items-center">
                                           <div className="flex flex-col">
@@ -1189,10 +1189,10 @@ const quickchallan = () => {
                                   return (
                                     <TableRow key={index}>
                                       <TableCell>
-                                        {productsData.find(product => product._id === object.product._id)?.productName}
+                                        {productsData.find(product => product.id === object.product.id)?.productName}
                                       </TableCell>
                                       <TableCell>
-                                        {cutData.find(product => product._id === object.cut._id)?.name}
+                                        {cutData.find(product => product.id === object.cut.id)?.name}
                                       </TableCell>
                                       <TableCell>
                                         {object.bales}
@@ -1345,7 +1345,7 @@ const quickchallan = () => {
                                         },
                                       }}
                                       aria-label="Select an "
-                                      placeholder={`Enter ${attributeData?.find(attribute => attribute._id === selectedKeys)?.name || "Select"}`}
+                                      placeholder={`Enter ${attributeData?.find(attribute => attribute.id === selectedKeys)?.name || "Select"}`}
                                       selectorButtonProps={{
                                         className: "hidden"
                                       }}
@@ -1364,7 +1364,7 @@ const quickchallan = () => {
                                               variant="light"
                                               className="capitalize h-[35px] text-[0.8rem] font-font1 font-[500]"
                                             >
-                                              {attributeData?.find(attribute => attribute._id === selectedKeys)?.name || "Select"}
+                                              {attributeData?.find(attribute => attribute.id === selectedKeys)?.name || "Select"}
                                             </Button>
                                           </DropdownTrigger>
                                           <DropdownMenu
@@ -1380,7 +1380,7 @@ const quickchallan = () => {
                                           >
                                             {
                                               attributeData?.map(attribute =>
-                                                <DropdownItem key={attribute?._id}>{attribute?.name}</DropdownItem>)
+                                                <DropdownItem key={attribute?.id}>{attribute?.name}</DropdownItem>)
                                             }
                                           </DropdownMenu>
                                         </Dropdown>
@@ -1444,7 +1444,7 @@ const quickchallan = () => {
                                 )
                               }
                             </div>
-                            <FillterTableData productref={productref} setproductchange={setproductchange} rows={supplierRef ? filteredProducts.filter(products => products?.supplierName?._id === supplierRef) : filteredProducts} columnsoffillter={columnsoffillter} />
+                            <FillterTableData productref={productref} setproductchange={setproductchange} rows={supplierRef ? filteredProducts.filter(products => products?.supplierName?.id === supplierRef) : filteredProducts} columnsoffillter={columnsoffillter} />
                             <Input size={'md'}
                               classNames={{
                                 label: "font-[600] font-font1",
@@ -1534,7 +1534,7 @@ const quickchallan = () => {
                                 variant="flat"
                               >
                                 {(item) => (
-                                  <AutocompleteItem key={item?._id} textValue={item?.name}>
+                                  <AutocompleteItem key={item?.id} textValue={item?.name}>
                                     <div className="flex justify-between items-center">
                                       <div className="flex gap-2 items-center">
                                         <div className="flex flex-col">
@@ -1553,7 +1553,7 @@ const quickchallan = () => {
                                   label: "font-[600] font-font1",
                                   input: "font-[500] font-font1",
                                 }}
-                                value={productsData?.find(product => product?._id === productref)?.productName || "Click On Product"}
+                                value={productsData?.find(product => product?.id === productref)?.productName || "Click On Product"}
                                 readOnly
                                 className=" mt-5 flex-grow"
                               />
@@ -1565,7 +1565,7 @@ const quickchallan = () => {
                                   label: "font-[600] font-font1",
                                   input: "font-[500] font-font1",
                                 }}
-                                value={productsData?.find(product => product?._id === productref)?.supplierName?.name || "Click On Product"}
+                                value={productsData?.find(product => product?.id === productref)?.supplierName?.name || "Click On Product"}
                                 readOnly
                                 className="mt-5 flex-grow"
                               />
@@ -1600,7 +1600,7 @@ const quickchallan = () => {
 
                                 onSelectionChange={setcutref}
                                 value={cutref}
-                                defaultItems={cutData?.filter(item => item?.ref?._id === productCategory) || cutData}
+                                defaultItems={cutData?.filter(item => item?.ref?.id === productCategory) || cutData}
                                 // items={(productref && cutData?.filter(cut => cut?.ref === productref) || [] )}
                                 selectedKey={cutref}
                                 inputProps={{
@@ -1664,7 +1664,7 @@ const quickchallan = () => {
                                 variant="flat"
                               >
                                 {(item) => (
-                                  <AutocompleteItem key={item?._id} textValue={item?.name}>
+                                  <AutocompleteItem key={item?.id} textValue={item?.name}>
                                     <div className="flex justify-between items-center">
                                       <div className="flex gap-2 items-center">
                                         <div className="flex flex-col">
@@ -1779,7 +1779,7 @@ const quickchallan = () => {
                                 variant="flat"
                               >
                                 {(item) => (
-                                  <AutocompleteItem key={item?._id} textValue={item?.name}>
+                                  <AutocompleteItem key={item?.id} textValue={item?.name}>
                                     <div className="flex justify-between items-center">
                                       <div className="flex gap-2 items-center">
                                         <div className="flex flex-col">
@@ -1862,10 +1862,10 @@ const quickchallan = () => {
                                   return (
                                     <TableRow key={index}>
                                       <TableCell>
-                                        {productsData.find(product => product._id === object.product._id)?.productName}
+                                        {productsData.find(product => product.id === object.product.id)?.productName}
                                       </TableCell>
                                       <TableCell>
-                                        {cutData.find(product => product._id === object.cut._id)?.name}
+                                        {cutData.find(product => product.id === object.cut.id)?.name}
                                       </TableCell>
                                       <TableCell>
                                         {object.bales}

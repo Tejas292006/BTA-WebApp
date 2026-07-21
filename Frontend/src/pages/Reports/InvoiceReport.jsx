@@ -19,7 +19,7 @@ export default function InvoiceReport() {
     const [productFilter, setProductFilter] = useState('');
 
     const filteredProducts = useMemo(() => {
-        return productsData.filter((product) => product.supplierName._id === supplierFilter);
+        return productsData.filter((product) => product.supplierName.id === supplierFilter);
     }, [productsData, supplierFilter]);
 
     const filteredInvoices = useMemo(() => {
@@ -47,13 +47,13 @@ export default function InvoiceReport() {
         return (
             <div>
                 {displayProducts.map((product, index) => (
-                    <div key={index}>{productsData.find(p => p._id === product.id)?.productName}</div>
+                    <div key={index}>{productsData.find(p => p.id === product.id)?.productName}</div>
                 ))}
                 {remainingProducts.length > 0 && (
                     <Tooltip content={
                         <div>
                             {remainingProducts.map((product, index) => (
-                                <div key={index}>{productsData.find(p => p._id === product.id)?.productName}</div>
+                                <div key={index}>{productsData.find(p => p.id === product.id)?.productName}</div>
                             ))}
                         </div>
                     }>
@@ -97,7 +97,7 @@ export default function InvoiceReport() {
                         setProductFilter(''); // Reset product filter when supplier changes
                     }}
                 >
-                    {(supplier) => <AutocompleteItem key={supplier._id}>{supplier.name}</AutocompleteItem>}
+                    {(supplier) => <AutocompleteItem key={supplier.id}>{supplier.name}</AutocompleteItem>}
                 </Autocomplete>
                 <Autocomplete
                     label="Customer"
@@ -105,7 +105,7 @@ export default function InvoiceReport() {
                     defaultItems={customerData}
                     onSelectionChange={(customerId) => setCustomerFilter(customerId)}
                 >
-                    {(customer) => <AutocompleteItem key={customer._id}>{customer.name}</AutocompleteItem>}
+                    {(customer) => <AutocompleteItem key={customer.id}>{customer.name}</AutocompleteItem>}
                 </Autocomplete>
                 <Autocomplete
                     label="Product"
@@ -114,7 +114,7 @@ export default function InvoiceReport() {
                     onSelectionChange={(productId) => setProductFilter(productId)}
                     isDisabled={!supplierFilter}
                 >
-                    {(product) => <AutocompleteItem key={product._id}>{product.productName}</AutocompleteItem>}
+                    {(product) => <AutocompleteItem key={product.id}>{product.productName}</AutocompleteItem>}
                 </Autocomplete>
             </div>
 
@@ -130,8 +130,8 @@ export default function InvoiceReport() {
                     {filteredInvoices.map((invoice, index) => (
                         <TableRow key={index}>
                             <TableCell>{formatDate(invoice.invoiceDate)}</TableCell>
-                            <TableCell>{suppliersData.find(s => s._id === invoice.supplierRef)?.name}</TableCell>
-                            <TableCell>{customerData.find(c => c._id === invoice.customerRef)?.name}</TableCell>
+                            <TableCell>{suppliersData.find(s => s.id === invoice.supplierRef)?.name}</TableCell>
+                            <TableCell>{customerData.find(c => c.id === invoice.customerRef)?.name}</TableCell>
                             <TableCell>{renderProductCell(invoice.products)}</TableCell>
                             <TableCell>{invoice.grandTotal}</TableCell>
                         </TableRow>

@@ -87,7 +87,7 @@ const PaymentMode = () => {
                 toast.success(response.message);
 
                 // Update local state based on the correct identifier (use _id instead of id)
-                setPaymentMode((prevData) => prevData.filter((paymentmode) => paymentmode._id !== id));
+                setPaymentMode((prevData) => prevData.filter((paymentmode) => paymentmode.id !== id));
 
                 navigate('/inventory');
             } else {
@@ -101,7 +101,7 @@ const PaymentMode = () => {
     }
 
     const updateFormWithpaymentMode = (paymentmodeId, updatedpaymentMode) => {
-        const paymentModeexist = updatedpaymentMode.find((element) => element._id === paymentmodeId);
+        const paymentModeexist = updatedpaymentMode.find((element) => element.id === paymentmodeId);
         console.log(paymentModeexist, updatedpaymentMode, 'existssssssssssssssssssssss');
 
         formik.setValues({
@@ -148,7 +148,7 @@ const PaymentMode = () => {
 
                 setPaymentMode((preValue) => {
                     const updatedpaymentmodes = preValue.map((paymentmode) => {
-                        return paymentmode._id === updateId ? response.paymentmode : paymentmode
+                        return paymentmode.id === updateId ? response.paymentmode : paymentmode
                     }
                     )
                     return updatedpaymentmodes;

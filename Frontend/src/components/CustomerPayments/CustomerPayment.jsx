@@ -98,7 +98,7 @@ const CustomerPayment = () => {
 
     const yourArray = [...selectedKeys];
     const selectedChallanData = yourArray.map((entry) => {
-        return allChallanData.find((item) => item._id === entry);
+        return allChallanData.find((item) => item.id === entry);
     });
     const [selectedChallansProducts, setSelectedChallansProducts] = useState([]);
 
@@ -210,8 +210,8 @@ const CustomerPayment = () => {
                     }
 
                     products.push({
-                        id: newRow?.product?._id,
-                        challanId: item._id,
+                        id: newRow?.product?.id,
+                        challanId: item.id,
                         unit: newRow?.unit,
                         product: newRow?.product?.productName || "NA",
                         cut: newRow?.cut?.name || "NA",
@@ -367,7 +367,7 @@ const CustomerPayment = () => {
     const [balanceUsed, setBalanceUsed] = useState(false);
 
     useEffect(() => {
-        const selectedCustomer = customerData?.find(item => item._id === customerRef)
+        const selectedCustomer = customerData?.find(item => item.id === customerRef)
         console.log(selectedCustomer)
         const linkedSupplierData = selectedCustomer?.supplierBalances?.find(item => item?.supplier === supplierRef)
         console.log(linkedSupplierData)
@@ -386,7 +386,7 @@ const CustomerPayment = () => {
             if (response.success) {
                 toast.success(response.message);
                 setCustomerPaymentData((prevData) =>
-                    prevData.filter((customerpayment) => customerpayment._id !== id)
+                    prevData.filter((customerpayment) => customerpayment.id !== id)
                 );
                 navigate("/payments");
             } else {
@@ -401,7 +401,7 @@ const CustomerPayment = () => {
 
     const updateFormWithinvoiceData = (invoiceId, updatedinvoiceData) => {
         const invoiceDataexist = updatedinvoiceData.find(
-            (element) => element._id === invoiceId
+            (element) => element.id === invoiceId
         );
         setSelectedChallansProducts(invoiceDataexist?.products);
     };
@@ -442,7 +442,7 @@ const CustomerPayment = () => {
 
                 setInvoiceData((preValue) => {
                     const updatedinvoices = preValue.map((invoice) => {
-                        return invoice._id === updateId ? response.invoice : invoice;
+                        return invoice.id === updateId ? response.invoice : invoice;
                     });
                     return updatedinvoices;
                 });
@@ -461,7 +461,7 @@ const CustomerPayment = () => {
 
     const updateInvoiceAsPerRemaining = async () => {
         const invoiceAdjustments = invoices.map(invoice => ({
-            invoiceId: invoice?._id,
+            invoiceId: invoice?.id,
             remainingAmount: invoice?.remaining
         }));
 
@@ -515,7 +515,7 @@ const CustomerPayment = () => {
             const paymentData = {
                 ...values,
                 adjustments: invoices.map(invoice => ({
-                    invoiceId : invoice._id,
+                    invoiceId : invoice.id,
                     invoiceNo: invoice.invoiceNo,
                     adjust: invoice.adjust,
                     discount: invoice.discount,
@@ -687,7 +687,7 @@ const CustomerPayment = () => {
 
 
     const fillterChallan = React.useMemo(() => {
-        return allChallanData.filter((item) => item.supplier._id === supplierRef && item.customer._id === customerRef && (item.products.filter(product => product.isProductDispatchedByInvoice === false)).length > 0 ? true : false)
+        return allChallanData.filter((item) => item.supplier.id === supplierRef && item.customer.id === customerRef && (item.products.filter(product => product.isProductDispatchedByInvoice === false)).length > 0 ? true : false)
     }, [supplierRef, customerRef]);
 
 
@@ -702,9 +702,9 @@ const CustomerPayment = () => {
             toast.error("Put Product Details !")
             return;
         }
-        let product = productsData.find(p => p._id === selectedKeynewproduct);
+        let product = productsData.find(p => p.id === selectedKeynewproduct);
         const newProduct = {
-            id: product?._id,
+            id: product?.id,
             product: product?.productName || "NA",
             unit: product?.pricePerUnit?.unit?.name === "Pcs" ? "1" : "2",
             cut: selectedCut,
@@ -1009,9 +1009,9 @@ const CustomerPayment = () => {
                                                     }}
 
                                                     onSelectionChange={(value) => onCustomerChange(value, "supplier")}
-                                                    value={formik?.values?.customer?._id}
+                                                    value={formik?.values?.customer?.id}
                                                     defaultItems={customerData}
-                                                    selectedKey={formik?.values?.customer?._id}
+                                                    selectedKey={formik?.values?.customer?.id}
                                                     inputProps={{
                                                         classNames: {
                                                             input: "ml-1 text-[#000] font-font1",
@@ -1074,7 +1074,7 @@ const CustomerPayment = () => {
                                                     variant="flat"
                                                 >
                                                     {(item) => (
-                                                        <AutocompleteItem key={item?._id} textValue={item?.name}>
+                                                        <AutocompleteItem key={item?.id} textValue={item?.name}>
                                                             <div className="flex justify-between items-center">
                                                                 <div className="flex gap-2 items-center">
                                                                     <div className="flex flex-col">
@@ -1096,9 +1096,9 @@ const CustomerPayment = () => {
                                                     }}
 
                                                     onSelectionChange={onSupplierChange}
-                                                    value={formik?.values?.supplier?._id}
+                                                    value={formik?.values?.supplier?.id}
                                                     defaultItems={suppliersData}
-                                                    selectedKey={formik?.values?.supplier?._id}
+                                                    selectedKey={formik?.values?.supplier?.id}
                                                     inputProps={{
                                                         classNames: {
                                                             input: "ml-1 text-[#000] font-font1",
@@ -1161,7 +1161,7 @@ const CustomerPayment = () => {
                                                     variant="flat"
                                                 >
                                                     {(item) => (
-                                                        <AutocompleteItem key={item?._id} textValue={item?.name}>
+                                                        <AutocompleteItem key={item?.id} textValue={item?.name}>
                                                             <div className="flex justify-between items-center">
                                                                 <div className="flex gap-2 items-center">
                                                                     <div className="flex flex-col">
@@ -1242,9 +1242,9 @@ const CustomerPayment = () => {
                                                 }}
 
                                                 onSelectionChange={(e) => onPaymentModeChange(e)}
-                                                // value={formik?.values?.supplier?._id}
+                                                // value={formik?.values?.supplier?.id}
                                                 defaultItems={paymentModeData}
-                                                // selectedKey={formik?.values?.supplier?._id}
+                                                // selectedKey={formik?.values?.supplier?.id}
                                                 inputProps={{
                                                     classNames: {
                                                         input: "ml-1 text-[#000] font-font1",

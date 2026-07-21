@@ -6,7 +6,7 @@ export const productsDataState = atom({
   default: selector({
     key: "productAtomSelector",
     get: async () => {
-      const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/products/get-all-products`);
+      const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/products/get-all-products`);
       return res.data.products;
     }
   })
@@ -19,7 +19,7 @@ export const getProductById = selector({
     const products = get(productsDataState);
     return (id) => {
       // Efficiently filter products using find or findIndex
-      const foundProduct = products.filter(product => product?.supplierName?._id === id);
+      const foundProduct = products.filter(product => product?.supplierName?.id === id);
       return foundProduct;
     };
   }

@@ -7,7 +7,7 @@ export const attributeDataState = atom({
     default : selector({
         key :  "attributeSelector",
         get : async () => {
-            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/attribute/get-all-attribute`);
+            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/attribute/get-all-attribute`);
             return res.data.attributes
         }
     })

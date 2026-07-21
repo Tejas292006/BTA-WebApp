@@ -7,7 +7,7 @@ export const qualityDataState = atom({
     default : selector({
         key :  "qualitySelector",
         get : async () => {
-            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/quality/get-all-quality`);
+            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/quality/get-all-quality`);
             return res.data.qualities
         }
     })

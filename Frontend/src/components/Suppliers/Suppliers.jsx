@@ -80,7 +80,7 @@ const Suppliers = () => {
                 toast.success(response.message);
 
                 // Update local state based on the correct identifier (use _id instead of id)
-                setsupplierData((prevData) => prevData.filter((supplier) => supplier._id !== id));
+                setsupplierData((prevData) => prevData.filter((supplier) => supplier.id !== id));
 
                 navigate('/inventory');
             } else {
@@ -93,7 +93,7 @@ const Suppliers = () => {
     }
 
     const updateFormWithsupplierData = (supplierId, updatedsupplierData) => {
-        const supplierDataexist = updatedsupplierData.find((element) => element._id === supplierId);
+        const supplierDataexist = updatedsupplierData.find((element) => element.id === supplierId);
         console.log(supplierDataexist, updatedsupplierData, 'existssssssssssssssssssssss');
 
         formik.setValues({
@@ -142,7 +142,7 @@ const Suppliers = () => {
 
                 // Optimistically update UI
                 const updatedsuppliers = supplierData.map((supplier) =>
-                    supplier._id === updateId ? response.supplier : supplier
+                    supplier.id === updateId ? response.supplier : supplier
                 );
 
                 setsupplierData(updatedsuppliers);

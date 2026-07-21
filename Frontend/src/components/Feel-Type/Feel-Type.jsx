@@ -88,7 +88,7 @@ const FeelType = () => {
                 toast.success(response.message);
 
                 // Update local state based on the correct identifier (use _id instead of id)
-                setfeeltypeData((prevData) => prevData.filter((feeltype) => feeltype._id !== id));
+                setfeeltypeData((prevData) => prevData.filter((feeltype) => feeltype.id !== id));
 
                 navigate('/inventory');
             } else {
@@ -102,7 +102,7 @@ const FeelType = () => {
     }
 
     const updateFormWithfeeltypeData = (feeltypeId, updatedfeeltypeData) => {
-        const feeltypeDataexist = updatedfeeltypeData.find((element) => element._id === feeltypeId);
+        const feeltypeDataexist = updatedfeeltypeData.find((element) => element.id === feeltypeId);
         console.log(feeltypeDataexist, updatedfeeltypeData, 'existssssssssssssssssssssss');
         setrefcat(() => (feeltypeDataexist?.ref))
 
@@ -149,7 +149,7 @@ const FeelType = () => {
 
                 // Optimistically update UI
                 const updatedfeeltypes = feeltypeData.map((feeltype) =>
-                    feeltype._id === updateId ? response.feeltype : feeltype
+                    feeltype.id === updateId ? response.feeltype : feeltype
                 );
 
                 setfeeltypeData(updatedfeeltypes);
@@ -294,7 +294,7 @@ const FeelType = () => {
                                                 variant="bordered"
                                             >
                                                 {(item) => (
-                                                    <AutocompleteItem key={item._id} textValue={item.name}>
+                                                    <AutocompleteItem key={item.id} textValue={item.name}>
                                                         <div className="flex justify-between items-center">
                                                             <div className="flex gap-2 items-center">
                                                                 <div className="flex flex-col">

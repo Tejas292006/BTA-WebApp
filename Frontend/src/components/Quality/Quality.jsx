@@ -88,7 +88,7 @@ const Quality = () => {
                 toast.success(response.message);
 
                 // Update local state based on the correct identifier (use _id instead of id)
-                setqualityData((prevData) => prevData.filter((quality) => quality._id !== id));
+                setqualityData((prevData) => prevData.filter((quality) => quality.id !== id));
 
                 navigate('/inventory');
             } else {
@@ -102,7 +102,7 @@ const Quality = () => {
     }
 
     const updateFormWithqualityData = (qualityId, updatedqualityData) => {
-        const qualityDataexist = updatedqualityData.find((element) => element._id === qualityId);
+        const qualityDataexist = updatedqualityData.find((element) => element.id === qualityId);
         console.log(qualityDataexist, updatedqualityData, 'existssssssssssssssssssssss');
         setrefcat(() => (qualityDataexist?.ref))
 
@@ -149,7 +149,7 @@ const Quality = () => {
 
                 // Optimistically update UI
                 const updatedqualitys = qualityData.map((quality) =>
-                    quality._id === updateId ? response.quality : quality
+                    quality.id === updateId ? response.quality : quality
                 );
 
                 setqualityData(updatedqualitys);
@@ -294,7 +294,7 @@ const Quality = () => {
                                                 variant="bordered"
                                             >
                                                 {(item) => (
-                                                    <AutocompleteItem key={item._id} textValue={item.name}>
+                                                    <AutocompleteItem key={item.id} textValue={item.name}>
                                                         <div className="flex justify-between items-center">
                                                             <div className="flex gap-2 items-center">
                                                                 <div className="flex flex-col">

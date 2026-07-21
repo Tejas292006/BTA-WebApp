@@ -7,7 +7,7 @@ export const invoiceDataState = atom({
     default : selector({
         key :  "invoiceSelector",
         get : async () => {
-            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/invoice/get-all-invoice`);
+            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/invoice/get-all-invoice`);
             return res.data.invoices
         }
     })

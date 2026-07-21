@@ -7,7 +7,7 @@ export const feeltypeDataState = atom({
     default : selector({
         key :  "feeltypeSelector",
         get : async () => {
-            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5000'}/api/feeltype/get-all-feeltype`);
+            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/feeltype/get-all-feeltype`);
             return res.data.feeltypes
         }
     })

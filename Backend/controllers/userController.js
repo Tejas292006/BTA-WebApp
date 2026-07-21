@@ -1,23 +1,27 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+import prisma from "../configs/prismaClient.js";
 import cloudinary from "../configs/cloudinaryConfig.js";
 
 
 export const registerUser = async (req, res) => {
     try {
         const { username, email } = req.body;
-        const existuser = await User.findOne({ username });
-        const existemail = await User.findOne({ email });
+        const existuser = await prisma.user.findUnique({ where: { username } });
+        const existemail = await prisma.user.findUnique({ where: { email } });
         if (existuser || existemail) {
             throw new Error("user is already exist")
         }
         const salt = await bcrypt.genSalt(10);
         const hashedpassword = await bcrypt.hash(req.body.password, salt);
-        req.body.password = hashedpassword;
 
-        const newUser = new User(req.body);
-        await newUser.save();
+        const newUser = await prisma.user.create({
+            data: {
+                username,
+                email,
+                password: hashedpassword,
+            }
+        });
 
         res.send({
             success: true,
@@ -38,7 +42,7 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        const user = await User.findOne({ email });
+        const user = await prisma.user.findUnique({ where: { email } });
 
         if (user) {
             const validPassword = await bcrypt.compare(password, user.password)
@@ -49,30 +53,32 @@ export const login = async (req, res) => {
         else {
             throw new Error("user not found");
         }
-        const token = jwt.sign({ userId: user._id, email: user.email }, `${process.env.SECRET}`, { expiresIn: "24h" });
+        const token = jwt.sign({ userId: user.id, email: user.email }, `${process.env.SECRET}`, { expiresIn: "24h" });
 
+        const { password: _, ...userWithoutPassword } = user;
         res.status(200).json({
             success: true,
             message: "login sucessfully",
-            user,
+            user: userWithoutPassword,
             token
         })
 
     } catch (error) {
         res.status(400).json({
             success: false,
-            error: error.message
+            message: error.message
         })
     }
 }
 
 export const getCurrentUser = async (req, res) => {
     try {
-        const user = await User.findById(req.body.userId);
+        const user = await prisma.user.findUnique({ where: { id: req.userId } });
+        const { password: _, ...userWithoutPassword } = user;
         res.send({
             success: true,
             message: "User Fetched Successfully",
-            data: user,
+            data: userWithoutPassword,
         })
     } catch (error) {
         res.send({
@@ -106,12 +112,11 @@ export const updateUser = async (req,res,next)=>{
         const userId = req.params.id;
         const salt = await bcrypt.genSalt(10);
         const hashedpassword = await bcrypt.hash(req.body.password,salt);
-        req.body.password = hashedpassword;
-    
 
-        console.log(req.body)
-        
-       const user =await User.findByIdAndUpdate(userId,req.body)
+       const user = await prisma.user.update({
+            where: { id: userId },
+            data: { ...req.body, password: hashedpassword }
+        })
         if(user) {
             res.send("user updated successfully")}
         if(!user) res.send("user not found")

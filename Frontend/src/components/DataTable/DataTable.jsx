@@ -99,7 +99,7 @@ export default function DataTable({ columns, users, deleteItem, statusOptions, v
     }
 
     const openViewArea = (productId) => {
-        const singleProductData = productsData.find((element) => element._id == productId);
+        const singleProductData = productsData.find((element) => element.id == productId);
         setUnitData(singleProductData);
         onOpen(true);
     }
@@ -145,9 +145,9 @@ export default function DataTable({ columns, users, deleteItem, statusOptions, v
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu className='font-2 font-medium text-[#000]'>
-                                <DropdownItem onClick={() => openViewArea(user._id)}>View</DropdownItem>
-                                <DropdownItem onClick={() => handleEditForSection(user._id)}>Edit</DropdownItem>
-                                <DropdownItem onClick={() => deleteItem(user._id)}>Delete</DropdownItem>
+                                <DropdownItem onClick={() => openViewArea(user.id)}>View</DropdownItem>
+                                <DropdownItem onClick={() => handleEditForSection(user.id)}>Edit</DropdownItem>
+                                <DropdownItem onClick={() => deleteItem(user.id)}>Delete</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -335,7 +335,7 @@ export default function DataTable({ columns, users, deleteItem, statusOptions, v
                 </TableHeader>
                 <TableBody emptyContent={"No users found"} items={sortedItems}>
                     {(item) => (
-                        <TableRow key={item._id}>
+                        <TableRow key={item.id}>
                             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                         </TableRow>
                     )}
