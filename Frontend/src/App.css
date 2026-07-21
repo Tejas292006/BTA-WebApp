@@ -1,0 +1,246 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap');
+
+@font-face {
+  font-family: jost;
+  src: url(../../assets/Jost.ttf);
+}
+
+@font-face {
+  font-family: jost2;
+  src: url(../../assets/Jost-Bold.ttf);
+}
+
+@font-face {
+  font-family: jost3;
+  src: url(../../assets/Jost-SemiBold.ttf);
+}
+
+@font-face {
+  font-family: jost4;
+  src: url(../../assets/Jost-ExtraBold.ttf);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.remove-scrolbar::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--text-color);
+  font-family: var(--font1);
+  overflow: hidden;
+}
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ===== Colors ===== */
+  --primary-color: #d8f275;
+  --text-color: #f7f7f5;
+  --bg-color: #1f1e30;
+  --font1: 'Fira Sans', sans-serif;
+  --font2: jost, sans-serif;
+  --font3: jost2, sans-serif;
+  --font4: jost3, sans-serif;
+  --font5: jost4, sans-serif;
+
+  /* ====== Transition ====== */
+  --tran-05: all 0.5s ease;
+  --tran-03: all 0.3s ease;
+  --tran-03: all 0.2s ease;
+}
+
+
+.main-dashboard.dark {
+  /* ===== Colors ===== */
+  --primary-color: #d8f275;
+  --text-color: #000;
+  --bg-color: #fff;
+  --font1: 'Fira Sans', sans-serif;
+  --font2: jost, sans-serif;
+  --font3: jost2, sans-serif;
+  --font4: jost3, sans-serif;
+  --font5: jost4, sans-serif;
+
+  /* ====== Transition ====== */
+  --tran-05: all 0.5s ease;
+  --tran-03: all 0.3s ease;
+  --tran-03: all 0.2s ease;
+}
+
+.main-dashboard {
+  height: fit-content;
+  width: 100vw;
+  display: flex;
+  gap: 1rem;
+  overflow: auto;
+}
+
+.table__body {
+  width: 100%;
+  max-height: calc(89% - 1.6rem);
+  background-color: #fffb;
+  border-radius: .6rem;
+  overflow: auto;
+  overflow: overlay;
+}
+
+
+.table__body::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.table__body::-webkit-scrollbar-thumb {
+  border-radius: .5rem;
+  background-color: #0004;
+  visibility: hidden;
+}
+
+.table__body:hover::-webkit-scrollbar-thumb {
+  visibility: visible;
+}
+
+
+.table-invoice {
+  width: 100%;
+}
+
+.table-invoice td img {
+  width: 36px;
+  height: 36px;
+  margin-right: .5rem;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.table-invoice,
+th{
+  border-collapse: collapse;
+  padding: 1.2rem 1rem;
+  text-align: left;
+  font-size: 0.9rem;
+  flex-shrink: 1;
+}
+.table-invoice td {
+  border-collapse: collapse;
+  padding: 1.2rem 1rem;
+  text-align: left;
+  font-size: 1rem;
+  font-family: var(--font1);
+  font-weight: 900;
+  color: #000;
+  max-width: 7rem;
+  width: 6rem;
+  overflow: hidden;
+  border-left: 1px solid #181818;
+  border-top: 1px solid #181818;
+  border-radius: .4rem;
+}
+.table-invoice td:last-child{
+  max-width: 3rem !important;
+  width: 3rem !important;
+}
+
+.table-invoice thead th {
+  position: sticky;
+  top: 0;
+  left: 0;
+  background-color: #000;
+  cursor: pointer;
+  text-transform: capitalize;
+  color: #f5eeee;
+}
+.table-invoice td input{
+  background-color: #fffafa;
+  border-collapse: collapse;
+  color: #000;
+  overflow: hidden;
+  outline: none;
+  border: 2px solid #181818;
+  border-radius: .4rem;
+  padding: 0 7px;
+}
+
+
+.table-invoice tbody tr:nth-child(even) {
+  background-color: #f5eeee;
+}
+
+.table-invoice tbody tr:nth-child(odd) {
+  background-color: #fffafa;
+}
+
+.table-invoice tbody tr {
+  --delay: .1s;
+  transition: .5s ease-in-out var(--delay), background-color 0s;
+}
+
+.table-invoice tbody tr.hide {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.table-invoice tbody tr td,
+.table-invoice tbody tr td p,
+.table-invoice tbody tr td img {
+  transition: .2s ease-in-out;
+}
+
+.table-invoice tbody tr.hide td,
+.table-invoice tbody tr.hide td p {
+  padding: 0;
+  font: 0 / 0 sans-serif;
+  transition: .2s ease-in-out .5s;
+}
+
+.table-invoice tbody tr.hide td img {
+  width: 0;
+  height: 0;
+  transition: .2s ease-in-out .5s;
+}
+
+
+@media (max-width: 1000px) {
+  .table-invoice td:not(:first-of-type) {
+    min-width: 12.1rem;
+  }
+}
+
+.table-invoice thead th span.icon-arrow {
+  display: inline-block;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  border: 1.4px solid transparent;
+
+  text-align: center;
+  font-size: 1rem;
+
+  margin-left: .5rem;
+  transition: .2s ease-in-out;
+}
+
+
+.table-invoice thead th.active span.icon-arrow {
+  background-color: #6c00bd;
+  color: #fff;
+}
+
+.table-invoice thead th.asc span.icon-arrow {
+  transform: rotate(180deg);
+}
+
+.table-invoice thead th.active,
+tbody td.active {
+  color: #6c00bd;
+}

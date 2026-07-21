@@ -1,0 +1,320 @@
+/* === Custom Scroll Bar CSS === */
+::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #000000;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0b3cc1;
+}
+
+body.dark::-webkit-scrollbar-thumb:hover,
+body.dark .activity-data::-webkit-scrollbar-thumb:hover {
+    background: #3A3B3C;
+}
+
+nav {
+    position: relative;
+    left: 0.5%;
+    height: 98vh;
+    max-width: 225px;
+    width: 250px;
+    padding: 15px 20px;
+    margin-top: 7px;
+    background-color: var(--bg-color);
+    transition: var(--tran-05);
+    border-radius: 24px;
+}
+
+nav.close {
+    width: 80px;
+}
+
+nav .logo-name {
+    display: flex;
+    align-items: center;
+}
+
+nav .logo-image {
+    display: flex;
+    justify-content: center;
+    min-width: 40px;
+    width: 40px;
+    height: 40px;
+    z-index: 10;
+}
+
+nav .logo-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+nav .logo-name .logo_name {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--text-color);
+    margin-left: 14px;
+    transition: var(--tran-05);
+    font-family: var(--font1);
+}
+
+nav.close .logo_name {
+    opacity: 0;
+    pointer-events: none;
+}
+
+nav .menu-items {
+    margin-top: 45px;
+    height: calc(100% - 90px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 3px;
+}
+
+.menu-items li {
+    list-style: none;
+    color: var(--text-color);
+}
+
+.menu-items li a {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 50px;
+    width: 100%;
+    text-decoration: none;
+    position: relative;
+    font-family: var(--font4);
+    transition: all 0.3s;
+}
+
+nav.close .menu-items li a {
+    width: 48px !important;
+}
+
+.active-tab {
+    background-color: var(--primary-color);
+    color: #262535 !important;
+    border-radius: 24px;
+}
+
+.active-tab svg path {
+    color: #262535 !important;
+    fill: #262535 !important;
+}
+
+.menu-items li a:hover:before {
+    content: "";
+    position: absolute;
+    left: -10px;
+    height: 5px;
+    width: 5px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    transition: all cubic-bezier(0.19, 1, 0.22, 1) 0.3s;
+
+}
+
+body.dark li a:hover:before {
+    background-color: var(--primary-color);
+}
+
+.menu-items li a:hover .link-name {
+    color: #000;
+}
+
+.menu-items li a svg {
+    min-width: 45px;
+    height: 23px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+    fill: var(--text-color);
+}
+
+.menu-items li a svg path {
+    color: var(--text-color);
+    fill: var(--text-color);
+}
+
+.menu-items li a:hover svg path {
+    color: var(--primary-color);
+    fill: var(--primary-color);
+}
+
+
+.menu-items li a .link-name {
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--black-light-color);
+    transition: var(--tran-05);
+}
+
+nav.close li a .link-name {
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+.menu-items .logout-mode {
+    padding-top: 10px;
+    border-top: 1px solid #fff;
+}
+
+.menu-items .mode {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.menu-items .mode-toggle {
+    position: absolute;
+    right: 14px;
+    height: 50px;
+    min-width: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.mode-toggle .switch {
+    position: relative;
+    display: inline-block;
+    height: 22px;
+    width: 40px;
+    border-radius: 25px;
+    background-color: #fff;
+}
+
+.switch:before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 15px;
+    width: 15px;
+    background-color: #000;
+    border-radius: 50%;
+    transition: var(--tran-03);
+}
+
+.main-dashboard.dark .switch:before {
+    left: 20px;
+}
+
+
+@media (max-width: 1000px) {
+    nav {
+        width: 95px;
+    }
+
+    nav.close {
+        width: 250px;
+    }
+
+    nav .logo_name {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    nav.close .logo_name {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    nav li a .link-name {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    nav.close li a .link-name {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    nav .top {
+        left: 85px;
+        width: calc(100% - 80px);
+    }
+
+    .close .top {
+        left: 250px !important;
+        width: calc(100% - 250px) !important;
+    }
+
+    .activity .activity-data {
+        overflow-X: scroll;
+    }
+}
+
+@media (max-width: 780px) {
+    .dash-content .boxes .box {
+        width: calc(100% / 2 - 15px);
+        margin-top: 15px;
+    }
+}
+
+@media (max-width: 560px) {
+    .dash-content .boxes .box {
+        width: 100%;
+    }
+}
+
+@media (max-width: 418px) {
+    nav {
+        overflow: hidden;
+    }
+
+    nav.close {
+        width: 0px;
+        padding: 0;
+    }
+
+    nav .logo_name {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    nav.close .logo_name {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    nav li a .link-name {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    nav.close li a .link-name {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+
+    nav .top {
+        left: 85px;
+        gap: 0px;
+        width: 100%;
+    }
+    
+    .close .top {
+        left: 0px !important;
+        width: 100% !important;
+    }
+}
