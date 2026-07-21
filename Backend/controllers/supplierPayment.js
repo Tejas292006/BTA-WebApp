@@ -1,139 +1,125 @@
 import express from "express";
-import Supplierpayment from "../models/SupplierPaymentModel.js"
-import CustomerLedger from "../models/CustomerLedger.js";
-import SupplierLedger from "../models/SupplierLedger.js";
+import { v4 as uuidv4 } from 'uuid';
+import prisma from "../configs/prismaClient.js";
+
 const router = express.Router();
 
-
-// Create width
-router.post("/create-supplierpayment", async (req, res, next) => {
+// Create supplier payment (also creates supplier ledger entries)
+router.post("/create-supplierpayment", async (req, res) => {
     try {
+        const {
+            adjustments,
+            customerRef,
+            supplierRef,
+            newReference,
+            paymentDate,
+            amountEntered,
+            paymentMode,
+            chequeNumber,
+        } = req.body;
 
-        const { whomToPay, adjustments, customerRef, supplierRef, newReference, paymentDate, amountEntered } = req.body;
-        const supplierpaymentDoc = await Supplierpayment.create(req.body);
+        const supplierpaymentDoc = await prisma.supplierPayment.create({
+            data: {
+                customerId: customerRef,
+                supplierId: supplierRef,
+                paymentDate: new Date(paymentDate),
+                amountEntered,
+                paymentMode,
+                chequeNumber: chequeNumber || null,
+                adjustments: adjustments ?? [],
+                newReference: newReference || null,
+            },
+        });
 
         for (const adjustment of adjustments) {
             const { invoiceId, adjust } = adjustment;
-
-            // Create a new entry in SupplierLedger
-            const supplierLedgerEntry = new SupplierLedger({
-                supplierRef,
-                paymentRef: supplierpaymentDoc._id,
-                invoiceRef: invoiceId,
-                amount: adjust,
-                transactionType: 'payment',
-                debit: adjust,
-                balance: 0 // Will be updated by pre-save hook
+            await prisma.supplierLedger.create({
+                data: {
+                    supplierId: supplierRef,
+                    paymentId: supplierpaymentDoc.id,
+                    invoiceId: invoiceId || null,
+                    amount: adjust,
+                    transactionType: 'payment',
+                    debit: adjust,
+                    credit: 0,
+                    balance: -adjust,
+                },
             });
-            await supplierLedgerEntry.save();
         }
 
-        // Handle advance payment (newReference) entry after all invoices have been added
         if (newReference && newReference.adjust > 0) {
-            const uniqueInvoiceRef = uuidv4(); // Generate a unique ID for advance payment
-            console.log(uniqueInvoiceRef, '::::::::::::');
-
-            // Create a similar entry in SupplierLedger for the advance payment
-            await SupplierLedger.create({
-                supplierRef,
-                paymentRef: supplierpaymentDoc._id,
-                advancePaymentRef: uniqueInvoiceRef, // Use the unique ID in advancePaymentRef
-                amount: newReference.adjust,
-                transactionType: 'payment',
-                debit: newReference.adjust,
-                balance: 0 // Will be updated by pre-save hook
+            await prisma.supplierLedger.create({
+                data: {
+                    supplierId: supplierRef,
+                    paymentId: supplierpaymentDoc.id,
+                    amount: newReference.adjust,
+                    transactionType: 'payment',
+                    debit: newReference.adjust,
+                    credit: 0,
+                    balance: -newReference.adjust,
+                },
             });
         }
 
-
-        res.status(201).json({
-            message: "Create Successfully",
-            success: true,
-            supplierpaymentDoc,
-        });
+        res.status(201).json({ message: "Created Successfully", success: true, supplierpaymentDoc });
     } catch (error) {
-        res.json({
-            message: "supplierpayment not be empty",
-            success: false,
-            error: error.message,
-        }).status(404);
+        res.status(400).json({ message: "Error creating supplier payment", success: false, error: error.message });
     }
 });
 
-
-// Get all widths
-router.get("/get-all-supplierpayments", async (req, res, next) => {
+// Get all supplier payments
+router.get("/get-all-supplierpayments", async (req, res) => {
     try {
-        const supplierpayments = await Supplierpayment.find({});
-
-        res.status(200).json({
-            success: true,
-            supplierpayments,
+        const supplierpayments = await prisma.supplierPayment.findMany({
+            include: { customer: true, supplier: true },
+            orderBy: { createdAt: "desc" },
         });
+        res.status(200).json({ success: true, supplierpayments });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
-// Delete width
-router.delete("/delete-supplierpayment/:id", async (req, res, next) => {
-
+// Delete supplier payment
+router.delete("/delete-supplierpayment/:id", async (req, res) => {
     try {
-        const supplierpaymentId = req.params.id;
-        console.log(supplierpaymentId)
-
-        const supplierpayment = await Supplierpayment.findByIdAndDelete(supplierpaymentId);
-        if (!supplierpayment) {
-            return res.status(404).json({
-                success: false,
-                error: "supplierpayment not found with this id",
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "supplierpayment deleted successfully!",
-            supplierpayment,
-        });
+        const supplierpayment = await prisma.supplierPayment.delete({ where: { id: req.params.id } });
+        res.status(200).json({ success: true, message: "Supplier payment deleted successfully!", supplierpayment });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
-// Update width
-router.put("/update-supplierpayment/:id", async (req, res, next) => {
+// Update supplier payment
+router.put("/update-supplierpayment/:id", async (req, res) => {
     try {
-        const supplierpaymentId = req.params.id;
+        const {
+            customerRef,
+            supplierRef,
+            paymentDate,
+            amountEntered,
+            paymentMode,
+            chequeNumber,
+            adjustments,
+            newReference,
+        } = req.body;
 
-        const supplierpayment = await Supplierpayment.findByIdAndUpdate(
-            supplierpaymentId,
-            req.body,
-            { new: true } // Add this option to return the updated document
-        );
-
-        if (!supplierpayment) {
-            return res.status(404).json({
-                success: false,
-                error: "supplierpayment not found with this id",
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "supplierpayment updated successfully!",
-            supplierpayment,
+        const supplierpayment = await prisma.supplierPayment.update({
+            where: { id: req.params.id },
+            data: {
+                customerId: customerRef,
+                supplierId: supplierRef,
+                paymentDate: paymentDate ? new Date(paymentDate) : undefined,
+                amountEntered,
+                paymentMode,
+                chequeNumber,
+                adjustments,
+                newReference,
+            },
         });
+        res.status(200).json({ success: true, message: "Supplier payment updated successfully!", supplierpayment });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 

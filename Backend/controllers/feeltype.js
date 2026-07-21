@@ -1,95 +1,55 @@
 import express from "express";
-import FeelType from "../models/FeelType.js";
+import prisma from "../configs/prismaClient.js";
 
 const router = express.Router();
 
 // Create feeltype
-router.post("/create-feeltype", async (req, res, next) => {
+router.post("/create-feeltype", async (req, res) => {
     try {
-        const feeltypeDoc = await FeelType.create(req.body);
-
-        res.status(201).json({
-            message: "Create Successfully",
-            success: true,
-            feeltypeDoc,
+        const { name, categoryId, verified } = req.body;
+        const feeltype = await prisma.feelType.create({
+            data: { name, categoryId: categoryId || null, verified: verified ?? false },
         });
+        res.status(201).json({ message: "Created Successfully", success: true, feeltype });
     } catch (error) {
-        return res.status(404).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
-
 // Get all feeltypes
-router.get("/get-all-feeltype", async (req, res, next) => {
+router.get("/get-all-feeltype", async (req, res) => {
     try {
-        const feeltypes = await FeelType.find({});
-
-        res.status(200).json({
-            success: true,
-            feeltypes,
+        const feeltypes = await prisma.feelType.findMany({
+            include: { category: true },
+            orderBy: { createdAt: "desc" },
         });
+        res.status(200).json({ success: true, feeltypes });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
 // Delete feeltype
-router.delete("/delete-feeltype/:id", async (req, res, next) => {
+router.delete("/delete-feeltype/:id", async (req, res) => {
     try {
-        const feeltypeId = req.params.id;
-
-        const feeltype = await FeelType.findByIdAndDelete(feeltypeId);
-
-        if (!feeltype) {
-            return res.status(404).json({
-                success: false,
-                error: "feeltype not found with this id",
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "feeltype deleted successfully!",
-            feeltype,
-        });
+        const feeltype = await prisma.feelType.delete({ where: { id: req.params.id } });
+        res.status(200).json({ success: true, message: "FeelType deleted successfully!", feeltype });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
 // Update feeltype
-router.put("/update-feeltype/:id", async (req, res, next) => {
+router.put("/update-feeltype/:id", async (req, res) => {
     try {
-        const feeltypeId = req.params.id;
-
-
-        const feeltype = await FeelType.findByIdAndUpdate(feeltypeId, req.body,{ new: true });
-
-        if (!feeltype) {
-            return res.status(404).json({
-                success: false,
-                error: "feeltype not found with this id",
-            });
-        }
-        res.status(200).json({
-            success: true,
-            message: "feeltype updated successfully!",
-            feeltype,
+        const { name, categoryId, verified } = req.body;
+        const feeltype = await prisma.feelType.update({
+            where: { id: req.params.id },
+            data: { name, categoryId: categoryId || null, verified },
         });
+        res.status(200).json({ success: true, message: "FeelType updated successfully!", feeltype });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 

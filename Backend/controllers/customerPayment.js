@@ -1,207 +1,190 @@
 import express from "express";
 import { v4 as uuidv4 } from 'uuid';
-import Customerpayment from "../models/CustomerPaymentModel.js"
-import CustomerLedger from "../models/CustomerLedger.js";
-import SupplierLedger from "../models/SupplierLedger.js";
+import prisma from "../configs/prismaClient.js";
 
 const router = express.Router();
 
-// Create width
-router.post("/create-customerpayment", async (req, res, next) => {
+// Create customer payment (also creates ledger entries)
+router.post("/create-customerpayment", async (req, res) => {
     try {
-        const { whomToPay, adjustments, customerRef, supplierRef, newReference, paymentDate, amountEntered } = req.body;
-        const customerpaymentDoc = await Customerpayment.create(req.body);
+        const {
+            whomToPay,
+            adjustments,
+            customerRef,
+            supplierRef,
+            newReference,
+            paymentDate,
+            amountEntered,
+            paymentMode,
+            chequeNumber,
+        } = req.body;
+
+        const customerpaymentDoc = await prisma.customerPayment.create({
+            data: {
+                customerId: customerRef,
+                supplierId: supplierRef,
+                paymentDate: new Date(paymentDate),
+                amountEntered,
+                paymentMode,
+                whomToPay,
+                chequeNumber: chequeNumber || null,
+                adjustments: adjustments ?? [],
+                newReference: newReference || null,
+            },
+        });
 
         if (whomToPay === 'supplier') {
-            // Process adjustments and update both customer and supplier ledgers
             for (const adjustment of adjustments) {
                 const { invoiceId, adjust } = adjustment;
 
-                // Create a new entry in CustomerLedger
-                const customerLedgerEntry = new CustomerLedger({
-                    customerRef,
-                    paymentRef: customerpaymentDoc._id,
-                    invoiceRef: invoiceId,
-                    amount: adjust,
-                    transactionType: 'payment',
-                    credit: adjust,
-                    balance: 0 // Will be updated by pre-save hook
+                await prisma.customerLedger.create({
+                    data: {
+                        customerId: customerRef,
+                        paymentId: customerpaymentDoc.id,
+                        invoiceId: invoiceId || null,
+                        amount: adjust,
+                        transactionType: 'payment',
+                        credit: adjust,
+                        debit: 0,
+                        balance: adjust,
+                    },
                 });
 
-                // Create a new entry in SupplierLedger
-                const supplierLedgerEntry = new SupplierLedger({
-                    supplierRef,
-                    paymentRef: customerpaymentDoc._id,
-                    invoiceRef: invoiceId,
-                    amount: adjust,
-                    transactionType: 'payment',
-                    debit: adjust,
-                    balance: 0 // Will be updated by pre-save hook
+                await prisma.supplierLedger.create({
+                    data: {
+                        supplierId: supplierRef,
+                        paymentId: customerpaymentDoc.id,
+                        invoiceId: invoiceId || null,
+                        amount: adjust,
+                        transactionType: 'payment',
+                        debit: adjust,
+                        credit: 0,
+                        balance: -adjust,
+                    },
                 });
-
-                // Save both ledger entries
-                await customerLedgerEntry.save();
-                await supplierLedgerEntry.save();
-
-                console.log(customerLedgerEntry, "customerrr")
-                console.log(supplierLedgerEntry, "supplierrrr")
             }
 
-            // Handle advance payment (newReference) entry after all invoices have been added
             if (newReference && newReference.adjust > 0) {
-                const uniqueInvoiceRef = uuidv4(); // Generate a unique ID for advance payment
-                console.log(uniqueInvoiceRef, '::::::::::::');
-
-                // Create an entry in CustomerLedger for the advance payment
-                await CustomerLedger.create({
-                    customerRef,
-                    paymentRef: customerpaymentDoc._id,
-                    advancePaymentRef: uniqueInvoiceRef, // Use the unique ID in advancePaymentRef
-                    amount: newReference.adjust,
-                    transactionType: 'payment',
-                    credit: newReference.adjust,
-                    balance: 0 // Will be updated by pre-save hook
+                const uniqueRef = uuidv4();
+                await prisma.customerLedger.create({
+                    data: {
+                        customerId: customerRef,
+                        paymentId: customerpaymentDoc.id,
+                        advancePaymentRef: uniqueRef,
+                        amount: newReference.adjust,
+                        transactionType: 'payment',
+                        credit: newReference.adjust,
+                        debit: 0,
+                        balance: newReference.adjust,
+                    },
                 });
-
-                // Create a similar entry in SupplierLedger for the advance payment
-                await SupplierLedger.create({
-                    supplierRef,
-                    paymentRef: customerpaymentDoc._id,
-                    advancePaymentRef: uniqueInvoiceRef, // Use the unique ID in advancePaymentRef
-                    amount: newReference.adjust,
-                    transactionType: 'payment',
-                    debit: newReference.adjust,
-                    balance: 0 // Will be updated by pre-save hook
+                await prisma.supplierLedger.create({
+                    data: {
+                        supplierId: supplierRef,
+                        paymentId: customerpaymentDoc.id,
+                        amount: newReference.adjust,
+                        transactionType: 'payment',
+                        debit: newReference.adjust,
+                        credit: 0,
+                        balance: -newReference.adjust,
+                    },
                 });
             }
-
         } else if (whomToPay === 'self') {
-            // make changes in customer ledger only
-
             for (const adjustment of adjustments) {
                 const { invoiceId, adjust } = adjustment;
-
-                // Create a new entry in CustomerLedger
-                const customerLedgerEntry = new CustomerLedger({
-                    customerRef,
-                    paymentRef: customerpaymentDoc._id,
-                    invoiceRef: invoiceId,
-                    amount: adjust,
-                    transactionType: 'payment',
-                    credit: adjust,
-                    balance: 0 // Will be updated by pre-save hook
+                await prisma.customerLedger.create({
+                    data: {
+                        customerId: customerRef,
+                        paymentId: customerpaymentDoc.id,
+                        invoiceId: invoiceId || null,
+                        amount: adjust,
+                        transactionType: 'payment',
+                        credit: adjust,
+                        debit: 0,
+                        balance: adjust,
+                    },
                 });
-
-                // Save both ledger entries
-                await customerLedgerEntry.save();
             }
 
-            // Handle advance payment (newReference) entry after all invoices have been added
             if (newReference && newReference.adjust > 0) {
-                const uniqueInvoiceRef = uuidv4(); // Generate a unique ID for advance payment
-                console.log(uniqueInvoiceRef, '::::::::::::');
-
-                // Create an entry in CustomerLedger for the advance payment
-                await CustomerLedger.create({
-                    customerRef,
-                    paymentRef: customerpaymentDoc._id,
-                    advancePaymentRef: uniqueInvoiceRef, // Use the unique ID in advancePaymentRef
-                    amount: newReference.adjust,
-                    transactionType: 'payment',
-                    credit: newReference.adjust,
-                    balance: 0 // Will be updated by pre-save hook
+                const uniqueRef = uuidv4();
+                await prisma.customerLedger.create({
+                    data: {
+                        customerId: customerRef,
+                        paymentId: customerpaymentDoc.id,
+                        advancePaymentRef: uniqueRef,
+                        amount: newReference.adjust,
+                        transactionType: 'payment',
+                        credit: newReference.adjust,
+                        debit: 0,
+                        balance: newReference.adjust,
+                    },
                 });
             }
         }
 
-        res.status(201).json({
-            message: "Create Successfully",
-            success: true,
-            customerpaymentDoc,
-        });
+        res.status(201).json({ message: "Created Successfully", success: true, customerpaymentDoc });
     } catch (error) {
-        res.json({
-            message: "customerpayment not be empty",
-            success: false,
-            error: error.message,
-        }).status(404);
+        res.status(400).json({ message: "Error creating customer payment", success: false, error: error.message });
     }
 });
 
-
-// Get all widths
-router.get("/get-all-customerpayments", async (req, res, next) => {
+// Get all customer payments
+router.get("/get-all-customerpayments", async (req, res) => {
     try {
-        const customerpayments = await Customerpayment.find({});
-
-        res.status(200).json({
-            success: true,
-            customerpayments,
+        const customerpayments = await prisma.customerPayment.findMany({
+            include: { customer: true, supplier: true },
+            orderBy: { createdAt: "desc" },
         });
+        res.status(200).json({ success: true, customerpayments });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
-// Delete width
-router.delete("/delete-customerpayment/:id", async (req, res, next) => {
-
+// Delete customer payment
+router.delete("/delete-customerpayment/:id", async (req, res) => {
     try {
-        const customerpaymentId = req.params.id;
-        console.log(customerpaymentId)
-
-        const customerpayment = await Customerpayment.findByIdAndDelete(customerpaymentId);
-        if (!customerpayment) {
-            return res.status(404).json({
-                success: false,
-                error: "customerpayment not found with this id",
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "customerpayment deleted successfully!",
-            customerpayment,
-        });
+        const customerpayment = await prisma.customerPayment.delete({ where: { id: req.params.id } });
+        res.status(200).json({ success: true, message: "Customer payment deleted successfully!", customerpayment });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
-// Update width
-router.put("/update-customerpayment/:id", async (req, res, next) => {
+// Update customer payment
+router.put("/update-customerpayment/:id", async (req, res) => {
     try {
-        const customerpaymentId = req.params.id;
+        const {
+            customerRef,
+            supplierRef,
+            paymentDate,
+            amountEntered,
+            paymentMode,
+            whomToPay,
+            chequeNumber,
+            adjustments,
+            newReference,
+        } = req.body;
 
-        const customerpayment = await Customerpayment.findByIdAndUpdate(
-            customerpaymentId,
-            req.body,
-            { new: true } // Add this option to return the updated document
-        );
-
-        if (!customerpayment) {
-            return res.status(404).json({
-                success: false,
-                error: "customerpayment not found with this id",
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "customerpayment updated successfully!",
-            customerpayment,
+        const customerpayment = await prisma.customerPayment.update({
+            where: { id: req.params.id },
+            data: {
+                customerId: customerRef,
+                supplierId: supplierRef,
+                paymentDate: paymentDate ? new Date(paymentDate) : undefined,
+                amountEntered,
+                paymentMode,
+                whomToPay,
+                chequeNumber,
+                adjustments,
+                newReference,
+            },
         });
+        res.status(200).json({ success: true, message: "Customer payment updated successfully!", customerpayment });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 

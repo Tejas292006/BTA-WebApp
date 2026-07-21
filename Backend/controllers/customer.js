@@ -1,193 +1,131 @@
 import express from "express";
-import Customer from "../models/Customer.js";
-
+import prisma from "../configs/prismaClient.js";
 
 const router = express.Router();
 
-// Create width
-router.post("/create-customer", async (req, res, next) => {
+// Create customer
+router.post("/create-customer", async (req, res) => {
     try {
-        const customerDoc = new Customer(req.body);
-        await customerDoc.save();
-        console.log(req.body, 'hiiiiiiiiiiiiiiiii')
-        res.status(201).json({
-            message: "Create Successfully",
-            success: true,
-            customerDoc,
+        const { name, companyName, supplierBalances } = req.body;
+        const customerDoc = await prisma.customer.create({
+            data: {
+                name,
+                companyName,
+                supplierBalances: supplierBalances ?? [],
+            },
         });
+        res.status(201).json({ message: "Created Successfully", success: true, customerDoc });
     } catch (error) {
-        res.status(404).json({
-            message: "customer name not be empty",
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message, message: "Customer name must not be empty" });
     }
 });
 
-
-// Get all widths
-router.get("/get-all-customers", async (req, res, next) => {
+// Get all customers
+router.get("/get-all-customers", async (req, res) => {
     try {
-        const customers = await Customer.find({});
-
-        res.status(200).json({
-            success: true,
-            customers,
-        });
+        const customers = await prisma.customer.findMany({ orderBy: { createdAt: "desc" } });
+        res.status(200).json({ success: true, customers });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
-
+// Update supplier balance inside customer (supplierBalances is JSON column)
 router.post("/update-supplier-balance", async (req, res) => {
     try {
-        const { updatedBalance,customerId, supplierId, invoiceAdjustments } = req.body;
+        const { updatedBalance, customerId, supplierId, invoiceAdjustments } = req.body;
 
-        // Fetch the customer document
-        const customer = await Customer.findById(customerId);
+        const customer = await prisma.customer.findUnique({ where: { id: customerId } });
         if (!customer) {
-            return res.status(404).json({ message: 'Customer not found' });
+            return res.status(404).json({ message: "Customer not found" });
         }
 
-        // Initialize or find the supplier balance entry
-        let supplierBalance = customer.supplierBalances.find(
-            balance => balance.supplier.toString() === supplierId
-        );
+        let supplierBalances = Array.isArray(customer.supplierBalances) ? customer.supplierBalances : [];
 
-        if (!supplierBalance) {
-            supplierBalance = {
-                supplier: supplierId,
-                balance: 0,
-                discount: 0,
-                interest: 0,
-            };
-            customer.supplierBalances.push(supplierBalance);
-        }
+        let supplierBalance = supplierBalances.find(b => b.supplier === supplierId);
 
-        // Calculate the new balance, total discount, and total interest
         let totalDiscount = 0;
         let totalInterest = 0;
-        let totalRemaining = 0;
-
-        invoiceAdjustments.forEach(adjustment => {
-            totalDiscount += adjustment.discount || 0;
-            totalInterest += adjustment.interest || 0;
-            totalRemaining += adjustment.remaining || 0;
+        invoiceAdjustments.forEach(adj => {
+            totalDiscount += adj.discount || 0;
+            totalInterest += adj.interest || 0;
         });
 
-        // Update the supplier balance fields
-        supplierBalance.balance = updatedBalance;
-        supplierBalance.discount += totalDiscount;
-        supplierBalance.interest += totalInterest;
+        if (supplierBalance) {
+            supplierBalance.balance = updatedBalance;
+            supplierBalance.discount = (supplierBalance.discount || 0) + totalDiscount;
+            supplierBalance.interest = (supplierBalance.interest || 0) + totalInterest;
+        } else {
+            supplierBalances.push({
+                supplier: supplierId,
+                balance: updatedBalance,
+                discount: totalDiscount,
+                interest: totalInterest,
+            });
+        }
 
-        // Save the customer document
-        await customer.save();
-
-        res.status(200).json({
-            success: true,
-            message: "Supplier balance updated successfully!",
-            customer,
+        const updatedCustomer = await prisma.customer.update({
+            where: { id: customerId },
+            data: { supplierBalances },
         });
+
+        res.status(200).json({ success: true, message: "Supplier balance updated successfully!", customer: updatedCustomer });
     } catch (error) {
-        console.error('Error updating supplier balance:', error);
-        res.status(500).json({ message: 'Error updating supplier balance' });
+        console.error("Error updating supplier balance:", error);
+        res.status(500).json({ message: "Error updating supplier balance" });
     }
 });
 
-router.post('/initialize-balance', async (req, res) => {
+// Initialize balance for a supplier inside customer
+router.post("/initialize-balance", async (req, res) => {
     try {
         const { customerId, supplierId } = req.body;
 
-        const customer = await Customer.findById(customerId);
-
+        const customer = await prisma.customer.findUnique({ where: { id: customerId } });
         if (!customer) {
-            return res.status(404).json({ message: 'Customer not found' });
+            return res.status(404).json({ message: "Customer not found" });
         }
 
-        const existingBalance = customer.supplierBalances.find(
-            (sb) => sb.supplier.toString() === supplierId
-        );
+        let supplierBalances = Array.isArray(customer.supplierBalances) ? customer.supplierBalances : [];
 
-        if (!existingBalance) {
-            customer.supplierBalances.push({
-                supplier: supplierId,
-                balance: 0,
-                discount: 0,
-                interest: 0,
+        const exists = supplierBalances.find(b => b.supplier === supplierId);
+        if (!exists) {
+            supplierBalances.push({ supplier: supplierId, balance: 0, discount: 0, interest: 0 });
+            const updatedCustomer = await prisma.customer.update({
+                where: { id: customerId },
+                data: { supplierBalances },
             });
-
-            await customer.save();
+            return res.status(200).json(updatedCustomer);
         }
 
         res.status(200).json(customer);
     } catch (error) {
-        console.error('Error initializing balance:', error);
-        res.status(500).json({ message: 'Error initializing balance' });
+        console.error("Error initializing balance:", error);
+        res.status(500).json({ message: "Error initializing balance" });
     }
 });
 
-
-
-// Delete width
-router.delete("/delete-customer/:id", async (req, res, next) => {
-   
+// Delete customer
+router.delete("/delete-customer/:id", async (req, res) => {
     try {
-        const customerId = req.params.id;
-        console.log(customerId)
-     
-        const customer = await Customer.findByIdAndDelete(customerId);
-        if (!customer) {
-            return res.status(404).json({
-                success: false,
-                error: "customer not found with this id",
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "customer deleted successfully!",
-            customer,
-        });
+        const customer = await prisma.customer.delete({ where: { id: req.params.id } });
+        res.status(200).json({ success: true, message: "Customer deleted successfully!", customer });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
-// Update width
-router.put("/update-customer/:id", async (req, res, next) => {
+// Update customer
+router.put("/update-customer/:id", async (req, res) => {
     try {
-        const customerId = req.params.id;
-
-        const customer = await Customer.findByIdAndUpdate(
-            customerId,
-            req.body,
-            { new: true } // Add this option to return the updated document
-        );
-
-        if (!customer) {
-            return res.status(404).json({
-                success: false,
-                error: "customername not found with this id",
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "customer updated successfully!",
-            customer,
+        const { name, companyName, supplierBalances } = req.body;
+        const customer = await prisma.customer.update({
+            where: { id: req.params.id },
+            data: { name, companyName, supplierBalances },
         });
+        res.status(200).json({ success: true, message: "Customer updated successfully!", customer });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 

@@ -1,0 +1,459 @@
+// Prisma Schema for BTA Webapp
+// Database: PostgreSQL (Neon)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────
+// USER
+// ─────────────────────────────────────────
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      String   @default("user")
+  avatar    String   @default("https://i.pinimg.com/564x/05/4c/b1/054cb148f9a8ef419b55166e0ce4dd64.jpg")
+  createdAt DateTime @default(now())
+
+  @@map("users")
+}
+
+// ─────────────────────────────────────────
+// SUPPLIER
+// ─────────────────────────────────────────
+model Supplier {
+  id           String    @id @default(cuid())
+  name         String
+  brand        String?
+  address      String?
+  experienced  Boolean   @default(false)
+  verified     Boolean   @default(false)
+  avatar       String    @default("https://i.pinimg.com/564x/05/4c/b1/054cb148f9a8ef419b55166e0ce4dd64.jpg")
+  createdAt    DateTime  @default(now())
+
+  products        Product[]
+  challans        Challan[]
+  quickChallans   QuickChallan[]
+  invoices        Invoice[]
+  customerPayments CustomerPayment[]
+  supplierPayments SupplierPayment[]
+  supplierLedgers  SupplierLedger[]
+
+  @@map("suppliers")
+}
+
+// ─────────────────────────────────────────
+// CATEGORY
+// ─────────────────────────────────────────
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  products    Product[]
+  qualities   Quality[]
+  designs     Design[]
+  feelTypes   FeelType[]
+  finishTypes FinishType[]
+  widths      Width[]
+  weaves      Weave[]
+  cuts        Cut[]
+
+  @@map("categories")
+}
+
+// ─────────────────────────────────────────
+// QUALITY
+// ─────────────────────────────────────────
+model Quality {
+  id         String    @id @default(cuid())
+  name       String
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  verified   Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+
+  @@map("qualities")
+}
+
+// ─────────────────────────────────────────
+// DESIGN
+// ─────────────────────────────────────────
+model Design {
+  id         String    @id @default(cuid())
+  name       String
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  verified   Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+
+  @@map("designs")
+}
+
+// ─────────────────────────────────────────
+// FEEL TYPE
+// ─────────────────────────────────────────
+model FeelType {
+  id         String    @id @default(cuid())
+  name       String
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  verified   Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+
+  @@map("feeltypes")
+}
+
+// ─────────────────────────────────────────
+// FINISH TYPE
+// ─────────────────────────────────────────
+model FinishType {
+  id         String    @id @default(cuid())
+  name       String
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  verified   Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+
+  @@map("finishtypes")
+}
+
+// ─────────────────────────────────────────
+// WIDTH
+// ─────────────────────────────────────────
+model Width {
+  id         String    @id @default(cuid())
+  name       String
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  verified   Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+
+  @@map("widths")
+}
+
+// ─────────────────────────────────────────
+// WEAVE
+// ─────────────────────────────────────────
+model Weave {
+  id         String    @id @default(cuid())
+  name       String
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  verified   Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+
+  @@map("weaves")
+}
+
+// ─────────────────────────────────────────
+// CUT
+// ─────────────────────────────────────────
+model Cut {
+  id              String    @id @default(cuid())
+  name            String
+  categoryId      String?
+  category        Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  isNameNumerical Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+
+  @@map("cuts")
+}
+
+// ─────────────────────────────────────────
+// UNIT
+// ─────────────────────────────────────────
+model Unit {
+  id        String   @id @default(cuid())
+  name      String
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  products Product[]
+
+  @@map("units")
+}
+
+// ─────────────────────────────────────────
+// ATTRIBUTE
+// ─────────────────────────────────────────
+model Attribute {
+  id        String   @id @default(cuid())
+  name      String
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  attributeValues AttributeValue[]
+
+  @@map("attributes")
+}
+
+// ─────────────────────────────────────────
+// ATTRIBUTE VALUE
+// valuesCombo: [{ category: String, attributeValue: String, isNameNumerical: Boolean }]
+// ─────────────────────────────────────────
+model AttributeValue {
+  id           String    @id @default(cuid())
+  attributeId  String?
+  attribute    Attribute? @relation(fields: [attributeId], references: [id], onDelete: SetNull)
+  valuesCombo  Json      @default("[]")
+  verified     Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+
+  @@map("attribute_values")
+}
+
+// ─────────────────────────────────────────
+// PAYMENT MODE
+// ─────────────────────────────────────────
+model PaymentMode {
+  id        String   @id @default(cuid())
+  name      String
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("payment_modes")
+}
+
+// ─────────────────────────────────────────
+// TRANSPORT
+// ─────────────────────────────────────────
+model Transport {
+  id        String   @id @default(cuid())
+  name      String
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("transports")
+}
+
+// ─────────────────────────────────────────
+// CUSTOMER
+// supplierBalances: [{ supplier: String, balance: Number, discount: Number, interest: Number }]
+// ─────────────────────────────────────────
+model Customer {
+  id               String   @id @default(cuid())
+  name             String
+  companyName      String
+  supplierBalances Json     @default("[]")
+  createdAt        DateTime @default(now())
+
+  challans         Challan[]
+  quickChallans    QuickChallan[]
+  invoices         Invoice[]
+  customerPayments CustomerPayment[]
+  supplierPayments SupplierPayment[]
+  customerLedgers  CustomerLedger[]
+
+  @@map("customers")
+}
+
+// ─────────────────────────────────────────
+// PRODUCT
+// productAttributes: [{ attrType: String, attrValue: String }]
+// productColorChartData: [{ src: String }]
+// ─────────────────────────────────────────
+model Product {
+  id                    String    @id @default(cuid())
+  supplierId            String?
+  supplier              Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  productName           String
+  categoryId            String?
+  category              Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  productAttributes     Json      @default("[]")
+  productColorChartData Json      @default("[]")
+  pricePerUnitMagnitude Float     @default(0)
+  pricePerUnitId        String?
+  pricePerUnit          Unit?     @relation(fields: [pricePerUnitId], references: [id], onDelete: SetNull)
+  createdAt             DateTime  @default(now())
+
+  @@map("products")
+}
+
+// ─────────────────────────────────────────
+// CHALLAN
+// products: [{ product: String, due: Number, cut: String, remarkDesc: String,
+//              qtyPcs: String, qtyMtr: Number, unit: String, challanChartImages: [...],
+//              isProductDispatchedByInvoice: Boolean, rate: Number, overall: Number }]
+// ─────────────────────────────────────────
+model Challan {
+  id             String    @id @default(cuid())
+  products       Json      @default("[]")
+  supplierId     String?
+  supplier       Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  customerId     String?
+  customer       Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  challanNo      String
+  totalBill      String
+  challanDate    DateTime
+  challanType    String    @default("main")
+  type           String?
+  verified       Boolean   @default(false)
+  overallremarks String?
+  createdAt      DateTime  @default(now())
+
+  @@map("challans")
+}
+
+// ─────────────────────────────────────────
+// QUICK CHALLAN
+// products: [{ product: String, due: Number, cut: String, remarkDesc: String,
+//              isProductDispatchedByInvoice: Boolean, bales: String, unit: String, price: Number }]
+// challanChartImages: [{ src: String }]
+// ─────────────────────────────────────────
+model QuickChallan {
+  id                 String    @id @default(cuid())
+  products           Json      @default("[]")
+  supplierId         String?
+  supplier           Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  customerId         String?
+  customer           Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  quickchallanNo     String
+  challanChartImages Json      @default("[]")
+  quickchallanDate   DateTime
+  challanType        String    @default("quick")
+  type               String?
+  verified           Boolean   @default(false)
+  overallremarks     String?
+  createdAt          DateTime  @default(now())
+
+  @@map("quick_challans")
+}
+
+// ─────────────────────────────────────────
+// INVOICE
+// challanRefs: [String]   (array of challan IDs)
+// products: [{ product, id, challanId, cut, unit, challanType, qtyPcs, qtyMtr, bales,
+//              received_bales, received_mtr, received_pcs, due, rate, total,
+//              markAsCompleted, isBeingDispatchedInInvoice }]
+// ─────────────────────────────────────────
+model Invoice {
+  id                 String    @id @default(cuid())
+  challanRefs        Json      @default("[]")
+  supplierId         String?
+  supplier           Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  customerId         String?
+  customer           Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  products           Json      @default("[]")
+  grandTotal         Float?
+  discount           Float?
+  gst                Float?
+  otherExpenses      Float?
+  totalBillingAmount Float?
+  currentTotal       Float?
+  isCleared          Boolean   @default(false)
+  isPaidToSupplier   Boolean   @default(false)
+  invoiceDate        String?
+  invoiceNo          String?
+  balance            Float     @default(0)
+  createdAt          DateTime  @default(now())
+
+  customerLedgers CustomerLedger[]
+  supplierLedgers SupplierLedger[]
+
+  @@map("invoices")
+}
+
+// ─────────────────────────────────────────
+// CUSTOMER PAYMENT
+// adjustments: [{ invoiceId, invoiceNo, adjust, discount, interest, remaining, balance, whomToPay }]
+// newReference: { currentBalance, adjust, newBalance }
+// ─────────────────────────────────────────
+model CustomerPayment {
+  id            String    @id @default(cuid())
+  customerId    String
+  customer      Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  supplierId    String
+  supplier      Supplier  @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  paymentDate   DateTime
+  amountEntered Float
+  paymentMode   String
+  whomToPay     String
+  chequeNumber  String?
+  adjustments   Json      @default("[]")
+  newReference  Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  customerLedgers CustomerLedger[]
+
+  @@map("customer_payments")
+}
+
+// ─────────────────────────────────────────
+// SUPPLIER PAYMENT
+// adjustments: [{ invoiceId, invoiceNo, adjust, discount, interest, remaining }]
+// newReference: { currentBalance, adjust, newBalance }
+// ─────────────────────────────────────────
+model SupplierPayment {
+  id            String    @id @default(cuid())
+  customerId    String
+  customer      Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  supplierId    String
+  supplier      Supplier  @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  paymentDate   DateTime
+  amountEntered Float
+  paymentMode   String
+  chequeNumber  String?
+  adjustments   Json      @default("[]")
+  newReference  Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  supplierLedgers SupplierLedger[]
+
+  @@map("supplier_payments")
+}
+
+// ─────────────────────────────────────────
+// CUSTOMER LEDGER
+// ─────────────────────────────────────────
+model CustomerLedger {
+  id                String           @id @default(cuid())
+  customerId        String?
+  customer          Customer?        @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  paymentId         String?
+  payment           CustomerPayment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  invoiceId         String?
+  invoice           Invoice?         @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  advancePaymentRef String?
+  amount            Float
+  transactionType   String
+  credit            Float            @default(0)
+  debit             Float            @default(0)
+  balance           Float            @default(0)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@map("customer_ledgers")
+}
+
+// ─────────────────────────────────────────
+// SUPPLIER LEDGER
+// ─────────────────────────────────────────
+model SupplierLedger {
+  id              String           @id @default(cuid())
+  supplierId      String?
+  supplier        Supplier?        @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  paymentId       String?
+  payment         SupplierPayment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  invoiceId       String?
+  invoice         Invoice?         @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  amount          Float
+  transactionType String
+  credit          Float            @default(0)
+  debit           Float            @default(0)
+  balance         Float            @default(0)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@map("supplier_ledgers")
+}

@@ -1,21 +1,21 @@
-import CustomerLedger from "../models/CustomerLedger.js";
 import express from "express";
+import prisma from "../configs/prismaClient.js";
 
 const router = express.Router();
 
-router.get("/get-all-customerledgers", async (req, res, next) => {
+// Get all customer ledger entries (optionally filter by customerId)
+router.get("/get-customer-ledger", async (req, res) => {
     try {
-        const customerledgers = await CustomerLedger.find({});
-
-        res.status(200).json({
-            success: true,
-            customerledgers,
+        const { customerId } = req.query;
+        const customerLedgers = await prisma.customerLedger.findMany({
+            where: customerId ? { customerId } : {},
+            include: { customer: true, invoice: true, payment: true },
+            orderBy: { createdAt: "asc" },
         });
+        res.status(200).json({ success: true, customerLedgers });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
+
 export default router;

@@ -1,101 +1,55 @@
 import express from "express";
-import Transport from "../models/Transport.js";
+import prisma from "../configs/prismaClient.js";
 
 const router = express.Router();
 
-// Create width
-router.post("/create-transport", async (req, res, next) => {
+// Create transport
+router.post("/create-transport", async (req, res) => {
     try {
-        const transportDoc = await Transport.create(req.body);
-
-        res.status(201).json({
-            message: "Create Successfully",
-            success: true,
-            transportDoc,
-        });
-    } catch (error) {
-        res.json({
-            message : "transport not be empty",
-            success: false,
-            error: error.message,
-        }).status(404);
-    }
-});
-
-
-// Get all widths
-router.get("/get-all-transport", async (req, res, next) => {
-    try {
-        const transports = await Transport.find({});
-
-        res.status(200).json({
-            success: true,
-            transports,
-        });
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
-    }
-});
-
-// Delete width
-router.delete("/delete-transport/:id", async (req, res, next) => {
-   
-    try {
-        const transportId = req.params.id;
-        console.log(transportId)
-     
-        const transport = await Transport.findByIdAndDelete(transportId);
-        if (!transport) {
-            return res.status(404).json({
-                success: false,
-                error: "transport not found with this id",
-            });
+        const { name, verified } = req.body;
+        if (!name || name.trim().length === 0) {
+            return res.status(400).json({ success: false, error: "Transport name cannot be empty" });
         }
-
-        res.status(200).json({
-            success: true,
-            message: "transport deleted successfully!",
-            transport,
+        const transport = await prisma.transport.create({
+            data: { name: name.trim(), verified: verified ?? false },
         });
+        res.status(201).json({ message: "Created Successfully", success: true, transport });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
-// Update width
-router.put("/update-transport/:id", async (req, res, next) => {
+// Get all transports
+router.get("/get-all-transport", async (req, res) => {
     try {
-        const transportId = req.params.id;
-
-        const transport = await Transport.findByIdAndUpdate(
-            transportId,
-            req.body,
-            { new: true } // Add this option to return the updated document
-        );
-
-        if (!transport) {
-            return res.status(404).json({
-                success: false,
-                error: "transport not found with this id",
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "transport updated successfully!",
-            transport,
-        });
+        const transports = await prisma.transport.findMany({ orderBy: { createdAt: "desc" } });
+        res.status(200).json({ success: true, transports });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
+        res.status(400).json({ success: false, error: error.message });
+    }
+});
+
+// Delete transport
+router.delete("/delete-transport/:id", async (req, res) => {
+    try {
+        const transport = await prisma.transport.delete({ where: { id: req.params.id } });
+        res.status(200).json({ success: true, message: "Transport deleted successfully!", transport });
+    } catch (error) {
+        res.status(400).json({ success: false, error: error.message });
+    }
+});
+
+// Update transport
+router.put("/update-transport/:id", async (req, res) => {
+    try {
+        const { name, verified } = req.body;
+        const transport = await prisma.transport.update({
+            where: { id: req.params.id },
+            data: { name, verified },
         });
+        res.status(200).json({ success: true, message: "Transport updated successfully!", transport });
+    } catch (error) {
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 

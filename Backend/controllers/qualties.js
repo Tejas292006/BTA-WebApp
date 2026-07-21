@@ -1,95 +1,55 @@
 import express from "express";
-import Quality from "../models/Quality.js";
+import prisma from "../configs/prismaClient.js";
 
 const router = express.Router();
 
 // Create quality
-router.post("/create-quality", async (req, res, next) => {
+router.post("/create-quality", async (req, res) => {
     try {
-        const qualityDoc = await Quality.create(req.body);
-
-        res.status(201).json({
-            message: "Create Successfully",
-            success: true,
-            qualityDoc,
+        const { name, categoryId, verified } = req.body;
+        const quality = await prisma.quality.create({
+            data: { name, categoryId: categoryId || null, verified: verified ?? false },
         });
+        res.status(201).json({ message: "Created Successfully", success: true, quality });
     } catch (error) {
-        return res.status(404).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
-
-// Get all qualitys
-router.get("/get-all-quality", async (req, res, next) => {
+// Get all qualities
+router.get("/get-all-quality", async (req, res) => {
     try {
-        const qualities = await Quality.find({});
-
-        res.status(200).json({
-            success: true,
-            qualities,
+        const qualities = await prisma.quality.findMany({
+            include: { category: true },
+            orderBy: { createdAt: "desc" },
         });
+        res.status(200).json({ success: true, qualities });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
 // Delete quality
-router.delete("/delete-quality/:id", async (req, res, next) => {
+router.delete("/delete-quality/:id", async (req, res) => {
     try {
-        const qualityId = req.params.id;
-
-        const quality = await Quality.findByIdAndDelete(qualityId);
-
-        if (!quality) {
-            return res.status(404).json({
-                success: false,
-                error: "quality not found with this id",
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "quality deleted successfully!",
-            quality,
-        });
+        const quality = await prisma.quality.delete({ where: { id: req.params.id } });
+        res.status(200).json({ success: true, message: "Quality deleted successfully!", quality });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
 // Update quality
-router.put("/update-quality/:id", async (req, res, next) => {
+router.put("/update-quality/:id", async (req, res) => {
     try {
-        const qualityId = req.params.id;
-
-
-        const quality = await Quality.findByIdAndUpdate(qualityId, req.body,{ new: true });
-
-        if (!quality) {
-            return res.status(404).json({
-                success: false,
-                error: "quality not found with this id",
-            });
-        }
-        res.status(200).json({
-            success: true,
-            message: "quality updated successfully!",
-            quality,
+        const { name, categoryId, verified } = req.body;
+        const quality = await prisma.quality.update({
+            where: { id: req.params.id },
+            data: { name, categoryId: categoryId || null, verified },
         });
+        res.status(200).json({ success: true, message: "Quality updated successfully!", quality });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 

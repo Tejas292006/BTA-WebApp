@@ -1,96 +1,55 @@
 import express from "express";
-import Width from "../models/WIdth.js";
+import prisma from "../configs/prismaClient.js";
 
 const router = express.Router();
 
 // Create width
-router.post("/create-width", async (req, res, next) => {
+router.post("/create-width", async (req, res) => {
     try {
-        const widthDoc = await Width.create(req.body);
-
-        res.status(201).json({
-            message: "Create Successfully",
-            success: true,
-            widthDoc,
+        const { name, categoryId, verified } = req.body;
+        const width = await prisma.width.create({
+            data: { name, categoryId: categoryId || null, verified: verified ?? false },
         });
+        res.status(201).json({ message: "Created Successfully", success: true, width });
     } catch (error) {
-        return res.status(404).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
-
 // Get all widths
-router.get("/get-all-width", async (req, res, next) => {
+router.get("/get-all-width", async (req, res) => {
     try {
-        const widths = await Width.find({});
-
-        res.status(200).json({
-            success: true,
-            widths,
+        const widths = await prisma.width.findMany({
+            include: { category: true },
+            orderBy: { createdAt: "desc" },
         });
+        res.status(200).json({ success: true, widths });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
 // Delete width
-router.delete("/delete-width/:id", async (req, res, next) => {
+router.delete("/delete-width/:id", async (req, res) => {
     try {
-        const widthId = req.params.id;
-
-        const width = await Width.findByIdAndDelete(widthId);
-
-        if (!width) {
-            return res.status(404).json({
-                success: false,
-                error: "width not found with this id",
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "width deleted successfully!",
-            width,
-        });
+        const width = await prisma.width.delete({ where: { id: req.params.id } });
+        res.status(200).json({ success: true, message: "Width deleted successfully!", width });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
 // Update width
-router.put("/update-width/:id", async (req, res, next) => {
-    console.log('calleddddddddddddddddddddddddddddddddd')
+router.put("/update-width/:id", async (req, res) => {
     try {
-        const widthId = req.params.id;
-
-        const width = await Width.findByIdAndUpdate(widthId, req.body,{ new: true });
-
-        if (!width) {
-            return res.status(404).json({
-                success: false,
-                error: "width not found with this id",
-            });
-        }
-        console.log('Updated width:', width); // Log the updated width
-        res.status(200).json({
-            success: true,
-            message: "width updated successfully!",
-            width,
+        const { name, categoryId, verified } = req.body;
+        const width = await prisma.width.update({
+            where: { id: req.params.id },
+            data: { name, categoryId: categoryId || null, verified },
         });
+        res.status(200).json({ success: true, message: "Width updated successfully!", width });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 

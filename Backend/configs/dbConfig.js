@@ -1,13 +1,13 @@
-import mongoose from "mongoose"
+import prisma from './prismaClient.js';
 
 const connectDatabase = async () => {
-    const dbUri = process.env.DB_URI || "mongodb://127.0.0.1:27017/bta_webapp";
     try {
-        const data = await mongoose.connect(dbUri);
-        console.log(`mongodb connected with server : ${data.connection.host}`);
+        await prisma.$connect();
+        console.log('PostgreSQL (Neon) connected successfully via Prisma');
     } catch (err) {
-        console.log(`mongodb not connected due to ${err.message}`);
+        console.error(`Database connection failed: ${err.message}`);
+        process.exit(1);
     }
-}
+};
 
-export default connectDatabase;
+export default connectDatabase;

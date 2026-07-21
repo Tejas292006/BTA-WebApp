@@ -1,98 +1,55 @@
 import express from "express";
-import Weave from "../models/Weave.js";
+import prisma from "../configs/prismaClient.js";
 
 const router = express.Router();
 
 // Create weave
-router.post("/create-weave", async (req, res, next) => {
+router.post("/create-weave", async (req, res) => {
     try {
-        const weaveDoc = await Weave.create(req.body);
-
-        res.status(201).json({
-            message: "Create Successfully",
-            success: true,
-            weaveDoc,
+        const { name, categoryId, verified } = req.body;
+        const weave = await prisma.weave.create({
+            data: { name, categoryId: categoryId || null, verified: verified ?? false },
         });
+        res.status(201).json({ message: "Created Successfully", success: true, weave });
     } catch (error) {
-        return res.status(404).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
-
 // Get all weaves
-router.get("/get-all-weave", async (req, res, next) => {
+router.get("/get-all-weave", async (req, res) => {
     try {
-        const weaves = await Weave.find({});
-
-        res.status(200).json({
-            success: true,
-            weaves,
+        const weaves = await prisma.weave.findMany({
+            include: { category: true },
+            orderBy: { createdAt: "desc" },
         });
+        res.status(200).json({ success: true, weaves });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
 // Delete weave
-router.delete("/delete-weave/:id", async (req, res, next) => {
+router.delete("/delete-weave/:id", async (req, res) => {
     try {
-        const weaveId = req.params.id;
-
-        const weave = await Weave.findByIdAndDelete(weaveId);
-
-        if (!weave) {
-            return res.status(404).json({
-                success: false,
-                error: "weave not found with this id",
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "weave deleted successfully!",
-            weave,
-        });
+        const weave = await prisma.weave.delete({ where: { id: req.params.id } });
+        res.status(200).json({ success: true, message: "Weave deleted successfully!", weave });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
 // Update weave
-router.put("/update-weave/:id", async (req, res, next) => {
+router.put("/update-weave/:id", async (req, res) => {
     try {
-        const weaveId = req.params.id;
-        const weave = await Weave.findByIdAndUpdate(
-            weaveId,
-            req.body,
-            { new: true } // Add this option to return the updated document
-        );
-     
-        if (!weave) {
-            return res.status(404).json({
-                success: false,
-                error: "weave name not found with this id",
-            });
-        }
-
-        res.json({
-            success: true,
-            message: "weave updated successfully!",
-            weave,
-        }).status(200);
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
+        const { name, categoryId, verified } = req.body;
+        const weave = await prisma.weave.update({
+            where: { id: req.params.id },
+            data: { name, categoryId: categoryId || null, verified },
         });
+        res.status(200).json({ success: true, message: "Weave updated successfully!", weave });
+    } catch (error) {
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 

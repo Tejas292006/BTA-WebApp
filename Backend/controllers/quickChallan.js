@@ -1,198 +1,175 @@
 import express from "express";
-import QuickChallan from "../models/QuickChallan.js";
+import prisma from "../configs/prismaClient.js";
 
 const router = express.Router();
 
 // Create quickchallan
-router.post("/create-quickchallan", async (req, res, next) => {
+router.post("/create-quickchallan", async (req, res) => {
     try {
+        const {
+            products,
+            supplierId,
+            customerId,
+            quickchallanNo,
+            challanChartImages,
+            quickchallanDate,
+            challanType,
+            type,
+            verified,
+            overallremarks,
+        } = req.body;
 
-        console.log(req.body, 'quickchallan')
-        const quickchallanDoc = await QuickChallan.create(req.body);
-
-        res.status(201).json({
-            message: "Created Successfully",
-            success: true,
-            quickchallanDoc,
+        const quickchallanDoc = await prisma.quickChallan.create({
+            data: {
+                products: products ?? [],
+                supplierId: supplierId || null,
+                customerId: customerId || null,
+                quickchallanNo,
+                challanChartImages: challanChartImages ?? [],
+                quickchallanDate: new Date(quickchallanDate),
+                challanType: challanType || "quick",
+                type: type || null,
+                verified: verified ?? false,
+                overallremarks: overallremarks || null,
+            },
         });
+
+        res.status(201).json({ message: "Created Successfully", success: true, quickchallanDoc });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
 // Get all quickchallans
-router.get("/get-all-quickchallan", async (req, res, next) => {
+router.get("/get-all-quickchallan", async (req, res) => {
     try {
-        const quickchallans = await QuickChallan.find({}).populate([
-            { path: 'customer' },
-            { path: 'supplier' },
-            {
-                path: 'products',
-                populate: [
-                    { path: 'product' },
-                    { path: 'cut' }
-                ]
-            }
-        ]);
-
-        res.status(200).json({
-            success: true,
-            quickchallans,
+        const quickchallans = await prisma.quickChallan.findMany({
+            include: { customer: true, supplier: true },
+            orderBy: { createdAt: "desc" },
         });
+        res.status(200).json({ success: true, quickchallans });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
 // Delete quickchallan
-router.delete("/delete-quickchallan/:id", async (req, res, next) => {
+router.delete("/delete-quickchallan/:id", async (req, res) => {
     try {
-        const quickchallanId = req.params.id;
-
-        const quickchallan = await QuickChallan.findByIdAndDelete(quickchallanId);
-
-        if (!quickchallan) {
-            return res.status(404).json({
-                success: false,
-                error: "quickchallan not found with this id",
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "quickchallan deleted successfully!",
-            quickchallan,
-        });
+        const quickchallan = await prisma.quickChallan.delete({ where: { id: req.params.id } });
+        res.status(200).json({ success: true, message: "QuickChallan deleted successfully!", quickchallan });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
 // Update quickchallan
-router.put("/update-quickchallan/:id", async (req, res, next) => {
+router.put("/update-quickchallan/:id", async (req, res) => {
     try {
-        const quickchallanId = req.params.id;
+        const {
+            products,
+            supplierId,
+            customerId,
+            quickchallanNo,
+            challanChartImages,
+            quickchallanDate,
+            challanType,
+            type,
+            verified,
+            overallremarks,
+        } = req.body;
 
-        const quickchallan = await QuickChallan.findByIdAndUpdate(quickchallanId, req.body, { new: true });
-
-        if (!quickchallan) {
-            return res.status(404).json({
-                success: false,
-                error: "quickchallan not found with this id",
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "quickchallan updated successfully!",
-            quickchallan,
+        const quickchallan = await prisma.quickChallan.update({
+            where: { id: req.params.id },
+            data: {
+                products,
+                supplierId: supplierId || null,
+                customerId: customerId || null,
+                quickchallanNo,
+                challanChartImages,
+                quickchallanDate: quickchallanDate ? new Date(quickchallanDate) : undefined,
+                challanType,
+                type,
+                verified,
+                overallremarks,
+            },
         });
+
+        res.status(200).json({ success: true, message: "QuickChallan updated successfully!", quickchallan });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
-router.put("/update-quick-challan-products/:id", async (req, res, next) => {
+// Update isProductDispatchedByInvoice for a product inside quickchallan products JSON
+router.put("/update-quick-challan-products/:id", async (req, res) => {
     try {
-        const challanId = req.params.id;
         const { productId, isProductDispatchedByInvoice } = req.body;
 
-
-
-
-        const challanProductUpdated = await QuickChallan.findById(challanId);
-
-        let productFound = false;
-
-        challanProductUpdated?.products.map(product => {
-            if (product.product == productId) {
-                product.isProductDispatchedByInvoice = isProductDispatchedByInvoice;
-                productFound = true;
-            }
-        })
-
-
-        if (!productFound) {
-            return res.status(404).json({
-                success: false,
-                error: "Product not found with this id",
-            });
+        const quickchallan = await prisma.quickChallan.findUnique({ where: { id: req.params.id } });
+        if (!quickchallan) {
+            return res.status(404).json({ success: false, error: "QuickChallan not found" });
         }
 
-        console.log(challanProductUpdated, "uddated")
+        const products = Array.isArray(quickchallan.products) ? quickchallan.products : [];
+        let productFound = false;
 
-        await challanProductUpdated.save();
-
-
-        res.status(200).json({
-            success: true,
-            message: "Challan Dispatch successfully!"
+        const updatedProducts = products.map(product => {
+            if (product.product === productId || product._id === productId) {
+                productFound = true;
+                return { ...product, isProductDispatchedByInvoice };
+            }
+            return product;
         });
 
+        if (!productFound) {
+            return res.status(404).json({ success: false, error: "Product not found in quickchallan" });
+        }
 
-        // yha update ka logic likhna h 
+        await prisma.quickChallan.update({
+            where: { id: req.params.id },
+            data: { products: updatedProducts },
+        });
+
+        res.status(200).json({ success: true, message: "QuickChallan dispatched successfully!" });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
-router.put("/update-quick-due-products/:id", async (req, res, next) => {
+// Update due for a product inside quickchallan products JSON
+router.put("/update-quick-due-products/:id", async (req, res) => {
     try {
-        const challanId = req.params.id;
         const { productId, due } = req.body;
 
-        const challanProductUpdated = await QuickChallan.findById(challanId);
-        if (!challanProductUpdated) {
-            return res.status(404).json({
-                success: false,
-                error: "Challan not found with this id",
-            });
+        const quickchallan = await prisma.quickChallan.findUnique({ where: { id: req.params.id } });
+        if (!quickchallan) {
+            return res.status(404).json({ success: false, error: "QuickChallan not found" });
         }
 
+        const products = Array.isArray(quickchallan.products) ? quickchallan.products : [];
         let productFound = false;
-        challanProductUpdated.products.forEach(product => {
-            if (product.product == productId) {
-                product.due = due;
+
+        const updatedProducts = products.map(product => {
+            if (product.product === productId || product._id === productId) {
                 productFound = true;
+                return { ...product, due };
             }
+            return product;
         });
 
         if (!productFound) {
-            return res.status(404).json({
-                success: false,
-                error: "Product not found with this id",
-            });
+            return res.status(404).json({ success: false, error: "Product not found in quickchallan" });
         }
 
-        await challanProductUpdated.save();
-
-        res.status(200).json({
-            success: true,
-            message: "Challan updated successfully!",
-            challan,
+        await prisma.quickChallan.update({
+            where: { id: req.params.id },
+            data: { products: updatedProducts },
         });
 
-        // yha update ka logic likhna h 
+        res.status(200).json({ success: true, message: "QuickChallan due updated successfully!" });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 

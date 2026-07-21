@@ -1,95 +1,55 @@
 import express from "express";
-import Design from "../models/Design.js";
+import prisma from "../configs/prismaClient.js";
 
 const router = express.Router();
 
 // Create design
-router.post("/create-design", async (req, res, next) => {
+router.post("/create-design", async (req, res) => {
     try {
-        const designDoc = await Design.create(req.body);
-
-        res.status(201).json({
-            message: "Create Successfully",
-            success: true,
-            designDoc,
+        const { name, categoryId, verified } = req.body;
+        const design = await prisma.design.create({
+            data: { name, categoryId: categoryId || null, verified: verified ?? false },
         });
+        res.status(201).json({ message: "Created Successfully", success: true, design });
     } catch (error) {
-        return res.status(404).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
-
 // Get all designs
-router.get("/get-all-design", async (req, res, next) => {
+router.get("/get-all-design", async (req, res) => {
     try {
-        const designs = await Design.find({});
-
-        res.status(200).json({
-            success: true,
-            designs,
+        const designs = await prisma.design.findMany({
+            include: { category: true },
+            orderBy: { createdAt: "desc" },
         });
+        res.status(200).json({ success: true, designs });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
 // Delete design
-router.delete("/delete-design/:id", async (req, res, next) => {
+router.delete("/delete-design/:id", async (req, res) => {
     try {
-        const designId = req.params.id;
-
-        const design = await Design.findByIdAndDelete(designId);
-
-        if (!design) {
-            return res.status(404).json({
-                success: false,
-                error: "design not found with this id",
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "design deleted successfully!",
-            design,
-        });
+        const design = await prisma.design.delete({ where: { id: req.params.id } });
+        res.status(200).json({ success: true, message: "Design deleted successfully!", design });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
 // Update design
-router.put("/update-design/:id", async (req, res, next) => {
+router.put("/update-design/:id", async (req, res) => {
     try {
-        const designId = req.params.id;
-
-
-        const design = await Design.findByIdAndUpdate(designId, req.body,{ new: true });
-
-        if (!design) {
-            return res.status(404).json({
-                success: false,
-                error: "design not found with this id",
-            });
-        }
-        res.status(200).json({
-            success: true,
-            message: "design updated successfully!",
-            design,
+        const { name, categoryId, verified } = req.body;
+        const design = await prisma.design.update({
+            where: { id: req.params.id },
+            data: { name, categoryId: categoryId || null, verified },
         });
+        res.status(200).json({ success: true, message: "Design updated successfully!", design });
     } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error: error.message,
-        });
+        res.status(400).json({ success: false, error: error.message });
     }
 });
 
