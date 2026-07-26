@@ -7,17 +7,18 @@ import {
   RecoilRoot,
 } from 'recoil';
 import Loader from './components/Loader/Loader.jsx'
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
  
     <BrowserRouter>
       <NextUIProvider>
         <RecoilRoot>
-          {/* <ErrorBoundary> */}
+          <ErrorBoundary>
           <React.Suspense fallback={<Loader />}>
             <App />
           </React.Suspense>
-          {/* </ErrorBoundary> */}
+          </ErrorBoundary>
         </RecoilRoot>
       </NextUIProvider>
     </BrowserRouter>

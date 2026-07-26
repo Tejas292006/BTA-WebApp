@@ -42,6 +42,7 @@ const PrivateRoute = ({ children }) => {
 
 
     useEffect(() => {
+        if (user) return;
         if (localStorage.getItem("token")) {
             validateToken();
         } else {
