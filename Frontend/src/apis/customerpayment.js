@@ -6,13 +6,13 @@ export const Createcustomerpayment = async (payload) => {
         return response.data;
 
     } catch (error) {
-        return error
+        return { success: false, message: error.response?.data?.error || error.message }
     }
 }
 
 export const GetcustomerpaymentData = async () => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/customerpayment/get-all-customerpayment`);
+        const response = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/customerpayment/get-all-customerpayments`);
         return response.data;
 
     } catch (error) {

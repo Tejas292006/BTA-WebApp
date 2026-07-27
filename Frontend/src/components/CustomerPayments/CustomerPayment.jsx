@@ -432,7 +432,7 @@ const CustomerPayment = () => {
         try {
             // values.ref = refcat;
             setIsLoading(true);
-            const response = await Updateinvoice(updateId, values);
+            const response = await Updatecustomerpayment(updateId, values);
             setIsLoading(false);
 
             if (response.success) {
@@ -608,7 +608,7 @@ const CustomerPayment = () => {
         const cutvalue = cutData.find(cut => cut.name === selectedChallansProducts[rowIndex]?.cut)
 
         if (selectedChallansProducts[rowIndex]?.challanType === "main") {
-            if (cutvalue.isNameNumerica) {
+            if (cutvalue?.isNameNumerical) {
                 selectedChallansProducts[rowIndex].due = Math.abs(selectedChallansProducts[rowIndex].received_mtr - selectedChallansProducts[rowIndex].qtyMtr);
                 if (selectedChallansProducts[rowIndex]?.unit === "1") {
                     selectedChallansProducts[rowIndex].total = Math.abs(selectedChallansProducts[rowIndex].rate * selectedChallansProducts[rowIndex].received_mtr)
@@ -715,10 +715,10 @@ const CustomerPayment = () => {
             received_pcs: "",
             received_bales: "",
             due: "",
-            rate: product?.pricePerUnit?.magnitude | 0,
+            rate: product?.pricePerUnit?.magnitude || 0,
             total: "",
             markAsCompleted: false,
-            isBeingDispatchedInInvoice: product?.isProductDispatchedByInvoice | false,
+            isBeingDispatchedInInvoice: product?.isProductDispatchedByInvoice || false,
         };
         setselectedKeynewproduct('');
         setSelectedCut('');

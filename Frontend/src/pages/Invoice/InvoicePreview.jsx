@@ -11,7 +11,7 @@ const InvoicePreview = () => {
     const url = params.id;
     console.log(params.id);
 
-    const [invoice, setInvoice] = useState([]); // Initialize with null
+    const [invoice, setInvoice] = useState(null);
     // const componentRef = useRef();
     const handlePrint = () => {
         window.print();
@@ -20,8 +20,9 @@ const InvoicePreview = () => {
     const GetInvoiceIdPreview = async (id) => {
         try {
             const response = await GetinvoiceDataByID(id);
-            console.log(response.invoices)
-            setInvoice(response.invoices[0])
+            if (response.success) {
+                setInvoice(response.invoice);
+            }
         } catch (error) {
             console.log(error);
         }

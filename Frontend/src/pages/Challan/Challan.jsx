@@ -107,8 +107,8 @@ const Challan = () => {
         setUpdateId(null); // Reset update ID when modal is closed
         onOpenChange(false)
       } else {
-        console.log(response.response?.data.error);
-        toast.error(response.response?.data.error);
+        console.log(response.message);
+        toast.error(response.message);
         // throw new Error(response.error);
       }
     } catch (error) {
@@ -453,7 +453,7 @@ const Challan = () => {
   const handleClose = (fruitToRemove) => {
     setfilterkeys(filterkeys?.filter(fruit => fruit !== fruitToRemove));
     if (filterkeys?.length === 1) {
-      setfilterkeys(initialFruits);
+      setfilterkeys([]);
     }
   };
 

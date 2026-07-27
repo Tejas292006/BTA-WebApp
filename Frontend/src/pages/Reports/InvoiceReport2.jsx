@@ -17,20 +17,11 @@ export default function InvoiceReport2() {
     const supplierLedger = useRecoilValue(supplierledgerDataState);
     
 
-
     const [startDateFilter, setStartDateFilter] = useState('');
     const [endDateFilter, setEndDateFilter] = useState('');
     const [supplierFilter, setSupplierFilter] = useState('');
     const [customerFilter, setCustomerFilter] = useState('');
     const [productFilter, setProductFilter] = useState('');
-   
-    console.log(invoiceData,"invoivedata")
-    console.log(customerLedger,"customerLedger")
-    
-    const cust = customerLedger.filter((c,i)=>(c.invoiceRef === invoiceData[1]?.id))
-    console.log(cust,"cust")
-    const totalr = cust.reduce((acc,item)=>(acc+item.credit),0)
-    console.log(totalr,"totalr")
 
     const filteredProducts = useMemo(() => {
         return productsData.filter((product) => product.supplierName.id === supplierFilter);

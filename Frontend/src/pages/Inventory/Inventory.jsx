@@ -7,24 +7,24 @@ import { UilRuler,UilCube,UilArrowsHAlt , UilPalette, UilSlack, UilLightbulbAlt,
 import ProductPage from '../../components/ProductPage/ProductPage';
 import Suppliers from '../../components/Suppliers/Suppliers';
 import Categories from '../../components/Categories/Categories';
-// import Quality from '../../components/Quality/Quality';
-// import Design from '../../components/Design/Design';
-// import FinishType from '../../components/Finish-Type/Finish-Type';
-// import FeelType from '../../components/Feel-Type/Feel-Type';
-// import Weave from '../../components/Weave/Weave';
-// import Width from '../../components/Width/Width';
+import Quality from '../../components/Quality/Quality';
+import Design from '../../components/Design/Design';
+import FinishType from '../../components/Finish-Type/Finish-Type';
+import FeelType from '../../components/Feel-Type/Feel-Type';
+import Weave from '../../components/Weave/Weave';
+import Width from '../../components/Width/Width';
 import Unit from '../../components/unit/Unit';
 import Cut from '../../components/cut/Cut';
 import { productsDataState } from '../../store/product/productAtom';
 import { useRecoilValue } from 'recoil';
 import { suppliersDataState } from '../../store/supplier/supplierAtom';
 import { categoryDataState } from '../../store/category/category';
-// import { qualityDataState } from '../../store/quality/qualityAtom';
-// import { designDataState } from '../../store/design/designAtom';
-// import { finishtypeDataState } from '../../store/finishtype/finishtypeAtom';
-// import { feeltypeDataState } from '../../store/feeltype/feeltypeAtom';
-// import { weaveDataState } from '../../store/weave/weaveAtom';
-// import { widthDataState } from '../../store/width/widthAtom';
+import { qualityDataState } from '../../store/quality/qualityAtom';
+import { designDataState } from '../../store/design/designAtom';
+import { finishtypeDataState } from '../../store/finishtype/finishtypeAtom';
+import { feeltypeDataState } from '../../store/feeltype/feeltypeAtom';
+import { weaveDataState } from '../../store/weave/weaveAtom';
+import { widthDataState } from '../../store/width/widthAtom';
 import { unitDataState } from '../../store/unit/unitAtom';
 import { cutDataState } from '../../store/cut/cutAtom';
 
@@ -47,7 +47,13 @@ const Inventory = () => {
     const attributeValueData = useRecoilValue(attributeValueDataState);
     const unitData = useRecoilValue(unitDataState);
     const paymentModeData = useRecoilValue(paymentModeState);
-    const cutData = useRecoilValue(unitDataState);
+    const cutData = useRecoilValue(cutDataState);
+    const qualityData = useRecoilValue(qualityDataState);
+    const designData = useRecoilValue(designDataState);
+    const finishtypeData = useRecoilValue(finishtypeDataState);
+    const feeltypeData = useRecoilValue(feeltypeDataState);
+    const weaveData = useRecoilValue(weaveDataState);
+    const widthData = useRecoilValue(widthDataState);
 
 
 
@@ -156,7 +162,7 @@ const Inventory = () => {
                     >
                         <PaymentMode />
                     </Tab>
-                    {/* <Tab
+                    <Tab
                         key="Quality"
                         title={
                             <div className="flex items-center space-x-2 ">
@@ -188,7 +194,7 @@ const Inventory = () => {
                             <div className="flex items-center space-x-2 ">
                                 <UilCheckCircle />
                                 <span>Finsh-Type</span>
-                                <Chip size="sm" variant="light">{finishData?.length}</Chip>
+                                <Chip size="sm" variant="light">{finishtypeData?.length}</Chip>
                             </div>
                         }
                         className="max-h-max px-5 "
@@ -201,7 +207,7 @@ const Inventory = () => {
                             <div className="flex items-center space-x-2 ">
                                 <UilLightbulbAlt />
                                 <span>Feel-Type</span>
-                                <Chip size="sm" variant="light">{feelData?.length}</Chip>
+                                <Chip size="sm" variant="light">{feeltypeData?.length}</Chip>
                             </div>
                         }
                         className="max-h-max px-5 "
@@ -234,7 +240,6 @@ const Inventory = () => {
                     >
                         <Width />
                     </Tab>
-                    */}
                     <Tab
                         key="Cut"
                         title={

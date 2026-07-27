@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { GetCurrentUser } from '../apis/user';
 import toast from 'react-hot-toast';
 import { Spinner } from '@nextui-org/react';

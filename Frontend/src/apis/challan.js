@@ -6,7 +6,7 @@ export const Createchallan = async (payload) => {
         return response.data;
 
     } catch (error) {
-        return error
+        return { success: false, message: error.response?.data?.error || error.message }
     }
 }
 

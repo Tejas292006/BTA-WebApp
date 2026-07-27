@@ -104,9 +104,9 @@ const LoginPage = () => {
               <img src="https://res.cloudinary.com/dylnk52kz/image/upload/v1707810632/image2_snc2z4.png" className="image img-2" alt />
               <img src="https://i.pinimg.com/564x/b7/ef/2f/b7ef2ff50453d559703c35c21a9aaaf3.jpg" className="image img-3" alt />
             </div>
-            <div class="text-slider">
-              <div class="text-wrap">
-                <div class="text-group">
+            <div className="text-slider">
+              <div className="text-wrap">
+                <div className="text-group">
                   <h2>Create your Partner</h2>
                   <h2>Customize as you like</h2>
                   <h2>Increase Growth</h2>

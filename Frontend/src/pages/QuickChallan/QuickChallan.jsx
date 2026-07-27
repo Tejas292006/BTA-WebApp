@@ -21,7 +21,7 @@ import { attributeValueDataState } from '../../store/attributevalue/attributeval
 
 import FillterTableData from '../../components/FillterDataTable/FillterTableData';
 
-const quickchallan = () => {
+const QuickChallan = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const navigate = useNavigate();
 
@@ -107,8 +107,8 @@ const quickchallan = () => {
         setUpdateId(null); // Reset update ID when modal is closed
         onOpenChange(false)
       } else {
-        console.log(response.response.data.error);
-        toast.error(response.response.data.error);
+        console.log(response.message);
+        toast.error(response.message);
         // throw new Error(response.error);
       }
     } catch (error) {
@@ -480,7 +480,7 @@ const quickchallan = () => {
   const handleClose = (fruitToRemove) => {
     setfilterkeys(filterkeys?.filter(fruit => fruit !== fruitToRemove));
     if (filterkeys?.length === 1) {
-      setfilterkeys(initialFruits);
+      setfilterkeys([]);
     }
   };
 
@@ -1991,4 +1991,17 @@ const quickchallan = () => {
   )
 }
 
-export default quickchallan
+export default QuickChallan
+
+const ImageModal = ({ imageSrc, onClose }) => {
+  return (
+    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-[9999]">
+      <div className="bg-white p-4 max-w-screen-lg">
+        <img src={imageSrc} alt="Clicked Image" />
+        <Button onClick={onClose} className="absolute top-0 right-0 m-2 text-gray-700">
+          Close
+        </Button>
+      </div>
+    </div>
+  );
+};

@@ -6,7 +6,7 @@ export const Createinvoice = async (payload) => {
         return response.data;
 
     } catch (error) {
-        return error
+        return { success: false, message: error.response?.data?.error || error.message }
     }
 }
 
@@ -20,9 +20,9 @@ export const GetinvoiceData = async () => {
     }
 }
 
-export const GetinvoiceDataByID = async () => {
+export const GetinvoiceDataByID = async (id) => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/invoice/get-all-invoice`);
+        const response = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/invoice/get-invoice/${id}`);
         return response.data;
 
     } catch (error) {

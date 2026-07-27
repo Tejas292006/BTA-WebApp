@@ -495,10 +495,10 @@ const GenerateInvoice = () => {
       received_pcs: "",
       received_bales: "",
       due: "",
-      rate: product?.pricePerUnit?.magnitude | 0,
+      rate: product?.pricePerUnit?.magnitude || 0,
       total: "",
       markAsCompleted: false,
-      isBeingDispatchedInInvoice: product?.isProductDispatchedByInvoice | false,
+      isBeingDispatchedInInvoice: product?.isProductDispatchedByInvoice || false,
     };
     setselectedKeynewproduct('');
     setSelectedCut('');
@@ -536,7 +536,7 @@ const GenerateInvoice = () => {
                     <ModalHeader className="px-2 py-0 text-[1.2rem] font-font1 flex items-center gap-3">
                       <div className="flex items-center gap-3">
                         Select Challan For Invoice
-                        <div class="bg-default/50 text-foreground flex items-center rounded-small justify-center w-7 h-7">
+                        <div className="bg-default/50 text-foreground flex items-center rounded-small justify-center w-7 h-7">
                           <svg
                             aria-hidden="true"
                             fill="none"
@@ -789,7 +789,7 @@ const GenerateInvoice = () => {
                           {(item) => (
                             <ListboxItem key={item.id} textValue={item.id}>
                               <div className="flex gap-2 items-center w-full ">
-                                <div class="bg-default/50 text-foreground flex items-center rounded-small justify-center w-7 h-7">
+                                <div className="bg-default/50 text-foreground flex items-center rounded-small justify-center w-7 h-7">
                                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#0850a4" height="1em"
                                     width="1em">
                                     <path fill-rule="evenodd" d="M12 1.5c-1.921 0-3.816.111-5.68.327-1.497.174-2.57 1.46-2.57 2.93V21.75a.75.75 0 0 0 1.029.696l3.471-1.388 3.472 1.388a.75.75 0 0 0 .556 0l3.472-1.388 3.471 1.388a.75.75 0 0 0 1.029-.696V4.757c0-1.47-1.073-2.756-2.57-2.93A49.255 49.255 0 0 0 12 1.5Zm3.53 7.28a.75.75 0 0 0-1.06-1.06l-6 6a.75.75 0 1 0 1.06 1.06l6-6ZM8.625 9a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Zm5.625 3.375a1.125 1.125 0 1 0 0 2.25 1.125 1.125 0 0 0 0-2.25Z" clip-rule="evenodd" />
@@ -825,7 +825,7 @@ const GenerateInvoice = () => {
                         <div className="flex items-center gap-10 relative">
                           <ModalHeader className="px-0 text-[1.2rem] font-font1 flex items-center gap-3">
                             Challan Table
-                            <div class="bg-default/50 text-foreground flex items-center rounded-small justify-center w-7 h-7"><svg height="1em" viewBox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg" class="text-lg "><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zm0 2 .001 4H5V5h14zM5 11h8v8H5v-8zm10 8v-8h4.001l.001 8H15z" fill="currentColor"></path></svg></div>
+                            <div className="bg-default/50 text-foreground flex items-center rounded-small justify-center w-7 h-7"><svg height="1em" viewBox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg" className="text-lg "><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zm0 2 .001 4H5V5h14zM5 11h8v8H5v-8zm10 8v-8h4.001l.001 8H15z" fill="currentColor"></path></svg></div>
                           </ModalHeader>
                           <Autocomplete
                             placeholder="Add Products"

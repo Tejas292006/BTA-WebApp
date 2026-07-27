@@ -26,7 +26,6 @@ export default function InvoiceReport3 () {
     const [customerFilter, setCustomerFilter] = useState('');
     const [productFilter, setProductFilter] = useState('');
     const [BalanceInvoice, setBalanceInvoice] = useState();
-    console.log(invoiceData,"invoice data")
 
     const filteredProducts = useMemo(() => {
         return productsData.filter((product) => product.supplierName.id === supplierFilter);
@@ -75,10 +74,7 @@ Object.values(copiedGroupedInvoices).forEach(group => {
 });
 
 // Logging the results
-console.log('Original Grouped Invoices:', groupedInvoices);
-console.log('Copied and Modified Grouped Invoices with Cumulative Balances:', copiedGroupedInvoices);
 setBalanceInvoice(Object.values(copiedGroupedInvoices).flat())
-console.log('Array Invoices with Cumulative Balances:', Object.values(copiedGroupedInvoices).flat());
 
       }, []);
     
@@ -176,7 +172,6 @@ console.log('Array Invoices with Cumulative Balances:', Object.values(copiedGrou
                 </TableHeader>
                 <TableBody>
                 {invoiceData.map((invoice, index) => {
-                    console.log(invoice)
     // Filter adjustments related to the current invoice ID from customer payments
     const adjustments = customerPayment
         .flatMap((payment) => payment.adjustments) // Extract adjustments from all customer payments

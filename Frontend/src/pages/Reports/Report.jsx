@@ -1,7 +1,6 @@
 import React from 'react'
 import ChallanReport from './ChallanReport'
 import { Chip, Tab, Tabs } from '@nextui-org/react'
-import Invoice from '../Invoice/Invoice';
 import InvoiceReport from './InvoiceReport';
 import InvoiceReport2 from './InvoiceReport2';
 import InvoiceReport3 from './InvoiceReport3';
