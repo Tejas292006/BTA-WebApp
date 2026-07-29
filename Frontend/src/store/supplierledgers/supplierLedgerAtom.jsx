@@ -7,8 +7,8 @@ export const supplierledgerDataState = atom({
     default : selector({
         key :  "supplierledgerSelector",
         get : async () => {
-            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/supplierledger/get-all-supplierledgers`);
-            return res.data.supplierledgers
+            const res = await axios.get(`${import.meta.env.VITE_SERVER || 'http://localhost:5001'}/api/supplierledger/get-supplier-ledger`);
+            return res.data.supplierLedgers
         }
     })
 })
