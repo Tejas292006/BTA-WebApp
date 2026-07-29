@@ -1,7 +1,7 @@
 import React from 'react'
 import { Tabs, Tab, Chip } from "@nextui-org/react";
 import { productsDataState } from '../../store/product/productAtom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, waitForAll } from 'recoil';
 
 import { FaUserAlt } from "react-icons/fa";
 import CustomerPage from '../../components/CustomerPage/CustomerPage';
@@ -11,6 +11,11 @@ import Transport from '../../components/Transport/Transport';
 import { FaTruckFast } from "react-icons/fa6";
 
 const Customer = () => {
+
+    useRecoilValue(waitForAll([
+        customerDataState,
+        transportDataState
+    ]));
 
     const customersData = useRecoilValue(customerDataState);
     const transportData = useRecoilValue(transportDataState);

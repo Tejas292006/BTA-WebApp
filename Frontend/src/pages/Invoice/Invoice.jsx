@@ -1,7 +1,7 @@
 
 import { Tabs, Tab, Chip, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip } from "@nextui-org/react";
 import GenerateInvoice from "../../components/GenerateInvoice/GenerateInvoice";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, waitForAll } from "recoil";
 import { invoiceDataState } from "../../store/invoice/invoiceAtom";
 import { customerDataState } from "../../store/customer/customerAtom";
 import { suppliersDataState } from "../../store/supplier/supplierAtom";
@@ -10,6 +10,13 @@ import { useNavigate } from "react-router-dom";
 
 
 const Invoice = () => {
+    useRecoilValue(waitForAll([
+        invoiceDataState,
+        customerDataState,
+        suppliersDataState,
+        customerledgerDataState
+    ]));
+    
     const invoiceData = useRecoilValue(invoiceDataState);
     const customerData = useRecoilValue(customerDataState);
     const suppliersData = useRecoilValue(suppliersDataState);

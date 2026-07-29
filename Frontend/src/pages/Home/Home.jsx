@@ -1,5 +1,5 @@
 import React from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, waitForAll } from 'recoil'
 import { userAtom } from '../../store/user/userAtom'
 import { productsDataState } from '../../store/product/productAtom'
 import { suppliersDataState } from '../../store/supplier/supplierAtom'
@@ -11,6 +11,18 @@ import { categoryDataState } from '../../store/category/category'
 import { Link } from 'react-router-dom'
 
 const Home = () => {
+
+  useRecoilValue(waitForAll([
+    userAtom,
+    productsDataState,
+    suppliersDataState,
+    customerDataState,
+    challanDataState,
+    invoiceDataState,
+    quickchallanDataState,
+    categoryDataState
+  ]));
+
   const user = useRecoilValue(userAtom)
   const productsData = useRecoilValue(productsDataState)
   const suppliersData = useRecoilValue(suppliersDataState)

@@ -1,13 +1,18 @@
 import React from 'react'
 import { Tabs, Tab, Chip } from "@nextui-org/react";
 import { UilRuler,UilCube,UilArrowsHAlt , UilPalette, UilSlack, UilLightbulbAlt, UilCheckCircle, UilUsersAlt, UilFilter, UilCreateDashboard, } from '@iconscout/react-unicons'
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, waitForAll } from 'recoil';
 import CustomerPayment from '../../components/CustomerPayments/CustomerPayment';
 import SupplierPayment from '../../components/SupplierPayments/SupplierPayment';
 import { supplierpaymentDataState } from '../../store/supplierpayments/supplierPaymentsAtom';
 import { customerpaymentDataState } from '../../store/customerpayments/customerPaymentsAtom';
 
 const Payments = () => {
+
+    useRecoilValue(waitForAll([
+        supplierpaymentDataState,
+        customerpaymentDataState
+    ]));
 
     const supplierPaymentData = useRecoilValue(supplierpaymentDataState);
     const customerPaymentData = useRecoilValue(customerpaymentDataState);

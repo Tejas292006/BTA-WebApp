@@ -65,7 +65,7 @@ export default function DataTableModel({ columns, update, deleteItem, users, sta
     }, [visibleColumns]);
 
     const filteredItems = React.useMemo(() => {
-        let filteredUsers = [...users];
+        let filteredUsers = [...(users || [])];
 
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((user) => {

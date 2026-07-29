@@ -5,7 +5,7 @@ import { useFormik } from 'formik'
 import { Createquickchallan, Deletequickchallan, Updatequickchallan } from '../../apis/quickChallan';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from "recoil"
+import { useRecoilState, useRecoilValue, waitForAll } from "recoil"
 import { globalLoaderAtom } from '../../store/GlobalLoader/globalLoaderAtom';
 import { quickchallanDataState } from '../../store/quickchallan/quickChallanAtom';
 import { productsDataState } from '../../store/product/productAtom';
@@ -24,6 +24,16 @@ import FillterTableData from '../../components/FillterDataTable/FillterTableData
 const QuickChallan = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const navigate = useNavigate();
+
+  useRecoilValue(waitForAll([
+    quickchallanDataState,
+    productsDataState,
+    cutDataState,
+    attributeDataState,
+    attributeValueDataState,
+    suppliersDataState,
+    customerDataState
+  ]));
 
   const [updateId, setUpdateId] = useState(null)
   const [productref, setproductref] = useState(null)

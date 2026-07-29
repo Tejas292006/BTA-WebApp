@@ -15,8 +15,8 @@ import Weave from '../../components/Weave/Weave';
 import Width from '../../components/Width/Width';
 import Unit from '../../components/unit/Unit';
 import Cut from '../../components/cut/Cut';
+import { waitForAll, useRecoilValue } from 'recoil';
 import { productsDataState } from '../../store/product/productAtom';
-import { useRecoilValue } from 'recoil';
 import { suppliersDataState } from '../../store/supplier/supplierAtom';
 import { categoryDataState } from '../../store/category/category';
 import { qualityDataState } from '../../store/quality/qualityAtom';
@@ -39,6 +39,23 @@ import PaymentMode from '../../components/paymentmode/PaymentMode';
 import { paymentModeState } from '../../store/paymentmode/paymentModeAtom';
 
 const Inventory = () => {
+
+    useRecoilValue(waitForAll([
+        productsDataState,
+        suppliersDataState,
+        categoryDataState,
+        attributeDataState,
+        attributeValueDataState,
+        unitDataState,
+        paymentModeState,
+        cutDataState,
+        qualityDataState,
+        designDataState,
+        finishtypeDataState,
+        feeltypeDataState,
+        weaveDataState,
+        widthDataState
+    ]));
 
     const productsData = useRecoilValue(productsDataState);
     const supplierData = useRecoilValue(suppliersDataState);
