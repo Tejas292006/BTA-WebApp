@@ -4,7 +4,7 @@ import toast from 'react-hot-toast'
 import { useNavigate } from "react-router-dom"
 import { useEffect } from 'react'
 import { useFormik } from 'formik'
-import { loginUser } from '../../apis/user'
+import { loginUser } from '../../api'
 
 const LoginPage = () => {
 

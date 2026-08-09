@@ -16,27 +16,27 @@ import Width from '../../components/Width/Width';
 import Unit from '../../components/unit/Unit';
 import Cut from '../../components/cut/Cut';
 import { waitForAll, useRecoilValue } from 'recoil';
-import { productsDataState } from '../../store/product/productAtom';
-import { suppliersDataState } from '../../store/supplier/supplierAtom';
-import { categoryDataState } from '../../store/category/category';
-import { qualityDataState } from '../../store/quality/qualityAtom';
-import { designDataState } from '../../store/design/designAtom';
-import { finishtypeDataState } from '../../store/finishtype/finishtypeAtom';
-import { feeltypeDataState } from '../../store/feeltype/feeltypeAtom';
-import { weaveDataState } from '../../store/weave/weaveAtom';
-import { widthDataState } from '../../store/width/widthAtom';
-import { unitDataState } from '../../store/unit/unitAtom';
-import { cutDataState } from '../../store/cut/cutAtom';
+import { productsDataState } from '../../store';
+import { suppliersDataState } from '../../store';
+import { categoryDataState } from '../../store';
+import { qualityDataState } from '../../store';
+import { designDataState } from '../../store';
+import { finishtypeDataState } from '../../store';
+import { feeltypeDataState } from '../../store';
+import { weaveDataState } from '../../store';
+import { widthDataState } from '../../store';
+import { unitDataState } from '../../store';
+import { cutDataState } from '../../store';
 
 import { PiTreeStructureBold } from "react-icons/pi";
 import { TbListTree } from "react-icons/tb";
 
 import Attribute from '../../components/Attribute/Attribute';
 import AttributeValue from '../../components/AttributeValue/AttributeValue';
-import { attributeDataState } from '../../store/attribute/attributeAtom';
-import { attributeValueDataState } from '../../store/attributevalue/attributevalueAtom';
+import { attributeDataState } from '../../store';
+import { attributeValueDataState } from '../../store';
 import PaymentMode from '../../components/paymentmode/PaymentMode';
-import { paymentModeState } from '../../store/paymentmode/paymentModeAtom';
+import { paymentModeState } from '../../store';
 
 const Inventory = () => {
 

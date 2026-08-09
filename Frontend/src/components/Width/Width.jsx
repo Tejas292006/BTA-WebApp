@@ -5,10 +5,10 @@ import { useFormik } from 'formik'
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, } from "recoil"
-import { globalLoaderAtom } from '../../store/GlobalLoader/globalLoaderAtom';
-import { widthDataState } from '../../store/width/widthAtom';
-import { Createwidth, Deletewidth, Updatewidth } from '../../apis/width';
-import { categoryDataState } from '../../store/category/category';
+import { globalLoaderAtom } from '../../store';
+import { widthDataState } from '../../store';
+import { Createwidth, Deletewidth, Updatewidth } from '../../api';
+import { categoryDataState } from '../../store';
 
 
 const Width = () => {

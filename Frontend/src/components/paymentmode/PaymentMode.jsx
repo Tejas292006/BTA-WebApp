@@ -6,10 +6,10 @@ import { snapshot_UNSTABLE, RecoilRoot } from 'recoil';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from "recoil"
-import { globalLoaderAtom } from '../../store/GlobalLoader/globalLoaderAtom';
+import { globalLoaderAtom } from '../../store';
 
-import { Createpaymentmode, Deletepaymentmode, Updatepaymentmode } from '../../apis/paymentmode.js';
-import { paymentModeState } from '../../store/paymentmode/paymentModeAtom';
+import { Createpaymentmode, Deletepaymentmode, Updatepaymentmode } from '../../api';
+import { paymentModeState } from '../../store';
 
 const PaymentMode = () => {
 

@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { productsDataState } from '../../store/product/productAtom';
-import { suppliersDataState } from '../../store/supplier/supplierAtom';
-import { customerDataState } from '../../store/customer/customerAtom';
+import { productsDataState } from '../../store';
+import { suppliersDataState } from '../../store';
+import { customerDataState } from '../../store';
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip, Input, Autocomplete, AutocompleteItem } from "@nextui-org/react";
-import { quickchallanDataState } from '../../store/quickchallan/quickChallanAtom';
-import { challanDataState } from '../../store/challan/challan';
+import { quickchallanDataState } from '../../store';
+import { challanDataState } from '../../store';
 
 export default function ChallanReport() {
     const customerData = useRecoilValue(customerDataState);

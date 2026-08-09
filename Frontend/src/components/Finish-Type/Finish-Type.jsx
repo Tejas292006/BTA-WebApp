@@ -5,10 +5,10 @@ import { useFormik } from 'formik'
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, } from "recoil"
-import { globalLoaderAtom } from '../../store/GlobalLoader/globalLoaderAtom';
-import { finishtypeDataState } from '../../store/finishtype/finishtypeAtom';
-import { Createfinishtype, Deletefinishtype, Updatefinishtype } from '../../apis/finishtype';
-import { categoryDataState } from '../../store/category/category';
+import { globalLoaderAtom } from '../../store';
+import { finishtypeDataState } from '../../store';
+import { Createfinishtype, Deletefinishtype, Updatefinishtype } from '../../api';
+import { categoryDataState } from '../../store';
 
 
 const Finishtype = () => {

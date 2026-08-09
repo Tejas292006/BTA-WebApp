@@ -2,10 +2,10 @@
 import { Tabs, Tab, Chip, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip } from "@nextui-org/react";
 import GenerateInvoice from "../../components/GenerateInvoice/GenerateInvoice";
 import { useRecoilValue, waitForAll } from "recoil";
-import { invoiceDataState } from "../../store/invoice/invoiceAtom";
-import { customerDataState } from "../../store/customer/customerAtom";
-import { suppliersDataState } from "../../store/supplier/supplierAtom";
-import { customerledgerDataState } from "../../store/customerledgers/customerLedgerAtom";
+import { invoiceDataState } from '../../store';
+import { customerDataState } from '../../store';
+import { suppliersDataState } from '../../store';
+import { customerledgerDataState } from '../../store';
 import { useNavigate } from "react-router-dom";
 
 

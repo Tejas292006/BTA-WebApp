@@ -6,9 +6,9 @@ import { snapshot_UNSTABLE, RecoilRoot } from 'recoil';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from "recoil"
-import { globalLoaderAtom } from '../../store/GlobalLoader/globalLoaderAtom';
-import { transportDataState } from '../../store/transport/transportAtom';
-import { Createtransport, Deletetransport, Updatetransport } from '../../apis/transport';
+import { globalLoaderAtom } from '../../store';
+import { transportDataState } from '../../store';
+import { Createtransport, Deletetransport, Updatetransport } from '../../api';
 
 const Transport = () => {
 

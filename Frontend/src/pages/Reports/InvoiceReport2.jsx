@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { invoiceDataState } from '../../store/invoice/invoiceAtom';
+import { invoiceDataState } from '../../store';
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip, Input, Autocomplete, AutocompleteItem } from "@nextui-org/react";
-import { customerDataState } from '../../store/customer/customerAtom';
-import { suppliersDataState } from '../../store/supplier/supplierAtom';
-import { productsDataState } from '../../store/product/productAtom';
-import { customerledgerDataState } from '../../store/customerledgers/customerLedgerAtom';
-import { supplierledgerDataState } from '../../store/supplierledgers/supplierLedgerAtom';
+import { customerDataState } from '../../store';
+import { suppliersDataState } from '../../store';
+import { productsDataState } from '../../store';
+import { customerledgerDataState } from '../../store';
+import { supplierledgerDataState } from '../../store';
 
 export default function InvoiceReport2() {
     const invoiceData = useRecoilValue(invoiceDataState);

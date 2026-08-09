@@ -17,15 +17,15 @@ import { useFormik } from "formik";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { globalLoaderAtom } from "../../store/GlobalLoader/globalLoaderAtom";
+import { globalLoaderAtom } from '../../store';
 import {
   CreateattributeValue,
   DeleteattributeValue,
   UpdateattributeValue,
-} from "../../apis/attributevalue";
-import { categoryDataState } from "../../store/category/category";
-import { attributeDataState } from "../../store/attribute/attributeAtom";
-import { attributeValueDataState } from "../../store/attributevalue/attributevalueAtom";
+} from '../../api';
+import { categoryDataState } from '../../store';
+import { attributeDataState } from '../../store';
+import { attributeValueDataState } from '../../store';
 
 
 const AttributeValue = () => {

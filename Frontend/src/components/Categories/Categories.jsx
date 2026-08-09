@@ -5,9 +5,9 @@ import { useFormik } from 'formik'
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, } from "recoil"
-import { globalLoaderAtom } from '../../store/GlobalLoader/globalLoaderAtom';
-import { categoryDataState } from '../../store/category/category';
-import { Createcategory, Deletecategory, Updatecategory } from '../../apis/categories';
+import { globalLoaderAtom } from '../../store';
+import { categoryDataState } from '../../store';
+import { Createcategory, Deletecategory, Updatecategory } from '../../api';
 
 
 const Categories = () => {

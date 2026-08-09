@@ -1,13 +1,15 @@
 import React from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
-import { userAtom } from '../../store/user/userAtom'
-import { productsDataState } from '../../store/product/productAtom'
-import { suppliersDataState } from '../../store/supplier/supplierAtom'
-import { customerDataState } from '../../store/customer/customerAtom'
-import { challanDataState } from '../../store/challan/challan'
-import { invoiceDataState } from '../../store/invoice/invoiceAtom'
-import { quickchallanDataState } from '../../store/quickchallan/quickChallanAtom'
-import { categoryDataState } from '../../store/category/category'
+import {
+  userAtom,
+  productsDataState,
+  suppliersDataState,
+  customerDataState,
+  challanDataState,
+  invoiceDataState,
+  quickchallanDataState,
+  categoryDataState
+} from '../../store'
 import { Link } from 'react-router-dom'
 
 const Home = () => {

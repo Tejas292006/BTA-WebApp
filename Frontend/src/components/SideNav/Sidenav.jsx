@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react'
 import Header from '../Header/Header'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { darkmodeAtom } from '../../store/darkmode/darkAtom';
-import { userAtom } from '../../store/user/userAtom';
+import { darkmodeAtom } from '../../store';
+import { userAtom } from '../../store';
 import { FaUserAlt } from "react-icons/fa";
 // Component for individual menu item
 const MenuItem = ({ icon, title, classNames, href }) => (

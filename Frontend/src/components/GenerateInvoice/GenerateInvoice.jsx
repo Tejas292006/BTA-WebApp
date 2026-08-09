@@ -41,21 +41,21 @@ import { snapshot_UNSTABLE, RecoilRoot } from "recoil";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { globalLoaderAtom } from "../../store/GlobalLoader/globalLoaderAtom";
+import { globalLoaderAtom } from '../../store';
 import {
   Createinvoice,
   Deleteinvoice,
   Updateinvoice,
-} from "../../apis/invoice";
-import { invoiceDataState } from "../../store/invoice/invoiceAtom";
-import { customerDataState } from "../../store/customer/customerAtom";
-import { suppliersDataState } from "../../store/supplier/supplierAtom";
-import { challanDataState } from "../../store/challan/challan";
-import { quickchallanDataState } from "../../store/quickchallan/quickChallanAtom";
-import { UpdateProductsDue, UpdatechallanProducts } from "../../apis/challan";
-import { productsDataState } from "../../store/product/productAtom";
-import { UpdateQuickChallanProducts, UpdateQuickProductsDue } from "../../apis/quickChallan";
-import { cutDataState } from "../../store/cut/cutAtom";
+} from '../../api';
+import { invoiceDataState } from '../../store';
+import { customerDataState } from '../../store';
+import { suppliersDataState } from '../../store';
+import { challanDataState } from '../../store';
+import { quickchallanDataState } from '../../store';
+import { UpdateProductsDue, UpdatechallanProducts } from '../../api';
+import { productsDataState } from '../../store';
+import { UpdateQuickChallanProducts, UpdateQuickProductsDue } from '../../api';
+import { cutDataState } from '../../store';
 
 const GenerateInvoice = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();

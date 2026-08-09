@@ -5,10 +5,10 @@ import { useFormik } from 'formik'
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, } from "recoil"
-import { globalLoaderAtom } from '../../store/GlobalLoader/globalLoaderAtom';
-import { feeltypeDataState } from '../../store/feeltype/feeltypeAtom';
-import { Createfeeltype, Deletefeeltype, Updatefeeltype } from '../../apis/feeltype';
-import { categoryDataState } from '../../store/category/category';
+import { globalLoaderAtom } from '../../store';
+import { feeltypeDataState } from '../../store';
+import { Createfeeltype, Deletefeeltype, Updatefeeltype } from '../../api';
+import { categoryDataState } from '../../store';
 
 
 const FeelType = () => {

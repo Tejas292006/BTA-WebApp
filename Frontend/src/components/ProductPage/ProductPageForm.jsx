@@ -6,21 +6,21 @@ import { toast } from 'react-hot-toast';
 import AutoComplete from '../Autocomplete/AutoComplete';
 import { useFormik } from 'formik';
 import * as z from 'zod';
-import { CreateProduct, UpdateProduct, UploadImage } from '../../apis/product';
+import { CreateProduct, UpdateProduct, UploadImage } from '../../api';
 // import Arrowsvg from "../../assets/arrow.svg"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
-import { suppliersDataState } from "../../store/supplier/supplierAtom"
-import { categoryDataState } from "../../store/category/category"
-import { qualityDataState } from "../../store/quality/qualityAtom"
-import { designDataState } from "../../store/design/designAtom"
-import { feeltypeDataState } from "../../store/feeltype/feeltypeAtom"
-import { finishtypeDataState } from "../../store/finishtype/finishtypeAtom"
-import { weaveDataState } from "../../store/weave/weaveAtom"
-import { widthDataState } from "../../store/width/widthAtom"
-import { productsDataState } from '../../store/product/productAtom';
-import { globalLoaderAtom } from '../../store/GlobalLoader/globalLoaderAtom';
-import { unitDataState } from '../../store/unit/unitAtom';
-import { attributeValueDataState } from '../../store/attributevalue/attributevalueAtom';
+import { suppliersDataState } from '../../store'
+import { categoryDataState } from '../../store'
+import { qualityDataState } from '../../store'
+import { designDataState } from '../../store'
+import { feeltypeDataState } from '../../store'
+import { finishtypeDataState } from '../../store'
+import { weaveDataState } from '../../store'
+import { widthDataState } from '../../store'
+import { productsDataState } from '../../store';
+import { globalLoaderAtom } from '../../store';
+import { unitDataState } from '../../store';
+import { attributeValueDataState } from '../../store';
 
 const ProductPageForm = () => {
     const params = useParams();

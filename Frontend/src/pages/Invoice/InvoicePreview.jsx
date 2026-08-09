@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { GetinvoiceDataByID } from '../../apis/invoice';
+import { GetinvoiceDataByID } from '../../api';
 // import { message } from 'antd';
 // import { BiDownload } from 'react-icons/bi';
 // import { BsCurrencyRupee } from 'react-icons/bs';

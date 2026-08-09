@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 import DataTable from '../DataTable/DataTable';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { productsDataState } from '../../store/product/productAtom';
-import { DeleteProduct, GetAllProducts } from '../../apis/product';
+import { productsDataState } from '../../store';
+import { DeleteProduct, GetAllProducts } from '../../api';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import { globalLoaderAtom } from '../../store/GlobalLoader/globalLoaderAtom';
+import { globalLoaderAtom } from '../../store';
 
 const ProductPage = () => {
 

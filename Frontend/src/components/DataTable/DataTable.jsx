@@ -21,7 +21,7 @@ import { UilAngleDown, UilPlus, UilEllipsisV } from '@iconscout/react-unicons'
 import { useNavigate } from "react-router-dom";
 import { capitalize } from "../../utils/capitalize";
 import ViewArea from "../View Area/ViewArea";
-import { productsDataState } from "../../store/product/productAtom";
+import { productsDataState } from '../../store';
 import { useRecoilValue } from "recoil";
 
 const statusColorMap = {

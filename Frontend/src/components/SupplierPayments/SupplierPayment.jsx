@@ -42,29 +42,29 @@ import { snapshot_UNSTABLE, RecoilRoot } from "recoil";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { globalLoaderAtom } from "../../store/GlobalLoader/globalLoaderAtom.jsx";
+import { globalLoaderAtom } from '../../store';
 import {
     Createsupplierpayment,
     Deletesupplierpayment,
     Updatesupplierpayment,
-} from "../../apis/supplierpayment.js";
-import { invoiceDataState } from "../../store/invoice/invoiceAtom.jsx";
-import { customerDataState } from "../../store/customer/customerAtom.jsx";
-import { suppliersDataState } from "../../store/supplier/supplierAtom.jsx";
-import { challanDataState } from "../../store/challan/challan.jsx";
-import { quickchallanDataState } from "../../store/quickchallan/quickChallanAtom.jsx";
-import { UpdateProductsDue, UpdatechallanProducts } from "../../apis/challan.js";
-import { productsDataState } from "../../store/product/productAtom.jsx";
-import { UpdateQuickChallanProducts, UpdateQuickProductsDue } from "../../apis/quickChallan.js";
-import { cutDataState } from "../../store/cut/cutAtom.jsx";
+} from '../../api';
+import { invoiceDataState } from '../../store';
+import { customerDataState } from '../../store';
+import { suppliersDataState } from '../../store';
+import { challanDataState } from '../../store';
+import { quickchallanDataState } from '../../store';
+import { UpdateProductsDue, UpdatechallanProducts } from '../../api';
+import { productsDataState } from '../../store';
+import { UpdateQuickChallanProducts, UpdateQuickProductsDue } from '../../api';
+import { cutDataState } from '../../store';
 import DataTableModel from "../DataTableModel/DataTableModel.jsx";
 // import Adjustment from "./Adjustment";
 // import NewRefrence from "./NewReferenceTable";
 import NewReferenceTable from "./NewReferenceTable.jsx";
-import { paymentModeState } from "../../store/paymentmode/paymentModeAtom.jsx";
+import { paymentModeState } from '../../store';
 import axios from "axios";
-import { supplierpaymentDataState } from "../../store/supplierpayments/supplierPaymentsAtom.jsx";
-// import { Createpayment } from "../../apis/payment";
+import { supplierpaymentDataState } from '../../store';
+// import { Createpayment } from '../../api';
 
 const SupplierPayment = () => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();

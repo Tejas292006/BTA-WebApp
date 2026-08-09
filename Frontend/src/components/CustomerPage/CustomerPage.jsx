@@ -5,10 +5,10 @@ import { useFormik } from 'formik'
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState,} from "recoil"
-import { globalLoaderAtom } from '../../store/GlobalLoader/globalLoaderAtom';
-import { customerDataState } from '../../store/customer/customerAtom';
-import { Createcustomer, Deletecustomer, Updatecustomer } from '../../apis/customer';
-import { categoryDataState } from '../../store/category/category';
+import { globalLoaderAtom } from '../../store';
+import { customerDataState } from '../../store';
+import { Createcustomer, Deletecustomer, Updatecustomer } from '../../api';
+import { categoryDataState } from '../../store';
 
 
 const CustomerPage = () => {

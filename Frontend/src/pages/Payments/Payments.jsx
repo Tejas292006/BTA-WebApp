@@ -4,8 +4,8 @@ import { UilRuler,UilCube,UilArrowsHAlt , UilPalette, UilSlack, UilLightbulbAlt,
 import { useRecoilValue, waitForAll } from 'recoil';
 import CustomerPayment from '../../components/CustomerPayments/CustomerPayment';
 import SupplierPayment from '../../components/SupplierPayments/SupplierPayment';
-import { supplierpaymentDataState } from '../../store/supplierpayments/supplierPaymentsAtom';
-import { customerpaymentDataState } from '../../store/customerpayments/customerPaymentsAtom';
+import { supplierpaymentDataState } from '../../store';
+import { customerpaymentDataState } from '../../store';
 
 const Payments = () => {
 

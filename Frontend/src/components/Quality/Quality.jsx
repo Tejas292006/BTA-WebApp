@@ -5,10 +5,10 @@ import { useFormik } from 'formik'
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, } from "recoil"
-import { globalLoaderAtom } from '../../store/GlobalLoader/globalLoaderAtom';
-import { qualityDataState } from '../../store/quality/qualityAtom';
-import { Createquality, Deletequality, Updatequality } from '../../apis/quality';
-import { categoryDataState } from '../../store/category/category';
+import { globalLoaderAtom } from '../../store';
+import { qualityDataState } from '../../store';
+import { Createquality, Deletequality, Updatequality } from '../../api';
+import { categoryDataState } from '../../store';
 
 
 const Quality = () => {

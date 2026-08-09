@@ -1,10 +1,10 @@
 import './Header.css'
 import React, { useRef, useState } from 'react'
-import { userAtom } from '../../store/user/userAtom';
+import { userAtom } from '../../store';
 import { useRecoilState } from 'recoil';
 import { useFormik } from 'formik'
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, RadioGroup, Radio, Input } from "@nextui-org/react";
-import { updateUser, UploadProfileImage } from '../../apis/user';
+import { updateUser, UploadProfileImage } from '../../api';
 import toast from 'react-hot-toast';
 
 const Header = ({ toggleSidebar }) => {

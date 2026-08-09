@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import DataTableModel from '../DataTableModel/DataTableModel';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, RadioGroup, Radio } from "@nextui-org/react";
 import { useFormik } from 'formik'
-import { Createsupplier, Deletesupplier, Updatesupplier } from '../../apis/supllier';
+import { Createsupplier, Deletesupplier, Updatesupplier } from '../../api';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 import { useRecoilState, useRecoilValue } from "recoil"
-import { suppliersDataState } from "../../store/supplier/supplierAtom"
-import { globalLoaderAtom } from '../../store/GlobalLoader/globalLoaderAtom';
+import { suppliersDataState } from '../../store'
+import { globalLoaderAtom } from '../../store';
 
 const Suppliers = () => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();

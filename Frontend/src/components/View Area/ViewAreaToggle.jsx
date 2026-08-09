@@ -2,11 +2,11 @@ import React from 'react'
 import ViewArea from './ViewArea'
 import { useDisclosure } from '@nextui-org/react'
 import { useRecoilValue } from 'recoil';
-import { categoryDataState } from '../../store/category/category';
-import { unitDataState } from '../../store/unit/unitAtom';
-import { suppliersDataState } from '../../store/supplier/supplierAtom';
-import { attributeDataState } from '../../store/attribute/attributeAtom';
-import { attributeValueDataState } from '../../store/attributevalue/attributevalueAtom';
+import { categoryDataState } from '../../store';
+import { unitDataState } from '../../store';
+import { suppliersDataState } from '../../store';
+import { attributeDataState } from '../../store';
+import { attributeValueDataState } from '../../store';
 
 const ViewAreaToggle = ({ section, id ,isOpen, onOpenChange, onClose }) => {
     

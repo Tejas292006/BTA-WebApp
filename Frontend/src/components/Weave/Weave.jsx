@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react'
 import DataTableModel from '../DataTableModel/DataTableModel';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, RadioGroup, Radio } from "@nextui-org/react";
 import { useFormik } from 'formik'
-import { Createweave, Deleteweave, Updateweave } from '../../apis/weave';
+import { Createweave, Deleteweave, Updateweave } from '../../api';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from "recoil"
-import { weaveDataState } from "../../store/weave/weaveAtom"
-import { categoryDataState } from '../../store/category/category';
+import { weaveDataState } from '../../store'
+import { categoryDataState } from '../../store';
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
-import { globalLoaderAtom } from '../../store/GlobalLoader/globalLoaderAtom';
+import { globalLoaderAtom } from '../../store';
 
 const Weave = () => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();

@@ -1,12 +1,12 @@
 import React from 'react'
 import { Tabs, Tab, Chip } from "@nextui-org/react";
-import { productsDataState } from '../../store/product/productAtom';
+import { productsDataState } from '../../store';
 import { useRecoilValue, waitForAll } from 'recoil';
 
 import { FaUserAlt } from "react-icons/fa";
 import CustomerPage from '../../components/CustomerPage/CustomerPage';
-import { customerDataState } from '../../store/customer/customerAtom';
-import { transportDataState } from '../../store/transport/transportAtom';
+import { customerDataState } from '../../store';
+import { transportDataState } from '../../store';
 import Transport from '../../components/Transport/Transport';
 import { FaTruckFast } from "react-icons/fa6";
 

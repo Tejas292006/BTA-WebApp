@@ -2,22 +2,22 @@ import React, { useEffect, useState } from 'react'
 import DataTableModel from '../../components/DataTableModel/DataTableModel';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, RadioGroup, Radio, Tab, Tabs, CardBody, Card, Input, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Autocomplete, AutocompleteItem, Textarea, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Chip, Spinner } from "@nextui-org/react";
 import { useFormik } from 'formik'
-import { Createchallan, Deletechallan, Updatechallan } from '../../apis/challan';
+import { Createchallan, Deletechallan, Updatechallan, UploadImageChallan } from '../../api';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, waitForAll } from "recoil"
-import { globalLoaderAtom } from '../../store/GlobalLoader/globalLoaderAtom';
-import { challanDataState } from '../../store/challan/challan';
-import { productsDataState } from '../../store/product/productAtom';
-import { cutDataState } from '../../store/cut/cutAtom';
-import { suppliersDataState } from '../../store/supplier/supplierAtom';
+import {
+  globalLoaderAtom,
+  challanDataState,
+  productsDataState,
+  cutDataState,
+  suppliersDataState,
+  customerDataState,
+  attributeDataState,
+  attributeValueDataState
+} from '../../store';
 import AutoComplete from '../../components/Autocomplete/AutoComplete';
-import { customerDataState } from '../../store/customer/customerAtom';
 import { IndianRupee } from 'lucide-react'
-import { UploadImageChallan } from '../../apis/product';
-
-import { attributeDataState } from '../../store/attribute/attributeAtom';
-import { attributeValueDataState } from '../../store/attributevalue/attributevalueAtom';
 
 import FillterTableData from '../../components/FillterDataTable/FillterTableData';
 

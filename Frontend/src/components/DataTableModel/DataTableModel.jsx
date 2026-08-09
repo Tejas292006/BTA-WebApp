@@ -20,12 +20,12 @@ import {
 import { UilAngleDown, UilPlus, UilEllipsisV } from '@iconscout/react-unicons'
 import { useNavigate } from "react-router-dom";
 import { capitalize } from "../../utils/capitalize";
-import { suppliersDataState } from "../../store/supplier/supplierAtom";
+import { suppliersDataState } from '../../store';
 import { useRecoilState } from "recoil";
-import { customerDataState } from "../../store/customer/customerAtom";
+import { customerDataState } from '../../store';
 
 import ViewAreaToggle from "../View Area/ViewAreaToggle";
-import { attributeDataState } from "../../store/attribute/attributeAtom";
+import { attributeDataState } from '../../store';
 
 
 

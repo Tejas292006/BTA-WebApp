@@ -1,7 +1,7 @@
 import React from "react";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue, Spinner } from "@nextui-org/react";
 import { useRecoilState } from "recoil";
-import { attributeDataState } from "../../store/attribute/attributeAtom";
+import { attributeDataState } from '../../store';
 
 
 

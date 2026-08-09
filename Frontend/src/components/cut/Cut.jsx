@@ -5,10 +5,10 @@ import { useFormik } from 'formik'
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, } from "recoil"
-import { globalLoaderAtom } from '../../store/GlobalLoader/globalLoaderAtom';
-import { cutDataState } from '../../store/cut/cutAtom';
-import { Createcut, Deletecut, Updatecut } from '../../apis/cut';
-import { categoryDataState } from '../../store/category/category';
+import { globalLoaderAtom } from '../../store';
+import { cutDataState } from '../../store';
+import { Createcut, Deletecut, Updatecut } from '../../api';
+import { categoryDataState } from '../../store';
 
 
 const Cut = () => {
