@@ -5,7 +5,7 @@ export const loginUser = async (payload) => {
     const response = await apiClient.post("/api/login", payload);
     return response.data;
   } catch (error) {
-    return error.message;
+    return { success: false, message: error.response?.data?.message || error.message };
   }
 };
 
@@ -14,7 +14,7 @@ export const GetCurrentUser = async () => {
     const response = await apiClient.get("/api/get-current-user");
     return response.data;
   } catch (error) {
-    return error.message;
+    return { success: false, message: error.response?.data?.message || error.message };
   }
 };
 

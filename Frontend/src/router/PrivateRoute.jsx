@@ -13,43 +13,40 @@ const PrivateRoute = ({ children }) => {
   const validateToken = async () => {
     try {
       const response = await GetCurrentUser();
-      if (response.success) {
+      if (response && response.success && response.data) {
         setUser(response.data);
       } else {
         localStorage.removeItem("token");
+        setUser(null);
         navigate("/login");
-        if (response.message !== "jwt expired") {
-          console.log(response.message);
-        }
       }
     } catch (error) {
       localStorage.removeItem("token");
+      setUser(null);
       navigate("/login");
-      console.log(error.message);
     }
   };
 
   useEffect(() => {
-    if (user) return;
-    if (localStorage.getItem("token")) {
-      validateToken();
-    } else {
-      toast.error("You are unauthorised to use this Website, Login to proceed");
+    const token = localStorage.getItem("token");
+    if (!token || token === "undefined" || token === "null") {
+      localStorage.removeItem("token");
+      setUser(null);
       navigate("/login");
+    } else if (!user) {
+      validateToken();
     }
-  }, []);
+  }, [user]);
 
-  return (
-    <>
-      {user ? (
-        <div>{children}</div>
-      ) : (
-        <div className="fixed backdrop-blur-sm z-[9999999] h-screen w-screen flex justify-center items-center">
-          <Spinner size="md" color="current" />
-        </div>
-      )}
-    </>
-  );
+  if (!user) {
+    return (
+      <div className="fixed inset-0 backdrop-blur-sm z-[9999999] h-screen w-screen flex justify-center items-center bg-slate-900/50">
+        <Spinner size="lg" color="primary" label="Verifying authentication..." />
+      </div>
+    );
+  }
+
+  return children;
 };
 
 export default PrivateRoute;

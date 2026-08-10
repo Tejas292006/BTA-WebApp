@@ -6,8 +6,8 @@ import { NextUIProvider } from '@nextui-org/react'
 import {
   RecoilRoot,
 } from 'recoil';
-import Loader from './components/Loader/Loader.jsx'
-import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary.jsx'
+import Loader from './components/Loader.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
  

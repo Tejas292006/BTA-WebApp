@@ -7,8 +7,19 @@ const createMasterDataSelector = (key, url, dataProp) =>
     get: async () => {
       try {
         const res = await apiClient.get(url);
-        return dataProp ? res.data[dataProp] : res.data;
-      } catch {
+        if (!res.data) return [];
+        if (dataProp && res.data[dataProp] !== undefined) return res.data[dataProp];
+        if (typeof res.data === "object") {
+          const matchedKey = Object.keys(res.data).find(
+            (k) => k.toLowerCase() === (dataProp || "").toLowerCase()
+          );
+          if (matchedKey && res.data[matchedKey] !== undefined) {
+            return res.data[matchedKey];
+          }
+        }
+        return Array.isArray(res.data) ? res.data : [];
+      } catch (error) {
+        console.error(`Error in selector ${key}:`, error);
         return [];
       }
     },
@@ -21,7 +32,7 @@ export const attributeDataState = atom({
 
 export const attributeValueDataState = atom({
   key: "attributeValueDataState",
-  default: createMasterDataSelector("attributeValueSelector", "/api/attributeValue/get-all-attributevalue", "attributevalues"),
+  default: createMasterDataSelector("attributeValueSelector", "/api/attributeValue/get-all-attributevalue", "attributeValues"),
 });
 
 export const categoryDataState = atom({
