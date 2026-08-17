@@ -9,6 +9,7 @@ import { globalLoaderAtom } from '../store';
 import { finishtypeDataState } from '../store';
 import { Createfinishtype, Deletefinishtype, Updatefinishtype } from '../api';
 import { categoryDataState } from '../store';
+import apiClient from '../api/client';
 
 
 const Finishtype = () => {
@@ -37,7 +38,7 @@ const Finishtype = () => {
         { name: "Active", uid: "false" },
     ];
 
-    const INITIAL_VISIBLE_COLUMNS = ["name", "isNameNumerical", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["id", "name", "ref", "isNameNumerical", "actions"];
 
     const [isLoading, setIsLoading] = useRecoilState(globalLoaderAtom);
 
@@ -197,6 +198,18 @@ const Finishtype = () => {
         setrefcat('')
 
     }
+
+    const refreshData = async () => {
+        try {
+            const res = await apiClient.get('/api/finishtype/get-all-finishtype');
+            if (res.data && res.data.finishtypes) {
+                setfinishtypeData(res.data.finishtypes);
+            }
+        } catch (error) {
+            console.error("Error refreshing finishtypes:", error);
+        }
+    };
+
     return (
         <>
             <div className="flex flex-col gap-2">
@@ -206,6 +219,11 @@ const Finishtype = () => {
                     size={"xl"}
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
+                        if (!newState) {
+                            setUpdateId(null);
+                            formik.resetForm();
+                            setrefcat('');
+                        }
                     }}
                 >
                     <ModalContent>
@@ -314,7 +332,6 @@ const Finishtype = () => {
                                     <Button
                                         color="danger" variant="light"
                                         onPress={onClose}
-                                        onClick={setUpdate}
                                     >
                                         Close
                                     </Button>
@@ -333,7 +350,7 @@ const Finishtype = () => {
                     </ModalContent>
                 </Modal>
             </div>
-            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={finishtypeData} onOpen={onOpen} section={'finishtype'} />
+            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={finishtypeData} onOpen={onOpen} section={'finishtype'} onRefresh={refreshData} />
         </>
     )
 }

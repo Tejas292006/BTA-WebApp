@@ -9,6 +9,7 @@ import { globalLoaderAtom } from '../store';
 import { widthDataState } from '../store';
 import { Createwidth, Deletewidth, Updatewidth } from '../api';
 import { categoryDataState } from '../store';
+import apiClient from '../api/client';
 
 
 const Width = () => {
@@ -37,7 +38,7 @@ const Width = () => {
         { name: "Active", uid: "false" },
     ];
 
-    const INITIAL_VISIBLE_COLUMNS = ["name", "isNameNumerical", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["id", "name", "ref", "isNameNumerical", "actions"];
 
     const [isLoading, setIsLoading] = useRecoilState(globalLoaderAtom);
 
@@ -197,6 +198,18 @@ const Width = () => {
         setrefcat('')
 
     }
+
+    const refreshData = async () => {
+        try {
+            const res = await apiClient.get('/api/width/get-all-width');
+            if (res.data && res.data.widths) {
+                setwidthData(res.data.widths);
+            }
+        } catch (error) {
+            console.error("Error refreshing widths:", error);
+        }
+    };
+
     return (
         <>
             <div className="flex flex-col gap-2">
@@ -206,6 +219,11 @@ const Width = () => {
                     size={"xl"}
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
+                        if (!newState) {
+                            setUpdateId(null);
+                            formik.resetForm();
+                            setrefcat('');
+                        }
                     }}
                 >
                     <ModalContent>
@@ -314,7 +332,6 @@ const Width = () => {
                                     <Button
                                         color="danger" variant="light"
                                         onPress={onClose}
-                                        onClick={setUpdate}
                                     >
                                         Close
                                     </Button>
@@ -333,7 +350,7 @@ const Width = () => {
                     </ModalContent>
                 </Modal>
             </div>
-            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={widthData} onOpen={onOpen} section={'width'} />
+            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={widthData} onOpen={onOpen} section={'width'} onRefresh={refreshData} />
         </>
     )
 }

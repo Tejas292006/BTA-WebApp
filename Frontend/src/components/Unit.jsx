@@ -9,6 +9,7 @@ import { useRecoilState, useRecoilValue } from "recoil"
 import { globalLoaderAtom } from '../store';
 import { unitDataState } from '../store';
 import { CreateUnit, Deleteunit, Updateunit } from '../api';
+import apiClient from '../api/client';
 
 const Unit = () => {
 
@@ -40,7 +41,7 @@ const Unit = () => {
         { name: "Active", uid: "false" },
     ];
 
-    const INITIAL_VISIBLE_COLUMNS = ["name", "verified", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["id", "name", "verified", "actions"];
 
     const [isLoading, setIsLoading] = useRecoilState(globalLoaderAtom);
     const [updated, setUpdated] = useState(false)
@@ -199,6 +200,18 @@ const Unit = () => {
         // setrefcat('')
 
     }
+
+    const refreshData = async () => {
+        try {
+            const res = await apiClient.get('/api/unit/get-all-unit');
+            if (res.data && res.data.units) {
+                setunitData(res.data.units);
+            }
+        } catch (error) {
+            console.error("Error refreshing units:", error);
+        }
+    };
+
     return (
         <>
             <div className="flex flex-col gap-2">
@@ -208,6 +221,10 @@ const Unit = () => {
                     size={"xl"}
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
+                        if (!newState) {
+                            setUpdateId(null);
+                            formik.resetForm();
+                        }
                     }}
                 >
                     <ModalContent>
@@ -234,7 +251,6 @@ const Unit = () => {
                                     <Button
                                         color="danger" variant="light"
                                         onPress={onClose}
-                                        onClick={setUpdate}
                                     >
                                         Close
                                     </Button>
@@ -253,7 +269,7 @@ const Unit = () => {
                     </ModalContent>
                 </Modal>
             </div>
-            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={unitData} onOpen={onOpen} section={'unit'} />
+            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={unitData} onOpen={onOpen} section={'unit'} onRefresh={refreshData} />
         </>
     )
 }

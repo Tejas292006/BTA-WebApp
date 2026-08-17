@@ -10,7 +10,7 @@ router.post("/create-quality", async (req, res) => {
         const quality = await prisma.quality.create({
             data: { name, categoryId: categoryId || null, verified: verified ?? false },
         });
-        res.status(201).json({ message: "Created Successfully", success: true, quality });
+        res.status(201).json({ message: "Created Successfully", success: true, quality, qualityDoc: quality });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
@@ -47,7 +47,7 @@ router.put("/update-quality/:id", async (req, res) => {
             where: { id: req.params.id },
             data: { name, categoryId: categoryId || null, verified },
         });
-        res.status(200).json({ success: true, message: "Quality updated successfully!", quality });
+        res.status(200).json({ success: true, message: "Quality updated successfully!", quality, qualityDoc: quality });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }

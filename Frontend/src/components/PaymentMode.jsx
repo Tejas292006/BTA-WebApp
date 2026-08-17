@@ -10,6 +10,7 @@ import { globalLoaderAtom } from '../store';
 
 import { Createpaymentmode, Deletepaymentmode, Updatepaymentmode } from '../api';
 import { paymentModeState } from '../store';
+import apiClient from '../api/client';
 
 const PaymentMode = () => {
 
@@ -41,7 +42,7 @@ const PaymentMode = () => {
         { name: "Active", uid: "false" },
     ];
 
-    const INITIAL_VISIBLE_COLUMNS = ["name", "verified", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["id", "name", "verified", "actions"];
 
     const [isLoading, setIsLoading] = useRecoilState(globalLoaderAtom);
     const [updated, setUpdated] = useState(false)
@@ -199,6 +200,18 @@ const PaymentMode = () => {
         // setrefcat('')
 
     }
+
+    const refreshData = async () => {
+        try {
+            const res = await apiClient.get('/api/paymentmode/get-all-paymentmode');
+            if (res.data && res.data.paymentmodes) {
+                setPaymentMode(res.data.paymentmodes);
+            }
+        } catch (error) {
+            console.error("Error refreshing payment modes:", error);
+        }
+    };
+
     return (
         <>
             <div className="flex flex-col gap-2">
@@ -208,6 +221,10 @@ const PaymentMode = () => {
                     size={"xl"}
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
+                        if (!newState) {
+                            setUpdateId(null);
+                            formik.resetForm();
+                        }
                     }}
                 >
                     <ModalContent>
@@ -234,7 +251,6 @@ const PaymentMode = () => {
                                     <Button
                                         color="danger" variant="light"
                                         onPress={onClose}
-                                        onClick={setUpdate}
                                     >
                                         Close
                                     </Button>
@@ -253,7 +269,7 @@ const PaymentMode = () => {
                     </ModalContent>
                 </Modal>
             </div>
-            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={paymentMode} onOpen={onOpen} section={'paymentmode'} />
+            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={paymentMode} onOpen={onOpen} section={'paymentmode'} onRefresh={refreshData} />
         </>
     )
 }

@@ -13,7 +13,7 @@ router.post("/create-attribute", async (req, res) => {
         const attribute = await prisma.attribute.create({
             data: { name: name.trim(), verified: verified ?? false },
         });
-        res.status(201).json({ message: "Created Successfully", success: true, attribute });
+        res.status(201).json({ message: "Created Successfully", success: true, attribute, attributeDoc: attribute });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
@@ -47,7 +47,7 @@ router.put("/update-attribute/:id", async (req, res) => {
             where: { id: req.params.id },
             data: { name, verified },
         });
-        res.status(200).json({ success: true, message: "Attribute updated successfully!", attribute });
+        res.status(200).json({ success: true, message: "Attribute updated successfully!", attribute, attributeDoc: attribute });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }

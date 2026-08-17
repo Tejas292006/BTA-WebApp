@@ -26,6 +26,7 @@ import {
 import { categoryDataState } from '../store';
 import { attributeDataState } from '../store';
 import { attributeValueDataState } from '../store';
+import apiClient from '../api/client';
 
 
 const AttributeValue = () => {
@@ -61,7 +62,7 @@ const AttributeValue = () => {
     { name: "Active", uid: "false" },
   ];
 
-  const INITIAL_VISIBLE_COLUMNS = ["id", "attributeref", "actions"];
+  const INITIAL_VISIBLE_COLUMNS = ["id", "attributeref", "ref", "isNameNumerical", "actions"];
 
   const [isLoading, setIsLoading] = useRecoilState(globalLoaderAtom);
   // Function to add new category input
@@ -258,6 +259,18 @@ const AttributeValue = () => {
     ]);
     setrefattName('');
   };
+
+  const refreshData = async () => {
+    try {
+      const res = await apiClient.get('/api/attributeValue/get-all-attributevalue');
+      if (res.data && res.data.attributeValues) {
+        setattributeValueData(res.data.attributeValues);
+      }
+    } catch (error) {
+      console.error("Error refreshing attribute values:", error);
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col gap-2">
@@ -267,6 +280,18 @@ const AttributeValue = () => {
           size={"xl"}
           onOpenChange={(newState) => {
             onOpenChange(newState);
+            if (!newState) {
+              setUpdateId(null);
+              setrefatt('');
+              setcategoryAndValueInputs([
+                {
+                  category: "",
+                  attributeValue: "",
+                  isNameNumerical: false
+                },
+              ]);
+              setrefattName('');
+            }
           }}
         >
           <ModalContent>
@@ -545,7 +570,6 @@ const AttributeValue = () => {
                     color="danger"
                     variant="light"
                     onPress={onClose}
-                    onClick={setUpdate}
                   >
                     Close
                   </Button>
@@ -571,6 +595,7 @@ const AttributeValue = () => {
         users={attributeValueData}
         onOpen={onOpen}
         section={"attributeValue"}
+        onRefresh={refreshData}
       />
     </>
   );

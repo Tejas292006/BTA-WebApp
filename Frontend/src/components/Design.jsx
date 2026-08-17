@@ -9,6 +9,7 @@ import { globalLoaderAtom } from '../store';
 import { designDataState } from '../store';
 import { Createdesign, Deletedesign, Updatedesign } from '../api';
 import { categoryDataState } from '../store';
+import apiClient from '../api/client';
 
 
 const Design = () => {
@@ -37,7 +38,7 @@ const Design = () => {
         { name: "Active", uid: "false" },
     ];
 
-    const INITIAL_VISIBLE_COLUMNS = ["name", "isNameNumerical", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["id", "name", "ref", "isNameNumerical", "actions"];
 
     const [isLoading, setIsLoading] = useRecoilState(globalLoaderAtom);
 
@@ -197,6 +198,18 @@ const Design = () => {
         setrefcat('')
 
     }
+
+    const refreshData = async () => {
+        try {
+            const res = await apiClient.get('/api/design/get-all-design');
+            if (res.data && res.data.designs) {
+                setdesignData(res.data.designs);
+            }
+        } catch (error) {
+            console.error("Error refreshing designs:", error);
+        }
+    };
+
     return (
         <>
             <div className="flex flex-col gap-2">
@@ -206,6 +219,11 @@ const Design = () => {
                     size={"xl"}
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
+                        if (!newState) {
+                            setUpdateId(null);
+                            formik.resetForm();
+                            setrefcat('');
+                        }
                     }}
                 >
                     <ModalContent>
@@ -314,7 +332,6 @@ const Design = () => {
                                     <Button
                                         color="danger" variant="light"
                                         onPress={onClose}
-                                        onClick={setUpdate}
                                     >
                                         Close
                                     </Button>
@@ -333,7 +350,7 @@ const Design = () => {
                     </ModalContent>
                 </Modal>
             </div>
-            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={designData} onOpen={onOpen} section={'design'} />
+            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={designData} onOpen={onOpen} section={'design'} onRefresh={refreshData} />
         </>
     )
 }

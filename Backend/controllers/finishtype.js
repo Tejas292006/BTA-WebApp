@@ -10,7 +10,7 @@ router.post("/create-finishtype", async (req, res) => {
         const finishtype = await prisma.finishType.create({
             data: { name, categoryId: categoryId || null, verified: verified ?? false },
         });
-        res.status(201).json({ message: "Created Successfully", success: true, finishtype });
+        res.status(201).json({ message: "Created Successfully", success: true, finishtype, finishtypeDoc: finishtype });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
@@ -47,7 +47,7 @@ router.put("/update-finishtype/:id", async (req, res) => {
             where: { id: req.params.id },
             data: { name, categoryId: categoryId || null, verified },
         });
-        res.status(200).json({ success: true, message: "FinishType updated successfully!", finishtype });
+        res.status(200).json({ success: true, message: "FinishType updated successfully!", finishtype, finishtypeDoc: finishtype });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }

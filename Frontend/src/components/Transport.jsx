@@ -40,7 +40,7 @@ const Transport = () => {
         { name: "Active", uid: "false" },
     ];
 
-    const INITIAL_VISIBLE_COLUMNS = ["name", "verified", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["id", "name", "verified", "actions"];
 
     const [isLoading, setIsLoading] = useRecoilState(globalLoaderAtom);
     const [updated, setUpdated] = useState(false)
@@ -209,6 +209,10 @@ const Transport = () => {
                     size={"xl"}
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
+                        if (!newState) {
+                            setUpdateId(null);
+                            formik.resetForm();
+                        }
                     }}
                 >
                     <ModalContent>
@@ -235,7 +239,6 @@ const Transport = () => {
                                     <Button
                                         color="danger" variant="light"
                                         onPress={onClose}
-                                        onClick={setUpdate}
                                     >
                                         Close
                                     </Button>

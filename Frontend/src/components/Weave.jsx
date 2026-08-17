@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from "recoil"
 import { weaveDataState } from '../store'
 import { categoryDataState } from '../store';
+import apiClient from '../api/client';
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import { globalLoaderAtom } from '../store';
 
@@ -37,7 +38,7 @@ const Weave = () => {
         { name: "Active", uid: "false" },
     ];
 
-    const INITIAL_VISIBLE_COLUMNS = ["name", "verified", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["id", "name", "verified", "actions"];
 
     const [isLoading, setIsLoading] = useRecoilState(globalLoaderAtom);
 
@@ -191,6 +192,17 @@ const Weave = () => {
 
     }
 
+    const refreshData = async () => {
+        try {
+            const res = await apiClient.get('/api/weave/get-all-weave');
+            if (res.data && res.data.weaves) {
+                setWeaveData(res.data.weaves);
+            }
+        } catch (error) {
+            console.error("Error refreshing weaves:", error);
+        }
+    };
+
     return (
         <>
             <div className="flex flex-col gap-2">
@@ -200,9 +212,11 @@ const Weave = () => {
                     size={"xl"}
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
-                        // if (!newState) {
-                        //     formik.setValues({})
-                        // }
+                        if (!newState) {
+                            setUpdateId(null);
+                            formik.resetForm();
+                            setrefcat('');
+                        }
                     }}
                 >
                     <ModalContent>
@@ -309,7 +323,6 @@ const Weave = () => {
                                     <Button
                                         color="danger" variant="light"
                                         onPress={onClose}
-                                        onClick={setUpdate}
                                     >
                                         Close
                                     </Button>
@@ -325,7 +338,7 @@ const Weave = () => {
                     </ModalContent>
                 </Modal>
             </div>
-            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={WeaveData} onOpen={onOpen} section={'weave'} />
+            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={WeaveData} onOpen={onOpen} section={'weave'} onRefresh={refreshData} />
         </>
     )
 }

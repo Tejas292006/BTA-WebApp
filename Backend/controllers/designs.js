@@ -10,7 +10,7 @@ router.post("/create-design", async (req, res) => {
         const design = await prisma.design.create({
             data: { name, categoryId: categoryId || null, verified: verified ?? false },
         });
-        res.status(201).json({ message: "Created Successfully", success: true, design });
+        res.status(201).json({ message: "Created Successfully", success: true, design, designDoc: design });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
@@ -47,7 +47,7 @@ router.put("/update-design/:id", async (req, res) => {
             where: { id: req.params.id },
             data: { name, categoryId: categoryId || null, verified },
         });
-        res.status(200).json({ success: true, message: "Design updated successfully!", design });
+        res.status(200).json({ success: true, message: "Design updated successfully!", design, designDoc: design });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }

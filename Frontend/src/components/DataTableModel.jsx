@@ -17,7 +17,7 @@ import {
     Pagination,
     useDisclosure,
 } from "@nextui-org/react";
-import { UilAngleDown, UilPlus, UilEllipsisV } from '@iconscout/react-unicons'
+import { UilAngleDown, UilPlus, UilEllipsisV, UilSync } from '@iconscout/react-unicons'
 import { useNavigate } from "react-router-dom";
 import { capitalize } from "../utils/capitalize";
 import { suppliersDataState } from '../store';
@@ -37,7 +37,7 @@ const statusColorMap = {
 };
 
 
-export default function DataTableModel({ columns, update, deleteItem, users, statusOptions, visible_columns, section, onOpen, filltername }) {
+export default function DataTableModel({ columns, update, deleteItem, users, statusOptions, visible_columns, section, onOpen, filltername, onRefresh }) {
 
     // console.log(users, "TableData");
     const [filterValue, setFilterValue] = React.useState("");
@@ -180,7 +180,7 @@ export default function DataTableModel({ columns, update, deleteItem, users, sta
             case "ref":
                 return (
                     <div className="flex max-w-max ml-2 items-center ">
-                        <p className="text-bold text-tiny capitalize text-default-800">{user?.ref?.name}</p>
+                        <p className="text-bold text-tiny capitalize text-default-800">{typeof user?.ref === 'object' ? user?.ref?.name : user?.ref || '-'}</p>
                     </div>
                 );
             case "brand":
@@ -306,6 +306,16 @@ export default function DataTableModel({ columns, update, deleteItem, users, sta
                         onValueChange={onSearchChange}
                     />
                     <div className="flex gap-3">
+                        {onRefresh && (
+                            <Button
+                                variant="flat"
+                                className="font-font1"
+                                endContent={<UilSync className="h-5 w-5" />}
+                                onClick={onRefresh}
+                            >
+                                Refresh
+                            </Button>
+                        )}
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
                                 <Button

@@ -10,7 +10,7 @@ router.post("/create-width", async (req, res) => {
         const width = await prisma.width.create({
             data: { name, categoryId: categoryId || null, verified: verified ?? false },
         });
-        res.status(201).json({ message: "Created Successfully", success: true, width });
+        res.status(201).json({ message: "Created Successfully", success: true, width, widthDoc: width });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
@@ -47,7 +47,7 @@ router.put("/update-width/:id", async (req, res) => {
             where: { id: req.params.id },
             data: { name, categoryId: categoryId || null, verified },
         });
-        res.status(200).json({ success: true, message: "Width updated successfully!", width });
+        res.status(200).json({ success: true, message: "Width updated successfully!", width, widthDoc: width });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }

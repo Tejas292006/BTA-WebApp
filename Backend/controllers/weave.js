@@ -10,7 +10,7 @@ router.post("/create-weave", async (req, res) => {
         const weave = await prisma.weave.create({
             data: { name, categoryId: categoryId || null, verified: verified ?? false },
         });
-        res.status(201).json({ message: "Created Successfully", success: true, weave });
+        res.status(201).json({ message: "Created Successfully", success: true, weave, weaveDoc: weave });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
@@ -47,7 +47,7 @@ router.put("/update-weave/:id", async (req, res) => {
             where: { id: req.params.id },
             data: { name, categoryId: categoryId || null, verified },
         });
-        res.status(200).json({ success: true, message: "Weave updated successfully!", weave });
+        res.status(200).json({ success: true, message: "Weave updated successfully!", weave, weaveDoc: weave });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }

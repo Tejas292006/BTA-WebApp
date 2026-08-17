@@ -9,6 +9,7 @@ import { globalLoaderAtom } from '../store';
 import { cutDataState } from '../store';
 import { Createcut, Deletecut, Updatecut } from '../api';
 import { categoryDataState } from '../store';
+import apiClient from '../api/client';
 
 
 const Cut = () => {
@@ -37,7 +38,7 @@ const Cut = () => {
         { name: "Active", uid: "false" },
     ];
 
-    const INITIAL_VISIBLE_COLUMNS = ["name", "isNameNumerical", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["id", "name", "ref", "isNameNumerical", "actions"];
 
     const [isLoading, setIsLoading] = useRecoilState(globalLoaderAtom);
 
@@ -182,6 +183,18 @@ const Cut = () => {
         setrefcat('')
 
     }
+
+    const refreshData = async () => {
+        try {
+            const res = await apiClient.get('/api/cut/get-all-cut');
+            if (res.data && res.data.cuts) {
+                setcutData(res.data.cuts);
+            }
+        } catch (error) {
+            console.error("Error refreshing cuts:", error);
+        }
+    };
+
     return (
         <>
             <div className="flex flex-col gap-2">
@@ -191,6 +204,11 @@ const Cut = () => {
                     size={"xl"}
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
+                        if (!newState) {
+                            setUpdateId(null);
+                            formik.resetForm();
+                            setrefcat('');
+                        }
                     }}
                 >
                     <ModalContent>
@@ -324,7 +342,6 @@ const Cut = () => {
                                     <Button
                                         color="danger" variant="light"
                                         onPress={onClose}
-                                        onClick={setUpdate}
                                     >
                                         Close
                                     </Button>
@@ -343,7 +360,7 @@ const Cut = () => {
                     </ModalContent>
                 </Modal>
             </div>
-            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={cutData} onOpen={onOpen} section={'cut'} />
+            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={cutData} onOpen={onOpen} section={'cut'} onRefresh={refreshData} />
         </>
     )
 }

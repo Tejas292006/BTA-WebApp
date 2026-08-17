@@ -10,7 +10,7 @@ router.post("/create-category", async (req, res) => {
         const category = await prisma.category.create({
             data: { name, verified: verified ?? false },
         });
-        res.status(201).json({ message: "Created Successfully", success: true, category });
+        res.status(201).json({ message: "Created Successfully", success: true, category, categoryDoc: category });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
@@ -48,7 +48,7 @@ router.put("/update-category/:id", async (req, res) => {
             where: { id: req.params.id },
             data: { name, verified },
         });
-        res.status(200).json({ success: true, message: "Category updated successfully!", category });
+        res.status(200).json({ success: true, message: "Category updated successfully!", category, categoryDoc: category });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }

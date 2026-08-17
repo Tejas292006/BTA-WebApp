@@ -9,6 +9,7 @@ import { useRecoilState, useRecoilValue } from "recoil"
 import { globalLoaderAtom } from '../store';
 import { Createattribute, Deleteattribute, Updateattribute } from '../api';
 import { attributeDataState } from '../store';
+import apiClient from '../api/client';
 
 const Attribute = () => {
 
@@ -40,7 +41,7 @@ const Attribute = () => {
         { name: "Active", uid: "false" },
     ];
 
-    const INITIAL_VISIBLE_COLUMNS = ["name", "verified", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["id", "name", "verified", "actions"];
 
     const [isLoading, setIsLoading] = useRecoilState(globalLoaderAtom);
     const [updated, setUpdated] = useState(false)
@@ -183,6 +184,18 @@ const Attribute = () => {
         // setrefcat('')
 
     }
+
+    const refreshData = async () => {
+        try {
+            const res = await apiClient.get('/api/attribute/get-all-attribute');
+            if (res.data && res.data.attributes) {
+                setattributeData(res.data.attributes);
+            }
+        } catch (error) {
+            console.error("Error refreshing attributes:", error);
+        }
+    };
+
     return (
         <>
             <div className="flex flex-col gap-2">
@@ -192,6 +205,10 @@ const Attribute = () => {
                     size={"xl"}
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
+                        if (!newState) {
+                            setUpdateId(null);
+                            formik.resetForm();
+                        }
                     }}
                 >
                     <ModalContent>
@@ -218,7 +235,6 @@ const Attribute = () => {
                                     <Button
                                         color="danger" variant="light"
                                         onPress={onClose}
-                                        onClick={setUpdate}
                                     >
                                         Close
                                     </Button>
@@ -237,7 +253,7 @@ const Attribute = () => {
                     </ModalContent>
                 </Modal>
             </div>
-            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={attributeData} onOpen={onOpen} section={'attribute'} />
+            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={attributeData} onOpen={onOpen} section={'attribute'} onRefresh={refreshData} />
         </>
     )
 }

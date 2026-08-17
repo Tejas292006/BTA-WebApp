@@ -1186,7 +1186,6 @@ const GenerateInvoice = () => {
                     color="danger"
                     variant="light"
                     onPress={onClose}
-                    onClick={setUpdate}
                   >
                     Close
                   </Button>

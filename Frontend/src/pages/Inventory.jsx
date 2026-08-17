@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import './Inventory.css'
 import { Tabs, Tab, Chip } from "@nextui-org/react";
 import { FaCut } from "react-icons/fa";
 import { GrTransaction } from "react-icons/gr";
-import { UilRuler,UilCube,UilArrowsHAlt , UilPalette, UilSlack, UilLightbulbAlt, UilCheckCircle, UilUsersAlt, UilFilter, UilCreateDashboard, } from '@iconscout/react-unicons'
+import { UilRuler,UilCube,UilArrowsHAlt , UilPalette, UilSlack, UilLightbulbAlt, UilCheckCircle, UilUsersAlt, UilFilter, UilCreateDashboard, UilAngleLeft, UilAngleRight } from '@iconscout/react-unicons'
 import ProductPage from '../components/ProductPage';
 import Suppliers from '../components/Suppliers';
 import Categories from '../components/Categories';
@@ -40,6 +40,10 @@ import { paymentModeState } from '../store';
 
 const Inventory = () => {
 
+    const tabsContainerRef = useRef(null);
+    const [showLeftArrow, setShowLeftArrow] = useState(false);
+    const [showRightArrow, setShowRightArrow] = useState(true);
+
     useRecoilValue(waitForAll([
         productsDataState,
         suppliersDataState,
@@ -72,12 +76,53 @@ const Inventory = () => {
     const weaveData = useRecoilValue(weaveDataState);
     const widthData = useRecoilValue(widthDataState);
 
+    const checkScroll = () => {
+        const el = tabsContainerRef.current;
+        if (el) {
+            setShowLeftArrow(el.scrollLeft > 5);
+            setShowRightArrow(el.scrollLeft < el.scrollWidth - el.clientWidth - 5);
+        }
+    };
+
+    useEffect(() => {
+        checkScroll();
+        const el = tabsContainerRef.current;
+        if (el) {
+            el.addEventListener('scroll', checkScroll);
+            window.addEventListener('resize', checkScroll);
+        }
+        return () => {
+            if (el) el.removeEventListener('scroll', checkScroll);
+            window.removeEventListener('resize', checkScroll);
+        };
+    }, []);
+
+    const scrollTabs = (direction) => {
+        const el = tabsContainerRef.current;
+        if (el) {
+            el.scrollBy({ left: direction * 200, behavior: 'smooth' });
+        }
+    };
+
 
 
     return (
         <div className='inventory-main '>
-            <div className="flex w-full flex-col mt-2">
-                <Tabs
+            <div className="flex w-full flex-col mt-2 relative">
+                {showLeftArrow && (
+                    <button
+                        onClick={() => scrollTabs(-1)}
+                        className="absolute left-0 top-0 z-10 h-full px-2 bg-gradient-to-r from-white via-white/80 to-transparent flex items-center"
+                    >
+                        <UilAngleLeft className="h-6 w-6 text-black" />
+                    </button>
+                )}
+                <div
+                    ref={tabsContainerRef}
+                    className="overflow-x-auto scrollbar-hide"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
+                    <Tabs
                     aria-label="Options"
                     color="secondary"
                     variant="underlined"
@@ -271,6 +316,15 @@ const Inventory = () => {
                         <Cut />
                     </Tab>
                 </Tabs>
+                </div>
+                {showRightArrow && (
+                    <button
+                        onClick={() => scrollTabs(1)}
+                        className="absolute right-0 top-0 z-10 h-full px-2 bg-gradient-to-l from-white via-white/80 to-transparent flex items-center"
+                    >
+                        <UilAngleRight className="h-6 w-6 text-black" />
+                    </button>
+                )}
             </div>
         </div>
     )

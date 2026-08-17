@@ -5,6 +5,7 @@ import { useFormik } from 'formik'
 import { Createsupplier, Deletesupplier, Updatesupplier } from '../api';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import apiClient from '../api/client';
 
 import { useRecoilState, useRecoilValue } from "recoil"
 import { suppliersDataState } from '../store'
@@ -192,6 +193,17 @@ const Suppliers = () => {
         formik.resetForm();
     }
 
+    const refreshData = async () => {
+        try {
+            const res = await apiClient.get('/api/supplier/get-all-supplier');
+            if (res.data && res.data.suppliers) {
+                setsupplierData(res.data.suppliers);
+            }
+        } catch (error) {
+            console.error("Error refreshing suppliers:", error);
+        }
+    };
+
 
     console.log(formik.values, "values")
     // console.log("supplier data outside: ", suppliersData)
@@ -258,7 +270,6 @@ const Suppliers = () => {
                                     <Button
                                         color="danger" variant="light"
                                         onPress={onClose}
-                                        onClick={setUpdate}
                                     >
                                         Close
                                     </Button>
@@ -274,7 +285,7 @@ const Suppliers = () => {
                     </ModalContent>
                 </Modal>
             </div>
-            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={supplierData} onOpen={onOpen} section={'supplier'} />
+            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={supplierData} onOpen={onOpen} section={'supplier'} onRefresh={refreshData} />
         </>
     )
 }

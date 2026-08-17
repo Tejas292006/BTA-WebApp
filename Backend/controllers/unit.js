@@ -10,7 +10,7 @@ router.post("/create-unit", async (req, res) => {
         const unit = await prisma.unit.create({
             data: { name, verified: verified ?? false },
         });
-        res.status(201).json({ message: "Created Successfully", success: true, unit });
+        res.status(201).json({ message: "Created Successfully", success: true, unit, unitDoc: unit });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
@@ -44,7 +44,7 @@ router.put("/update-unit/:id", async (req, res) => {
             where: { id: req.params.id },
             data: { name, verified },
         });
-        res.status(200).json({ success: true, message: "Unit updated successfully!", unit });
+        res.status(200).json({ success: true, message: "Unit updated successfully!", unit, unitDoc: unit });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }

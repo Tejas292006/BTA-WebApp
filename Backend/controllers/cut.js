@@ -14,7 +14,7 @@ router.post("/create-cut", async (req, res) => {
                 isNameNumerical: isNameNumerical ?? false,
             },
         });
-        res.status(201).json({ message: "Created Successfully", success: true, cut });
+        res.status(201).json({ message: "Created Successfully", success: true, cut, cutDoc: cut });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
@@ -51,7 +51,7 @@ router.put("/update-cut/:id", async (req, res) => {
             where: { id: req.params.id },
             data: { name, categoryId: categoryId || null, isNameNumerical },
         });
-        res.status(200).json({ success: true, message: "Cut updated successfully!", cut });
+        res.status(200).json({ success: true, message: "Cut updated successfully!", cut, cutDoc: cut });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }

@@ -13,7 +13,7 @@ router.post("/create-paymentmode", async (req, res) => {
         const paymentMode = await prisma.paymentMode.create({
             data: { name: name.trim(), verified: verified ?? false },
         });
-        res.status(201).json({ message: "Created Successfully", success: true, paymentMode });
+        res.status(201).json({ message: "Created Successfully", success: true, paymentMode, paymentmodeDoc: paymentMode });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
@@ -47,7 +47,7 @@ router.put("/update-paymentmode/:id", async (req, res) => {
             where: { id: req.params.id },
             data: { name, verified },
         });
-        res.status(200).json({ success: true, message: "PaymentMode updated successfully!", paymentMode });
+        res.status(200).json({ success: true, message: "PaymentMode updated successfully!", paymentMode, paymentmodeDoc: paymentMode });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }

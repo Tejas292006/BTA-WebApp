@@ -9,6 +9,7 @@ import { globalLoaderAtom } from '../store';
 import { qualityDataState } from '../store';
 import { Createquality, Deletequality, Updatequality } from '../api';
 import { categoryDataState } from '../store';
+import apiClient from '../api/client';
 
 
 const Quality = () => {
@@ -37,7 +38,7 @@ const Quality = () => {
         { name: "Active", uid: "false" },
     ];
 
-    const INITIAL_VISIBLE_COLUMNS = ["name", "isNameNumerical", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["id", "name", "ref", "isNameNumerical", "actions"];
 
     const [isLoading, setIsLoading] = useRecoilState(globalLoaderAtom);
 
@@ -197,6 +198,18 @@ const Quality = () => {
         setrefcat('')
 
     }
+
+    const refreshData = async () => {
+        try {
+            const res = await apiClient.get('/api/quality/get-all-quality');
+            if (res.data && res.data.qualities) {
+                setqualityData(res.data.qualities);
+            }
+        } catch (error) {
+            console.error("Error refreshing qualities:", error);
+        }
+    };
+
     return (
         <>
             <div className="flex flex-col gap-2">
@@ -206,6 +219,11 @@ const Quality = () => {
                     size={"xl"}
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
+                        if (!newState) {
+                            setUpdateId(null);
+                            formik.resetForm();
+                            setrefcat('');
+                        }
                     }}
                 >
                     <ModalContent>
@@ -314,7 +332,6 @@ const Quality = () => {
                                     <Button
                                         color="danger" variant="light"
                                         onPress={onClose}
-                                        onClick={setUpdate}
                                     >
                                         Close
                                     </Button>
@@ -333,7 +350,7 @@ const Quality = () => {
                     </ModalContent>
                 </Modal>
             </div>
-            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={qualityData} onOpen={onOpen} section={'quality'} />
+            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={qualityData} onOpen={onOpen} section={'quality'} onRefresh={refreshData} />
         </>
     )
 }

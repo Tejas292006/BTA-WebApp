@@ -10,7 +10,7 @@ router.post("/create-feeltype", async (req, res) => {
         const feeltype = await prisma.feelType.create({
             data: { name, categoryId: categoryId || null, verified: verified ?? false },
         });
-        res.status(201).json({ message: "Created Successfully", success: true, feeltype });
+        res.status(201).json({ message: "Created Successfully", success: true, feeltype, feeltypeDoc: feeltype });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
@@ -47,7 +47,7 @@ router.put("/update-feeltype/:id", async (req, res) => {
             where: { id: req.params.id },
             data: { name, categoryId: categoryId || null, verified },
         });
-        res.status(200).json({ success: true, message: "FeelType updated successfully!", feeltype });
+        res.status(200).json({ success: true, message: "FeelType updated successfully!", feeltype, feeltypeDoc: feeltype });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }

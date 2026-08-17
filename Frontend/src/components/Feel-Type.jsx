@@ -9,6 +9,7 @@ import { globalLoaderAtom } from '../store';
 import { feeltypeDataState } from '../store';
 import { Createfeeltype, Deletefeeltype, Updatefeeltype } from '../api';
 import { categoryDataState } from '../store';
+import apiClient from '../api/client';
 
 
 const FeelType = () => {
@@ -37,7 +38,7 @@ const FeelType = () => {
         { name: "Active", uid: "false" },
     ];
 
-    const INITIAL_VISIBLE_COLUMNS = ["name", "isNameNumerical", "actions"];
+    const INITIAL_VISIBLE_COLUMNS = ["id", "name", "ref", "isNameNumerical", "actions"];
 
     const [isLoading, setIsLoading] = useRecoilState(globalLoaderAtom);
 
@@ -197,6 +198,18 @@ const FeelType = () => {
         setrefcat('')
 
     }
+
+    const refreshData = async () => {
+        try {
+            const res = await apiClient.get('/api/feeltype/get-all-feeltype');
+            if (res.data && res.data.feeltypes) {
+                setfeeltypeData(res.data.feeltypes);
+            }
+        } catch (error) {
+            console.error("Error refreshing feeltypes:", error);
+        }
+    };
+
     return (
         <>
             <div className="flex flex-col gap-2">
@@ -206,6 +219,11 @@ const FeelType = () => {
                     size={"xl"}
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
+                        if (!newState) {
+                            setUpdateId(null);
+                            formik.resetForm();
+                            setrefcat('');
+                        }
                     }}
                 >
                     <ModalContent>
@@ -314,7 +332,6 @@ const FeelType = () => {
                                     <Button
                                         color="danger" variant="light"
                                         onPress={onClose}
-                                        onClick={setUpdate}
                                     >
                                         Close
                                     </Button>
@@ -333,7 +350,7 @@ const FeelType = () => {
                     </ModalContent>
                 </Modal>
             </div>
-            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={feeltypeData} onOpen={onOpen} section={'feeltype'} />
+            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={feeltypeData} onOpen={onOpen} section={'feeltype'} onRefresh={refreshData} />
         </>
     )
 }
