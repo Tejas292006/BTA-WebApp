@@ -40,9 +40,10 @@ import { paymentModeState } from '../store';
 
 const Inventory = () => {
 
-    const tabsContainerRef = useRef(null);
+    const scrollRef = useRef(null);
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
+    const [activeTab, setActiveTab] = useState("Products");
 
     useRecoilValue(waitForAll([
         productsDataState,
@@ -77,7 +78,7 @@ const Inventory = () => {
     const widthData = useRecoilValue(widthDataState);
 
     const checkScroll = () => {
-        const el = tabsContainerRef.current;
+        const el = scrollRef.current;
         if (el) {
             setShowLeftArrow(el.scrollLeft > 5);
             setShowRightArrow(el.scrollLeft < el.scrollWidth - el.clientWidth - 5);
@@ -86,7 +87,7 @@ const Inventory = () => {
 
     useEffect(() => {
         checkScroll();
-        const el = tabsContainerRef.current;
+        const el = scrollRef.current;
         if (el) {
             el.addEventListener('scroll', checkScroll);
             window.addEventListener('resize', checkScroll);
@@ -98,233 +99,225 @@ const Inventory = () => {
     }, []);
 
     const scrollTabs = (direction) => {
-        const el = tabsContainerRef.current;
+        const el = scrollRef.current;
         if (el) {
-            el.scrollBy({ left: direction * 200, behavior: 'smooth' });
+            el.scrollBy({ left: direction * 250, behavior: 'smooth' });
         }
     };
 
-
+    const tabContent = {
+        Products: <ProductPage />,
+        Suppliers: <Suppliers />,
+        Category: <Categories />,
+        Attributes: <Attribute />,
+        AttributeValues: <AttributeValue />,
+        Unit: <Unit />,
+        PaymentMode: <PaymentMode />,
+        Quality: <Quality />,
+        Design: <Design />,
+        "Finsh-Type": <FinishType />,
+        "Feel-Type": <FeelType />,
+        Weave: <Weave />,
+        Width: <Width />,
+        Cut: <Cut />,
+    };
 
     return (
-        <div className='inventory-main '>
-            <div className="flex w-full flex-col mt-2 relative">
+        <div className='inventory-main'>
+            <div className="w-full mt-2 relative">
                 {showLeftArrow && (
                     <button
                         onClick={() => scrollTabs(-1)}
-                        className="absolute left-0 top-0 z-10 h-full px-2 bg-gradient-to-r from-white via-white/80 to-transparent flex items-center"
+                        className="absolute left-0 top-0 z-20 h-12 w-10 bg-gradient-to-r from-white via-white/90 to-transparent flex items-center justify-start pl-1 cursor-pointer"
                     >
-                        <UilAngleLeft className="h-6 w-6 text-black" />
+                        <UilAngleLeft className="h-6 w-6 text-gray-700" />
                     </button>
                 )}
                 <div
-                    ref={tabsContainerRef}
+                    ref={scrollRef}
                     className="overflow-x-auto scrollbar-hide"
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
                     <Tabs
-                    aria-label="Options"
-                    color="secondary"
-                    variant="underlined"
-                    classNames={{
-                        tabList: "gap-6 w-full ml-3 relative rounded-none p-0 border-b border-divider",
-                        cursor: "w-full bg-[#000]",
-                        tab: "max-w-fit px-0 h-12 font-font1",
-                        tabContent: "group-data-[selected=true]:text-[#000]"
-                    }}
-                >
-                    <Tab
-                        key="Products"
-                        title={
-                            <div className="flex items-center space-x-2 ">
-                                <UilCube />
-                                <span>Products</span>
-                                <Chip size="sm" variant="light">{productsData?.length}</Chip>
-                            </div>
-                        }
-                        className="max-h-max px-5 "
+                        aria-label="Options"
+                        color="secondary"
+                        variant="underlined"
+                        selectedKey={activeTab}
+                        onSelectionChange={setActiveTab}
+                        classNames={{
+                            tabList: "gap-6 w-max ml-3 relative rounded-none p-0 border-b border-divider",
+                            cursor: "w-full bg-[#000]",
+                            tab: "max-w-fit px-0 h-12 font-font1",
+                            tabContent: "group-data-[selected=true]:text-[#000]"
+                        }}
                     >
-                        <ProductPage />
-                    </Tab>
-                    <Tab
-                        key="Suppliers"
-                        title={
-                            <div className="flex items-center space-x-2 ">
-                                <UilUsersAlt />
-                                <span>Suppliers</span>
-                                <Chip size="sm" variant="light">{supplierData?.length}</Chip>
-                            </div>
-                        }
-                        className="max-h-max px-5 "
-                    >
-                        <Suppliers />
-                    </Tab>
-                    <Tab
-                        key="Category"
-                        title={
-                            <div className="flex items-center space-x-2 ">
-                                <UilCreateDashboard />
-                                <span>Categories</span>
-                                <Chip size="sm" variant="light">{categoryData?.length}</Chip>
-                            </div>
-                        }
-                        className="max-h-max px-5 "
-                    >
-                        <Categories />
-                    </Tab>
-                    <Tab
-                        key="Attributes"
-                        title={
-                            <div className="flex items-center space-x-2 ">
-                                <PiTreeStructureBold style={{ fontSize: '23px' }}/>
-                                <span>Attributes</span>
-                                <Chip size="sm" variant="light">{attributeData?.length}</Chip>
-                            </div>
-                        }
-                        className="max-h-max px-5 "
-                    >
-                        <Attribute/>
-                    </Tab>
-                    <Tab
-                        key="AttributeValues"
-                        title={
-                            <div className="flex items-center space-x-2 ">
-                                <TbListTree style={{ fontSize: '23px' }}/>
-                                <span>AttributeValues</span>
-                                <Chip size="sm" variant="light">{attributeValueData?.length}</Chip>
-                            </div>
-                        }
-                        className="max-h-max px-5 "
-                    >
-                        <AttributeValue/>
-                    </Tab>
-                    <Tab
-                        key="Unit"
-                        title={
-                            <div className="flex items-center space-x-2 ">
-                              <UilRuler/>
-                                <span>Unit</span>
-                                <Chip size="sm" variant="light">{unitData?.length}</Chip>
-                            </div>
-                        }
-                        className="max-h-max px-5 "
-                    >
-                        <Unit />
-                    </Tab>
-                    <Tab
-                        key="PaymentMode"
-                        title={
-                            <div className="flex items-center space-x-2 ">
-                            <GrTransaction/>
-                                <span>Payment Mode</span>
-                                <Chip size="sm" variant="light">{paymentModeData?.length}</Chip>
-                            </div>
-                        }
-                        className="max-h-max px-5 "
-                    >
-                        <PaymentMode />
-                    </Tab>
-                    <Tab
-                        key="Quality"
-                        title={
-                            <div className="flex items-center space-x-2 ">
-                                <UilFilter />
-                                <span>Quality</span>
-                                <Chip size="sm" variant="light">{qualityData?.length}</Chip>
-                            </div>
-                        }
-                        className="max-h-max px-5 "
-                    >
-                        <Quality />
-                    </Tab>
-                    <Tab
-                        key="Design"
-                        title={
-                            <div className="flex items-center space-x-2 ">
-                                <UilPalette />
-                                <span>Design</span>
-                                <Chip size="sm" variant="light">{designData?.length}</Chip>
-                            </div>
-                        }
-                        className="max-h-max px-5 "
-                    >
-                        <Design />
-                    </Tab>
-                    <Tab
-                        key="Finsh-Type"
-                        title={
-                            <div className="flex items-center space-x-2 ">
-                                <UilCheckCircle />
-                                <span>Finsh-Type</span>
-                                <Chip size="sm" variant="light">{finishtypeData?.length}</Chip>
-                            </div>
-                        }
-                        className="max-h-max px-5 "
-                    >
-                        <FinishType />
-                    </Tab>
-                    <Tab
-                        key="Feel-Type"
-                        title={
-                            <div className="flex items-center space-x-2 ">
-                                <UilLightbulbAlt />
-                                <span>Feel-Type</span>
-                                <Chip size="sm" variant="light">{feeltypeData?.length}</Chip>
-                            </div>
-                        }
-                        className="max-h-max px-5 "
-                    >
-                        <FeelType />
-                    </Tab>
-                    <Tab
-                        key="Weave"
-                        title={
-                            <div className="flex items-center space-x-2 ">
-                                <UilSlack />
-                                <span>Weave</span>
-                                <Chip size="sm" variant="light">{weaveData?.length}</Chip>
-                            </div>
-                        }
-                        className="max-h-max px-5 "
-                    >
-                        <Weave />
-                    </Tab>
-                    <Tab
-                        key="Width"
-                        title={
-                            <div className="flex items-center space-x-2 ">
-                                <UilArrowsHAlt  />
-                                <span>Width</span>
-                                <Chip size="sm" variant="light">{widthData?.length}</Chip>
-                            </div>
-                        }
-                        className="max-h-max px-5 "
-                    >
-                        <Width />
-                    </Tab>
-                    <Tab
-                        key="Cut"
-                        title={
-                            <div className="flex items-center space-x-2 ">
-                              <FaCut/>
-                                <span>Cut</span>
-                                <Chip size="sm" variant="light">{cutData?.length}</Chip>
-                            </div>
-                        }
-                        className="max-h-max px-5 "
-                    >
-                        <Cut />
-                    </Tab>
-                </Tabs>
+                        <Tab
+                            key="Products"
+                            title={
+                                <div className="flex items-center space-x-2 ">
+                                    <UilCube />
+                                    <span>Products</span>
+                                    <Chip size="sm" variant="light">{productsData?.length}</Chip>
+                                </div>
+                            }
+                            className="max-h-max px-5 "
+                        />
+                        <Tab
+                            key="Suppliers"
+                            title={
+                                <div className="flex items-center space-x-2 ">
+                                    <UilUsersAlt />
+                                    <span>Suppliers</span>
+                                    <Chip size="sm" variant="light">{supplierData?.length}</Chip>
+                                </div>
+                            }
+                            className="max-h-max px-5 "
+                        />
+                        <Tab
+                            key="Category"
+                            title={
+                                <div className="flex items-center space-x-2 ">
+                                    <UilCreateDashboard />
+                                    <span>Categories</span>
+                                    <Chip size="sm" variant="light">{categoryData?.length}</Chip>
+                                </div>
+                            }
+                            className="max-h-max px-5 "
+                        />
+                        <Tab
+                            key="Attributes"
+                            title={
+                                <div className="flex items-center space-x-2 ">
+                                    <PiTreeStructureBold style={{ fontSize: '23px' }}/>
+                                    <span>Attributes</span>
+                                    <Chip size="sm" variant="light">{attributeData?.length}</Chip>
+                                </div>
+                            }
+                            className="max-h-max px-5 "
+                        />
+                        <Tab
+                            key="AttributeValues"
+                            title={
+                                <div className="flex items-center space-x-2 ">
+                                    <TbListTree style={{ fontSize: '23px' }}/>
+                                    <span>AttributeValues</span>
+                                    <Chip size="sm" variant="light">{attributeValueData?.length}</Chip>
+                                </div>
+                            }
+                            className="max-h-max px-5 "
+                        />
+                        <Tab
+                            key="Unit"
+                            title={
+                                <div className="flex items-center space-x-2 ">
+                                  <UilRuler/>
+                                    <span>Unit</span>
+                                    <Chip size="sm" variant="light">{unitData?.length}</Chip>
+                                </div>
+                            }
+                            className="max-h-max px-5 "
+                        />
+                        <Tab
+                            key="PaymentMode"
+                            title={
+                                <div className="flex items-center space-x-2 ">
+                                <GrTransaction/>
+                                    <span>Payment Mode</span>
+                                    <Chip size="sm" variant="light">{paymentModeData?.length}</Chip>
+                                </div>
+                            }
+                            className="max-h-max px-5 "
+                        />
+                        <Tab
+                            key="Quality"
+                            title={
+                                <div className="flex items-center space-x-2 ">
+                                    <UilFilter />
+                                    <span>Quality</span>
+                                    <Chip size="sm" variant="light">{qualityData?.length}</Chip>
+                                </div>
+                            }
+                            className="max-h-max px-5 "
+                        />
+                        <Tab
+                            key="Design"
+                            title={
+                                <div className="flex items-center space-x-2 ">
+                                    <UilPalette />
+                                    <span>Design</span>
+                                    <Chip size="sm" variant="light">{designData?.length}</Chip>
+                                </div>
+                            }
+                            className="max-h-max px-5 "
+                        />
+                        <Tab
+                            key="Finsh-Type"
+                            title={
+                                <div className="flex items-center space-x-2 ">
+                                    <UilCheckCircle />
+                                    <span>Finsh-Type</span>
+                                    <Chip size="sm" variant="light">{finishtypeData?.length}</Chip>
+                                </div>
+                            }
+                            className="max-h-max px-5 "
+                        />
+                        <Tab
+                            key="Feel-Type"
+                            title={
+                                <div className="flex items-center space-x-2 ">
+                                    <UilLightbulbAlt />
+                                    <span>Feel-Type</span>
+                                    <Chip size="sm" variant="light">{feeltypeData?.length}</Chip>
+                                </div>
+                            }
+                            className="max-h-max px-5 "
+                        />
+                        <Tab
+                            key="Weave"
+                            title={
+                                <div className="flex items-center space-x-2 ">
+                                    <UilSlack />
+                                    <span>Weave</span>
+                                    <Chip size="sm" variant="light">{weaveData?.length}</Chip>
+                                </div>
+                            }
+                            className="max-h-max px-5 "
+                        />
+                        <Tab
+                            key="Width"
+                            title={
+                                <div className="flex items-center space-x-2 ">
+                                    <UilArrowsHAlt  />
+                                    <span>Width</span>
+                                    <Chip size="sm" variant="light">{widthData?.length}</Chip>
+                                </div>
+                            }
+                            className="max-h-max px-5 "
+                        />
+                        <Tab
+                            key="Cut"
+                            title={
+                                <div className="flex items-center space-x-2 ">
+                                  <FaCut/>
+                                    <span>Cut</span>
+                                    <Chip size="sm" variant="light">{cutData?.length}</Chip>
+                                </div>
+                            }
+                            className="max-h-max px-5 "
+                        />
+                    </Tabs>
                 </div>
                 {showRightArrow && (
                     <button
                         onClick={() => scrollTabs(1)}
-                        className="absolute right-0 top-0 z-10 h-full px-2 bg-gradient-to-l from-white via-white/80 to-transparent flex items-center"
+                        className="absolute right-0 top-0 z-20 h-12 w-10 bg-gradient-to-l from-white via-white/90 to-transparent flex items-center justify-end pr-1 cursor-pointer"
                     >
-                        <UilAngleRight className="h-6 w-6 text-black" />
+                        <UilAngleRight className="h-6 w-6 text-gray-700" />
                     </button>
                 )}
+            </div>
+            <div className="mt-1">
+                {tabContent[activeTab]}
             </div>
         </div>
     )

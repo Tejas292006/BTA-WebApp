@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import DataTable from './DataTable';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { productsDataState } from '../store';
@@ -32,6 +32,20 @@ const ProductPage = () => {
     const productsData = useRecoilValue(productsDataState);
     const setProductsData = useSetRecoilState(productsDataState);
     console.log(productsData)
+
+    const refreshData = useCallback(async () => {
+        try {
+            const response = await GetAllProducts();
+            if (response.success) {
+                setProductsData(response.products);
+            } else {
+                throw new Error(response.message);
+            }
+        } catch (error) {
+            console.error("Error refreshing products:", error);
+            toast.error(error.message);
+        }
+    }, [setProductsData]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -177,7 +191,7 @@ const ProductPage = () => {
 
     return (
         <>
-            <DataTable columns={columns} statusOptions={statusOptions} users={productsData} section={'product'} deleteItem={deleteItem} visible_columns={INITIAL_VISIBLE_COLUMNS} />
+            <DataTable columns={columns} statusOptions={statusOptions} users={productsData} section={'product'} deleteItem={deleteItem} visible_columns={INITIAL_VISIBLE_COLUMNS} onRefresh={refreshData} />
         </>
     )
 }

@@ -17,7 +17,7 @@ import {
     Pagination,
     useDisclosure,
 } from "@nextui-org/react";
-import { UilAngleDown, UilPlus, UilEllipsisV } from '@iconscout/react-unicons'
+import { UilAngleDown, UilPlus, UilEllipsisV, UilSync } from '@iconscout/react-unicons'
 import { useNavigate } from "react-router-dom";
 import { capitalize } from "../utils/capitalize";
 import ViewArea from "./ViewArea";
@@ -31,7 +31,7 @@ const statusColorMap = {
 
 
 
-export default function DataTable({ columns, users, deleteItem, statusOptions, visible_columns, section }) {
+export default function DataTable({ columns, users, deleteItem, statusOptions, visible_columns, section, onRefresh }) {
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [visibleColumns, setVisibleColumns] = React.useState(new Set(visible_columns));
@@ -207,6 +207,16 @@ export default function DataTable({ columns, users, deleteItem, statusOptions, v
                         onValueChange={onSearchChange}
                     />
                     <div className="flex gap-3">
+                        {onRefresh && (
+                            <Button
+                                variant="flat"
+                                className="font-font1"
+                                endContent={<UilSync className="h-5 w-5" />}
+                                onClick={onRefresh}
+                            >
+                                Refresh
+                            </Button>
+                        )}
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
                                 <Button
@@ -279,6 +289,7 @@ export default function DataTable({ columns, users, deleteItem, statusOptions, v
         users.length,
         onSearchChange,
         hasSearchFilter,
+        onRefresh,
     ]);
 
 
