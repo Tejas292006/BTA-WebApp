@@ -190,18 +190,22 @@ const CustomerPayment = () => {
             item.products.map((row) => {
                 if (!row?.isProductDispatchedByInvoice) {
                     const newRow = { ...row };
+                    const productId = typeof newRow.product === 'object' ? newRow.product?.id : newRow.product;
+                    const cutObj = typeof newRow.cut === 'object' ? newRow.cut : null;
+                    const cutName = cutObj?.name || (typeof newRow.cut === 'number' ? newRow.cut : 0);
+                    const productObj = typeof newRow.product === 'object' ? newRow.product : null;
 
                     // Update the copied row object
                     if (newRow.due !== 0) {
                         if (newRow.unit === '1' && (item.challanType === 'main')) {
                             //if unit in pcs
                             newRow.qtyPcs = newRow.unit === '1' ? newRow.due : newRow.qtyPcs;
-                            newRow.qtyMtr = (newRow.qtyPcs * newRow.cut?.name) || newRow.qtyMtr;
+                            newRow.qtyMtr = (newRow.qtyPcs * cutName) || newRow.qtyMtr;
 
                         } else if (newRow.unit === '2' && (item.challanType === 'main')) {
                             //if unit in meter
                             newRow.qtyMtr = newRow.unit === '2' ? newRow.due : newRow.qtyMtr;
-                            newRow.qtyPcs = (newRow.qtyMtr / newRow.cut?.name) || newRow.qtyMtr;
+                            newRow.qtyPcs = (newRow.qtyMtr / cutName) || newRow.qtyMtr;
                         }
 
                         if (item.challanType === 'quick') {
@@ -210,11 +214,11 @@ const CustomerPayment = () => {
                     }
 
                     products.push({
-                        id: newRow?.product?.id,
+                        id: productId,
                         challanId: item.id,
                         unit: newRow?.unit,
-                        product: newRow?.product?.productName || "NA",
-                        cut: newRow?.cut?.name || "NA",
+                        product: productObj?.productName || "NA",
+                        cut: cutObj?.name || "NA",
                         qtyPcs: newRow.qtyPcs || "NA",
                         challanType: item.challanType,
                         qtyMtr: newRow.qtyMtr || "NA",
@@ -223,10 +227,10 @@ const CustomerPayment = () => {
                         received_pcs: "", // This will be filled by user input
                         received_bales: "", // This will be filled by user input
                         due: newRow.due || null, // This will be filled by user input
-                        rate: newRow?.rate ?? newRow.product.pricePerUnit.magnitude,
+                        rate: newRow?.rate ?? (productObj?.pricePerUnit?.magnitude || 0),
                         total: "", // This will be filled by user input
                         markAsCompleted: false, // This will be filled by user input
-                        isBeingDispatchedInInvoice: newRow?.product?.isProductDispatchedByInvoice || false,
+                        isBeingDispatchedInInvoice: productObj?.isProductDispatchedByInvoice || false,
                     });
                 }
             });
@@ -687,7 +691,7 @@ const CustomerPayment = () => {
 
 
     const fillterChallan = React.useMemo(() => {
-        return allChallanData.filter((item) => item.supplier.id === supplierRef && item.customer.id === customerRef && (item.products.filter(product => product.isProductDispatchedByInvoice === false)).length > 0 ? true : false)
+        return allChallanData.filter((item) => (typeof item.supplier === 'object' ? item.supplier?.id : item.supplier) === supplierRef && (typeof item.customer === 'object' ? item.customer?.id : item.customer) === customerRef && (item.products.filter(product => product.isProductDispatchedByInvoice === false)).length > 0 ? true : false)
     }, [supplierRef, customerRef]);
 
 

@@ -147,18 +147,26 @@ export default function DataTableModel({ columns, update, deleteItem, users, sta
             }
 
 
-                case "customer":
+                case "customer": {
+                    const cust = user?.customer;
+                    const custId = typeof cust === 'object' ? cust?.id : cust;
+                    const custName = (typeof cust === 'object' && cust?.name) ? cust.name : (customerData?.find(c => c?.id === custId)?.name);
                     return (
                         <div className="flex flex-col">
-                            <p className="text-bold text-tiny capitalize text-default-900">{user?.customer?.name}</p>
+                            <p className="text-bold text-tiny capitalize text-default-900">{custName || "-"}</p>
                         </div>
                     );
-                case "supplier":
+                }
+                case "supplier": {
+                    const supp = user?.supplier;
+                    const suppId = typeof supp === 'object' ? supp?.id : supp;
+                    const suppName = (typeof supp === 'object' && supp?.name) ? supp.name : (suppliersData?.find(s => s?.id === suppId)?.name);
                     return (
                         <div className="flex flex-col">
-                            <p className="text-bold text-tiny capitalize text-default-900">{user?.supplier?.name}</p>
+                            <p className="text-bold text-tiny capitalize text-default-900">{suppName || "-"}</p>
                         </div>
                     );
+                }
                     case "customerName":
                         return (
                             <div className="flex flex-col">

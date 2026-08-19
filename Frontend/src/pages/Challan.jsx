@@ -453,8 +453,8 @@ const Challan = () => {
 
 
   const Units = [
-    { name: "Pcs", _id: 1 },
-    { name: "Meter", _id: 2 },
+    { name: "Pcs", id: "1" },
+    { name: "Meter", id: "2" },
   ]
 
 
@@ -636,9 +636,9 @@ const Challan = () => {
                                   }}
 
                                   onSelectionChange={(value) => onCustomerChange(value, "supplier")}
-                                  value={formik?.values?.customer?.id}
+                                  value={typeof formik?.values?.customer === 'object' ? formik?.values?.customer?.id : formik?.values?.customer || undefined}
                                   defaultItems={customerData}
-                                  selectedKey={formik?.values?.customer?.id}
+                                  selectedKey={typeof formik?.values?.customer === 'object' ? formik?.values?.customer?.id : formik?.values?.customer || undefined}
                                   inputProps={{
                                     classNames: {
                                       input: "ml-1 text-[#000] font-font1",
@@ -723,9 +723,9 @@ const Challan = () => {
                                   }}
 
                                   onSelectionChange={onSupplierChange}
-                                  value={formik?.values?.supplier?.id}
+                                  value={typeof formik?.values?.supplier === 'object' ? formik?.values?.supplier?.id : formik?.values?.supplier || undefined}
                                   defaultItems={suppliersData}
-                                  selectedKey={formik?.values?.supplier?.id}
+                                  selectedKey={typeof formik?.values?.supplier === 'object' ? formik?.values?.supplier?.id : formik?.values?.supplier || undefined}
                                   inputProps={{
                                     classNames: {
                                       input: "ml-1 text-[#000] font-font1",
@@ -1175,29 +1175,20 @@ const Challan = () => {
                               </TableHeader>
                               <TableBody>
                                 {formik.values?.products?.map((object, index) => {
+                                  const productId = typeof object.product === 'object' ? object.product?.id : object.product;
+                                  const cutId = typeof object.cut === 'object' ? object.cut?.id : object.cut;
+                                  const productName = productsData.find(p => p.id === productId)?.productName || 'N/A';
+                                  const cutName = cutData.find(c => c.id === cutId)?.name || 'N/A';
+                                  const unitName = Units[object.unit - 1]?.name || 'N/A';
                                   return (
                                     <TableRow key={index}>
-                                      <TableCell>
-                                        {productsData.find(product => product.id === object.product.id)?.productName}
-                                      </TableCell>
-                                      <TableCell>
-                                        {cutData.find(product => product.id === object.cut.id)?.name}
-                                      </TableCell>
-                                      <TableCell>
-                                        {object.qtyPcs}
-                                      </TableCell>
-                                      <TableCell>
-                                        {object.qtyMtr}
-                                      </TableCell>
-                                      <TableCell>
-                                        {object.rate}
-                                      </TableCell>
-                                      <TableCell>
-                                        {Units[object.unit - 1].name}
-                                      </TableCell>
-                                      <TableCell>
-                                        {object.overall}
-                                      </TableCell>
+                                      <TableCell>{productName}</TableCell>
+                                      <TableCell>{cutName}</TableCell>
+                                      <TableCell>{object.qtyPcs}</TableCell>
+                                      <TableCell>{object.qtyMtr}</TableCell>
+                                      <TableCell>{object.rate}</TableCell>
+                                      <TableCell>{unitName}</TableCell>
+                                      <TableCell>{object.overall}</TableCell>
                                       <TableCell className='overflow-hidden'>
                                         {object?.remarkDesc || "nothing"}
                                       </TableCell>
@@ -1280,8 +1271,8 @@ const Challan = () => {
                                 classNames={{
                                   inputWrapper: "remove-scrolbar overflow-scroll",
                                 }}
-                                value={formik?.values?.overallremarks} // Use directly from formik values
-                                onChange={formik.handleChange} // Use formik's handleChange function for input change
+                                value={formik?.values?.overallremarks}
+                                onChange={formik.handleChange}
                                 name="overallremarks"
                               />
                             </div>
@@ -1454,9 +1445,9 @@ const Challan = () => {
                                 }}
 
                                 onSelectionChange={(value) => onCustomerChange(value, "product")}
-                                value={formik?.values?.customer?.id}
+                                value={typeof formik?.values?.customer === 'object' ? formik?.values?.customer?.id : formik?.values?.customer || undefined}
                                 defaultItems={customerData}
-                                selectedKey={formik?.values?.customer?.id}
+                                selectedKey={typeof formik?.values?.customer === 'object' ? formik?.values?.customer?.id : formik?.values?.customer || undefined}
                                 inputProps={{
                                   classNames: {
                                     input: "ml-1 text-[#000] font-font1",
@@ -1871,37 +1862,28 @@ const Challan = () => {
                               </TableHeader>
                               <TableBody>
                                 {formik.values?.products?.map((object, index) => {
+                                  const productId = typeof object.product === 'object' ? object.product?.id : object.product;
+                                  const cutId = typeof object.cut === 'object' ? object.cut?.id : object.cut;
+                                  const productName = productsData.find(p => p.id === productId)?.productName || 'N/A';
+                                  const cutName = cutData.find(c => c.id === cutId)?.name || 'N/A';
+                                  const unitName = Units[object.unit - 1]?.name || 'N/A';
                                   return (
                                     <TableRow key={index}>
-                                      <TableCell>
-                                        {productsData.find(product => product.id === object.product.id)?.productName}
-                                      </TableCell>
-                                      <TableCell>
-                                        {cutData.find(product => product.id === object.cut.id)?.name}
-                                      </TableCell>
-                                      <TableCell>
-                                        {object.qtyPcs}
-                                      </TableCell>
-                                      <TableCell>
-                                        {object.qtyMtr}
-                                      </TableCell>
-                                      <TableCell>
-                                        {object.rate}
-                                      </TableCell>
-                                      <TableCell>
-                                        {Units[object.unit - 1].name}
-                                      </TableCell>
-                                      <TableCell>
-                                        {object.overall}
-                                      </TableCell>
+                                      <TableCell>{productName}</TableCell>
+                                      <TableCell>{cutName}</TableCell>
+                                      <TableCell>{object.qtyPcs}</TableCell>
+                                      <TableCell>{object.qtyMtr}</TableCell>
+                                      <TableCell>{object.rate}</TableCell>
+                                      <TableCell>{unitName}</TableCell>
+                                      <TableCell>{object.overall}</TableCell>
                                       <TableCell className='overflow-hidden'>
                                         {object?.remarkDesc || "nothing"}
                                       </TableCell>
                                       <TableCell className='overflow-hidden'>
                                         {
-                                          object?.challanChartImages.length > 0 ? (
+                                          object?.challanChartImages?.length > 0 ? (
                                             <div className='flex items-center justify-center gap-3 overflow-auto w-40'>
-                                              {object?.challanChartImages.map(img => <img className='h-20 w-20 object-contain' src={img.src} alt="img" />)}
+                                              {object?.challanChartImages.map((img, idx) => <img key={idx} className='h-20 w-20 object-contain' src={img.src} alt="img" />)}
                                             </div>
                                           ) : "No Charts"
                                         }

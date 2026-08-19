@@ -7,9 +7,12 @@ const router = express.Router();
 router.post("/create-invoice", async (req, res) => {
     try {
         const {
-            challanRefs,
-            supplierId,
-            customerId,
+            challanRefs: challanRefsBody,
+            supplierId: supplierIdBody,
+            customerId: customerIdBody,
+            supplierRef,
+            customerRef,
+            challanRef,
             products,
             grandTotal,
             discount,
@@ -23,6 +26,10 @@ router.post("/create-invoice", async (req, res) => {
             invoiceNo,
             balance,
         } = req.body;
+
+        const challanRefs = challanRefsBody || challanRef || [];
+        const supplierId = supplierIdBody || supplierRef || null;
+        const customerId = customerIdBody || customerRef || null;
 
         const invoiceDoc = await prisma.invoice.create({
             data: {
@@ -177,9 +184,12 @@ router.delete("/delete-invoice/:id", async (req, res) => {
 router.put("/update-invoice/:id", async (req, res) => {
     try {
         const {
-            challanRefs,
-            supplierId,
-            customerId,
+            challanRefs: challanRefsBody,
+            supplierId: supplierIdBody,
+            customerId: customerIdBody,
+            supplierRef,
+            customerRef,
+            challanRef,
             products,
             grandTotal,
             discount,
@@ -193,6 +203,10 @@ router.put("/update-invoice/:id", async (req, res) => {
             invoiceNo,
             balance,
         } = req.body;
+
+        const challanRefs = challanRefsBody || challanRef || [];
+        const supplierId = supplierIdBody || supplierRef || null;
+        const customerId = customerIdBody || customerRef || null;
 
         const invoice = await prisma.invoice.update({
             where: { id: req.params.id },

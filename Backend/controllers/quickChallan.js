@@ -8,8 +8,10 @@ router.post("/create-quickchallan", async (req, res) => {
     try {
         const {
             products,
-            supplierId,
-            customerId,
+            supplierId: supplierIdBody,
+            customerId: customerIdBody,
+            supplier,
+            customer,
             quickchallanNo,
             challanChartImages,
             quickchallanDate,
@@ -18,6 +20,9 @@ router.post("/create-quickchallan", async (req, res) => {
             verified,
             overallremarks,
         } = req.body;
+
+        const supplierId = supplierIdBody || supplier || null;
+        const customerId = customerIdBody || customer || null;
 
         const quickchallanDoc = await prisma.quickChallan.create({
             data: {
@@ -32,6 +37,7 @@ router.post("/create-quickchallan", async (req, res) => {
                 verified: verified ?? false,
                 overallremarks: overallremarks || null,
             },
+            include: { customer: true, supplier: true },
         });
 
         res.status(201).json({ message: "Created Successfully", success: true, quickchallanDoc });
@@ -68,8 +74,10 @@ router.put("/update-quickchallan/:id", async (req, res) => {
     try {
         const {
             products,
-            supplierId,
-            customerId,
+            supplierId: supplierIdBody,
+            customerId: customerIdBody,
+            supplier,
+            customer,
             quickchallanNo,
             challanChartImages,
             quickchallanDate,
@@ -78,6 +86,9 @@ router.put("/update-quickchallan/:id", async (req, res) => {
             verified,
             overallremarks,
         } = req.body;
+
+        const supplierId = supplierIdBody || supplier || null;
+        const customerId = customerIdBody || customer || null;
 
         const quickchallan = await prisma.quickChallan.update({
             where: { id: req.params.id },
@@ -93,6 +104,7 @@ router.put("/update-quickchallan/:id", async (req, res) => {
                 verified,
                 overallremarks,
             },
+            include: { customer: true, supplier: true },
         });
 
         res.status(200).json({ success: true, message: "QuickChallan updated successfully!", quickchallan });

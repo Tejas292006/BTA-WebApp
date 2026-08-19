@@ -8,8 +8,10 @@ router.post("/create-challan", async (req, res) => {
     try {
         const {
             products,
-            supplierId,
-            customerId,
+            supplierId: supplierIdBody,
+            customerId: customerIdBody,
+            supplier,
+            customer,
             challanNo,
             totalBill,
             challanDate,
@@ -18,6 +20,9 @@ router.post("/create-challan", async (req, res) => {
             verified,
             overallremarks,
         } = req.body;
+
+        const supplierId = supplierIdBody || supplier || null;
+        const customerId = customerIdBody || customer || null;
 
         const challanDoc = await prisma.challan.create({
             data: {
@@ -32,6 +37,7 @@ router.post("/create-challan", async (req, res) => {
                 verified: verified ?? false,
                 overallremarks: overallremarks || null,
             },
+            include: { customer: true, supplier: true },
         });
 
         res.status(201).json({ message: "Created Successfully", success: true, challanDoc });
@@ -68,8 +74,10 @@ router.put("/update-challan/:id", async (req, res) => {
     try {
         const {
             products,
-            supplierId,
-            customerId,
+            supplierId: supplierIdBody,
+            customerId: customerIdBody,
+            supplier,
+            customer,
             challanNo,
             totalBill,
             challanDate,
@@ -78,6 +86,9 @@ router.put("/update-challan/:id", async (req, res) => {
             verified,
             overallremarks,
         } = req.body;
+
+        const supplierId = supplierIdBody || supplier || null;
+        const customerId = customerIdBody || customer || null;
 
         const challan = await prisma.challan.update({
             where: { id: req.params.id },
@@ -93,6 +104,7 @@ router.put("/update-challan/:id", async (req, res) => {
                 verified,
                 overallremarks,
             },
+            include: { customer: true, supplier: true },
         });
 
         res.status(200).json({ success: true, message: "Challan updated successfully!", challan });

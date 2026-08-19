@@ -480,8 +480,8 @@ const QuickChallan = () => {
   // console.log(currentDate, "current-date")
 
   const Units = [
-    { name: "Pcs", _id: 1 },
-    { name: "Meter", _id: 2 },
+    { name: "Pcs", id: "1" },
+    { name: "Meter", id: "2" },
   ]
 
 
@@ -1196,29 +1196,18 @@ const QuickChallan = () => {
                               </TableHeader>
                               <TableBody>
                                 {formik.values?.products?.map((object, index) => {
+                                  const productId = typeof object.product === 'object' ? object.product?.id : object.product;
+                                  const cutId = typeof object.cut === 'object' ? object.cut?.id : object.cut;
+                                  const productName = productsData.find(p => p.id === productId)?.productName || 'N/A';
+                                  const cutName = cutData.find(c => c.id === cutId)?.name || 'N/A';
+                                  const unitName = Units[object.unit - 1]?.name || 'N/A';
                                   return (
                                     <TableRow key={index}>
-                                      <TableCell>
-                                        {productsData.find(product => product.id === object.product.id)?.productName}
-                                      </TableCell>
-                                      <TableCell>
-                                        {cutData.find(product => product.id === object.cut.id)?.name}
-                                      </TableCell>
-                                      <TableCell>
-                                        {object.bales}
-                                      </TableCell>
-                                      {/* <TableCell>
-                                        {object.qtyMtr}
-                                      </TableCell> */}
-                                      <TableCell>
-                                        {object.price}
-                                      </TableCell>
-                                      <TableCell>
-                                        {Units[object.unit - 1].name}
-                                      </TableCell>
-                                      {/* <TableCell>
-                                        {object.overall}
-                                      </TableCell> */}
+                                      <TableCell>{productName}</TableCell>
+                                      <TableCell>{cutName}</TableCell>
+                                      <TableCell>{object.bales}</TableCell>
+                                      <TableCell>{object.price}</TableCell>
+                                      <TableCell>{unitName}</TableCell>
                                       <TableCell className='overflow-hidden'>
                                         {object?.remarkDesc || "nothing"}
                                       </TableCell>
@@ -1869,25 +1858,18 @@ const QuickChallan = () => {
                               </TableHeader>
                               <TableBody>
                                 {formik.values?.products?.map((object, index) => {
+                                  const productId = typeof object.product === 'object' ? object.product?.id : object.product;
+                                  const cutId = typeof object.cut === 'object' ? object.cut?.id : object.cut;
+                                  const productName = productsData.find(p => p.id === productId)?.productName || 'N/A';
+                                  const cutName = cutData.find(c => c.id === cutId)?.name || 'N/A';
+                                  const unitName = Units[object.unit - 1]?.name || 'N/A';
                                   return (
                                     <TableRow key={index}>
-                                      <TableCell>
-                                        {productsData.find(product => product.id === object.product.id)?.productName}
-                                      </TableCell>
-                                      <TableCell>
-                                        {cutData.find(product => product.id === object.cut.id)?.name}
-                                      </TableCell>
-                                      <TableCell>
-                                        {object.bales}
-                                      </TableCell>
-
-                                      <TableCell>
-                                        {object.price}
-                                      </TableCell>
-                                      <TableCell>
-                                        {Units[object.unit - 1].name}
-                                      </TableCell>
-
+                                      <TableCell>{productName}</TableCell>
+                                      <TableCell>{cutName}</TableCell>
+                                      <TableCell>{object.bales}</TableCell>
+                                      <TableCell>{object.price}</TableCell>
+                                      <TableCell>{unitName}</TableCell>
                                       <TableCell className='overflow-hidden'>
                                         {object?.remarkDesc || "nothing"}
                                       </TableCell>
