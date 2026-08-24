@@ -25,7 +25,7 @@ export default function FillterTableData({ rows, productref, setproductchange, c
             case "supplierName":
                 return (
                     <div className="flex flex-col">
-                        <p className="text-tiny capitalize font-font1 font-[600]">{user?.supplierName?.name || "NA"}</p>
+                        <p className="text-tiny capitalize font-font1 font-[600]">{user?.supplier?.name || user?.supplierName?.name || "NA"}</p>
                     </div>
                 );
             case "category":
@@ -37,13 +37,13 @@ export default function FillterTableData({ rows, productref, setproductchange, c
             case "pricePerUnit":
                 return (
                     <div className="flex flex-col">
-                        <p className="text-tiny capitalize font-font1 font-[600]">{user?.pricePerUnit?.magnitude || "NA"}</p>
+                        <p className="text-tiny capitalize font-font1 font-[600]">{user?.pricePerUnitMagnitude ?? user?.pricePerUnit?.magnitude ?? "NA"}</p>
                     </div>
                 );
             case "quality":
                 return (
                     <div className="flex flex-col">
-                        <p className="text-tiny capitalize font-font1 font-[600]">{user?.productAttributes.find(attribute => attribute?.attrType === attributeData?.find(attribute => attribute.name === "Quality").id)?.attrValue || "NA"}</p>
+                        <p className="text-tiny capitalize font-font1 font-[600]">{user?.productAttributes?.find(attribute => attribute?.attrType === attributeData?.find(a => a.name === "Quality")?.id)?.attrValue || "NA"}</p>
                     </div>
                 );
             default:

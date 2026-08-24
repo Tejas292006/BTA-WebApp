@@ -3,28 +3,16 @@ import './Inventory.css'
 import { Tabs, Tab, Chip } from "@nextui-org/react";
 import { FaCut } from "react-icons/fa";
 import { GrTransaction } from "react-icons/gr";
-import { UilRuler,UilCube,UilArrowsHAlt , UilPalette, UilSlack, UilLightbulbAlt, UilCheckCircle, UilUsersAlt, UilFilter, UilCreateDashboard, UilAngleLeft, UilAngleRight } from '@iconscout/react-unicons'
+import { UilRuler,UilCube, UilUsersAlt, UilCreateDashboard, UilAngleLeft, UilAngleRight } from '@iconscout/react-unicons'
 import ProductPage from '../components/ProductPage';
 import Suppliers from '../components/Suppliers';
 import Categories from '../components/Categories';
-import Quality from '../components/Quality';
-import Design from '../components/Design';
-import FinishType from '../components/Finish-Type';
-import FeelType from '../components/Feel-Type';
-import Weave from '../components/Weave';
-import Width from '../components/Width';
 import Unit from '../components/Unit';
 import Cut from '../components/Cut';
 import { waitForAll, useRecoilValue } from 'recoil';
 import { productsDataState } from '../store';
 import { suppliersDataState } from '../store';
 import { categoryDataState } from '../store';
-import { qualityDataState } from '../store';
-import { designDataState } from '../store';
-import { finishtypeDataState } from '../store';
-import { feeltypeDataState } from '../store';
-import { weaveDataState } from '../store';
-import { widthDataState } from '../store';
 import { unitDataState } from '../store';
 import { cutDataState } from '../store';
 
@@ -53,13 +41,7 @@ const Inventory = () => {
         attributeValueDataState,
         unitDataState,
         paymentModeState,
-        cutDataState,
-        qualityDataState,
-        designDataState,
-        finishtypeDataState,
-        feeltypeDataState,
-        weaveDataState,
-        widthDataState
+        cutDataState
     ]));
 
     const productsData = useRecoilValue(productsDataState);
@@ -70,12 +52,6 @@ const Inventory = () => {
     const unitData = useRecoilValue(unitDataState);
     const paymentModeData = useRecoilValue(paymentModeState);
     const cutData = useRecoilValue(cutDataState);
-    const qualityData = useRecoilValue(qualityDataState);
-    const designData = useRecoilValue(designDataState);
-    const finishtypeData = useRecoilValue(finishtypeDataState);
-    const feeltypeData = useRecoilValue(feeltypeDataState);
-    const weaveData = useRecoilValue(weaveDataState);
-    const widthData = useRecoilValue(widthDataState);
 
     const checkScroll = () => {
         const el = scrollRef.current;
@@ -113,12 +89,6 @@ const Inventory = () => {
         AttributeValues: <AttributeValue />,
         Unit: <Unit />,
         PaymentMode: <PaymentMode />,
-        Quality: <Quality />,
-        Design: <Design />,
-        "Finsh-Type": <FinishType />,
-        "Feel-Type": <FeelType />,
-        Weave: <Weave />,
-        Width: <Width />,
         Cut: <Cut />,
     };
 
@@ -224,72 +194,6 @@ const Inventory = () => {
                                 <GrTransaction/>
                                     <span>Payment Mode</span>
                                     <Chip size="sm" variant="light">{paymentModeData?.length}</Chip>
-                                </div>
-                            }
-                            className="max-h-max px-5 "
-                        />
-                        <Tab
-                            key="Quality"
-                            title={
-                                <div className="flex items-center space-x-2 ">
-                                    <UilFilter />
-                                    <span>Quality</span>
-                                    <Chip size="sm" variant="light">{qualityData?.length}</Chip>
-                                </div>
-                            }
-                            className="max-h-max px-5 "
-                        />
-                        <Tab
-                            key="Design"
-                            title={
-                                <div className="flex items-center space-x-2 ">
-                                    <UilPalette />
-                                    <span>Design</span>
-                                    <Chip size="sm" variant="light">{designData?.length}</Chip>
-                                </div>
-                            }
-                            className="max-h-max px-5 "
-                        />
-                        <Tab
-                            key="Finsh-Type"
-                            title={
-                                <div className="flex items-center space-x-2 ">
-                                    <UilCheckCircle />
-                                    <span>Finsh-Type</span>
-                                    <Chip size="sm" variant="light">{finishtypeData?.length}</Chip>
-                                </div>
-                            }
-                            className="max-h-max px-5 "
-                        />
-                        <Tab
-                            key="Feel-Type"
-                            title={
-                                <div className="flex items-center space-x-2 ">
-                                    <UilLightbulbAlt />
-                                    <span>Feel-Type</span>
-                                    <Chip size="sm" variant="light">{feeltypeData?.length}</Chip>
-                                </div>
-                            }
-                            className="max-h-max px-5 "
-                        />
-                        <Tab
-                            key="Weave"
-                            title={
-                                <div className="flex items-center space-x-2 ">
-                                    <UilSlack />
-                                    <span>Weave</span>
-                                    <Chip size="sm" variant="light">{weaveData?.length}</Chip>
-                                </div>
-                            }
-                            className="max-h-max px-5 "
-                        />
-                        <Tab
-                            key="Width"
-                            title={
-                                <div className="flex items-center space-x-2 ">
-                                    <UilArrowsHAlt  />
-                                    <span>Width</span>
-                                    <Chip size="sm" variant="light">{widthData?.length}</Chip>
                                 </div>
                             }
                             className="max-h-max px-5 "

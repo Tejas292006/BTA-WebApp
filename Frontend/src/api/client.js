@@ -4,9 +4,6 @@ const API_BASE_URL = import.meta.env.VITE_SERVER || "http://localhost:5001";
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 // Attach Authorization token to requests if available

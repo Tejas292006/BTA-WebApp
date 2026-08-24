@@ -68,8 +68,12 @@ const Challan = () => {
   const [attributesvaluesData, setattributesvaluesData] = useState([]);
   const [productCategory, setProductCategory] = useState(null);
 
-  //Images:
+  // Images:
   const [modalImage, setModalImage] = useState(null);
+
+  // Resolve a product's supplier id whether the API returned the relation object or a plain id
+  const getProductSupplierId = (product) =>
+    typeof product?.supplier === 'object' ? product?.supplier?.id : product?.supplier;
 
   const openModal = (imageSrc) => {
     setModalImage(imageSrc);
@@ -282,7 +286,7 @@ const Challan = () => {
       const newProduct = { product: productref, cut: cutref, qtyPcs: qty, qtyMtr: qtymeter, challanChartImages: productChartImageData, rate: rate || 0, unit: unit, overall: overall, remarkDesc: remark };
       formik.setValues(prevValues => ({
         ...prevValues,
-        supplier: productsData.find(product => product?.id === productref)?.supplierName?.id,
+        supplier: getProductSupplierId(productsData.find(product => product?.id === productref)),
         products: [...(prevValues?.products || []), newProduct] // Ensure products is initialized as an array
       }));
       setUnit("")
@@ -347,9 +351,9 @@ const Challan = () => {
   };
   const setproductchange = (value) => {
     console.log(value)
-    const rate = productsData?.filter(item => item?.id === value)[0]?.pricePerUnit?.magnitude;
+    const rate = productsData?.filter(item => item?.id === value)[0]?.pricePerUnitMagnitude ?? productsData?.filter(item => item?.id === value)[0]?.pricePerUnit?.magnitude;
     const selectedProductCategory = productsData?.filter(item => item?.id === value)[0]?.category?.id || "";
-    const supplier_id = productsData?.find(item => item?.id === value)?.supplierName?.id || "";
+    const supplier_id = getProductSupplierId(productsData?.find(item => item?.id === value)) || "";
     console.log(selectedProductCategory)
     setproductref(value);
     setsupplierRef(supplier_id)
@@ -372,12 +376,33 @@ const Challan = () => {
   };
 
   const removeAttributeFromTable = (index) => {
-    formik.setValues((prevValues) => {
-      const updatedProducts = [...prevValues.products];
-      updatedProducts.splice(index, 1);
-      return { ...prevValues, products: updatedProducts };
-    });
-    generateToatl();
+    const updatedProducts = [...(formik.values.products || [])];
+    updatedProducts.splice(index, 1);
+    const newTotal = updatedProducts.reduce((acc, product) => acc + Number(product.overall || 0), 0);
+    settotalbill(newTotal);
+    formik.setValues((prevValues) => ({ ...prevValues, products: updatedProducts, totalBill: newTotal }));
+  };
+
+  // Explicit close handler so the cross / close button always resets the form reliably
+  const handleCloseModal = () => {
+    onOpenChange(false);
+    formik.resetForm();
+    setsupplierRef("");
+    setcustomerRef("");
+    setfilterkeys([]);
+    setproductref("");
+    setprodcutkey("");
+    setUpdateId("");
+    setSelectedKeys("");
+    setRemark("");
+    settotalbill("");
+    setcutref("");
+    setUnit("");
+    setqty("");
+    setrate("");
+    setqtymeter("");
+    setProductChartImageData([]);
+    setProductChartImage("");
   };
   const generateToatl = () => {
     // Accessing products from formik values
@@ -557,17 +582,10 @@ const Challan = () => {
           size={"full"}
           className="!mx-20 !rounded-xl"
           onOpenChange={(newState) => {
-            onOpenChange(newState);
-            setsupplierRef("")
             if (!newState) {
-              formik.resetForm();
-              setfilterkeys([])
-              setproductref("")
-              setUpdateId("")
-              setSelectedKeys('')
-              setsupplierRef("")
-              setRemark("");
-              settotalbill("");
+              handleCloseModal();
+            } else {
+              onOpenChange(newState);
             }
           }}
         >
@@ -816,7 +834,7 @@ const Challan = () => {
 
                                   onSelectionChange={(value) => setproductchange(value)}
                                   value={productref}
-                                  items={(supplierRef && productsData?.filter(product => product?.supplierName?.id === supplierRef) || [])}
+                                  items={(supplierRef && productsData?.filter(product => getProductSupplierId(product) === supplierRef) || [])}
                                   selectedKey={productref}
                                   inputProps={{
                                     classNames: {
@@ -1420,7 +1438,7 @@ const Challan = () => {
                                 )
                               }
                             </div>
-                            <FillterTableData productref={productref} setproductchange={setproductchange} rows={supplierRef ? filteredProducts.filter(products => products?.supplierName?.id === supplierRef) : filteredProducts} columnsoffillter={columnsoffillter} />
+                            <FillterTableData productref={productref} setproductchange={setproductchange} rows={supplierRef ? filteredProducts.filter(products => getProductSupplierId(products) === supplierRef) : filteredProducts} columnsoffillter={columnsoffillter} />
                             <Input size={'md'}
                               classNames={{
                                 label: "font-[600] font-font1",
@@ -1541,7 +1559,7 @@ const Challan = () => {
                                   label: "font-[600] font-font1",
                                   input: "font-[500] font-font1",
                                 }}
-                                value={productsData?.find(product => product?.id === productref)?.supplierName?.name || "Click On Product"}
+                                value={productsData?.find(product => product?.id === productref)?.supplier?.name || "Click On Product"}
                                 readOnly
                                 className="mt-5 flex-grow"
                               />
@@ -1978,7 +1996,7 @@ const Challan = () => {
                   </div>
                 </ModalBody>
                 <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
+                  <Button color="danger" variant="light" onPress={handleCloseModal}>
                     Close
                   </Button>
                   <Button

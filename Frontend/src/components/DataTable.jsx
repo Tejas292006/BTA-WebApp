@@ -120,7 +120,7 @@ export default function DataTable({ columns, users, deleteItem, statusOptions, v
             case "supplierName":
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-tiny capitalize text-default-400">{user?.supplierName?.name || "NA"}</p>
+                        <p className="text-bold text-tiny capitalize text-default-400">{user?.supplier?.name || user?.supplierName?.name || "NA"}</p>
                     </div>
                 );
             case "category":

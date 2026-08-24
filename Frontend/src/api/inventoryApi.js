@@ -5,7 +5,7 @@ export const CreateProduct = async (payload) => {
     const response = await apiClient.post("/api/products/create-product", payload);
     return response.data;
   } catch (error) {
-    return error.message;
+    return { success: false, message: error.response?.data?.message || error.message };
   }
 };
 
@@ -14,25 +14,29 @@ export const GetAllProducts = async () => {
     const response = await apiClient.get("/api/products/get-all-products");
     return response.data;
   } catch (error) {
-    return error.message;
+    return { success: false, message: error.response?.data?.message || error.message };
   }
 };
 
 export const UploadImage = async (payload) => {
   try {
-    const response = await apiClient.post("/api/products/upload-product-chart", payload);
+    const response = await apiClient.post("/api/products/upload-product-chart", payload, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return response.data;
   } catch (error) {
-    return error.message;
+    return { success: false, message: error.response?.data?.message || error.message };
   }
 };
 
 export const UploadImageChallan = async (payload) => {
   try {
-    const response = await apiClient.post("/api/products/upload-challan-chart", payload);
+    const response = await apiClient.post("/api/products/upload-challan-chart", payload, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return response.data;
   } catch (error) {
-    return error.message;
+    return { success: false, message: error.response?.data?.message || error.message };
   }
 };
 
@@ -41,7 +45,7 @@ export const GetProductById = async (id) => {
     const response = await apiClient.get(`/api/products/get-product-by-id/${id}`);
     return response.data;
   } catch (error) {
-    return error.message;
+    return { success: false, message: error.response?.data?.message || error.message };
   }
 };
 
@@ -50,7 +54,7 @@ export const UpdateProduct = async (id, payload) => {
     const response = await apiClient.patch(`/api/products/edit-product/${id}`, payload);
     return response.data;
   } catch (error) {
-    return error.message;
+    return { success: false, message: error.response?.data?.message || error.message };
   }
 };
 

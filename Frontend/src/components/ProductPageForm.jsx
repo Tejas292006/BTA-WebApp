@@ -73,7 +73,7 @@ const ProductPageForm = () => {
                     setProductChartImageData((prevImages) => [...prevImages, { src: newImageLink }]);
                     setProductChartImage('');
                 } else {
-                    toast.error(response.message);
+                    toast.error(response.error ? `${response.message}: ${response.error}` : response.message);
                 }
             } else {
                 toast.error('Please select an image file.');
@@ -97,18 +97,18 @@ const ProductPageForm = () => {
             console.log(singleProductData)
             setProductChartImageData(singleProductData?.productColorChartData);
             formik.setValues({
-                supplierName: singleProductData?.supplierName && singleProductData?.supplierName?.id,
+                supplierName: singleProductData?.supplier?.id || "",
                 productName: singleProductData?.productName || "",
-                category: singleProductData?.category && singleProductData?.category?.id,
+                category: singleProductData?.category?.id || null,
                 productAttributes: singleProductData?.productAttributes?.map(attr => ({
                     attrType: attr.attrType,
                     attrValue: attr.attrValue
                 })),
                 pricePerUnit: {
-                    magnitude: singleProductData?.pricePerUnit?.magnitude || null,
-                    unit: singleProductData?.pricePerUnit?.unit || null,
+                    magnitude: singleProductData?.pricePerUnitMagnitude ?? null,
+                    unit: singleProductData?.pricePerUnit?.id || null,
                 },
-                productColorChartData: singleProductData?.productColorChartData
+                productColorChartData: singleProductData?.productColorChartData || []
             });
 
 
@@ -335,11 +335,7 @@ const ProductPageForm = () => {
                 magnitude: null,
                 unit: null
             },
-            productColorChartData: [
-                {
-                    src: null,
-                }
-            ]
+            productColorChartData: []
         },
         validate: (values) => {
             const errors = {};
@@ -392,10 +388,17 @@ const ProductPageForm = () => {
             // Handle form submission logic here
             console.log(productChartImageData)
 
-            // if (!values.productColorChartData.length > 0) {
-            //     toast.error("Please enter at least one image");
-            //     return; x
-            // }
+            const payload = {
+                supplierId: values.supplierName || null,
+                productName: values.productName,
+                categoryId: values.category || null,
+                productAttributes: (values.productAttributes || []).filter(attr => attr.attrValue !== null && attr.attrValue !== undefined),
+                productColorChartData: values.productColorChartData || [],
+                pricePerUnit: {
+                    magnitude: values.pricePerUnit?.magnitude === null || values.pricePerUnit?.magnitude === '' ? null : Number(values.pricePerUnit.magnitude),
+                    unit: values.pricePerUnit?.unit || null,
+                },
+            };
 
             console.log(values, "+++++++++++++++");
             // return;
@@ -404,11 +407,11 @@ const ProductPageForm = () => {
                 let response = null;
                 if (updateId) {
                     setIsLoading(true);
-                    response = await UpdateProduct(updateId, values);
+                    response = await UpdateProduct(updateId, payload);
                     setIsLoading(false);
                 } else {
                     setIsLoading(true);
-                    response = await CreateProduct(values);
+                    response = await CreateProduct(payload);
                     setIsLoading(false);
                 }
 
