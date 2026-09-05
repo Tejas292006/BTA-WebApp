@@ -1,6 +1,5 @@
 import express from 'express';
 import prisma from '../configs/prismaClient.js';
-import cloudinary from "../configs/cloudinaryConfig.js";
 import upload from '../middlewares/multer.js';
 
 const router = express.Router();
@@ -17,6 +16,11 @@ router.post('/create-product', async (req, res) => {
             pricePerUnit,
         } = req.body;
 
+        const parseMagnitude = (value) => {
+            const num = Number(value);
+            return value !== null && value !== undefined && value !== '' && !Number.isNaN(num) ? num : 0;
+        };
+
         const product = await prisma.product.create({
             data: {
                 supplierId: supplierId || null,
@@ -24,7 +28,7 @@ router.post('/create-product', async (req, res) => {
                 categoryId: categoryId || null,
                 productAttributes: productAttributes ?? [],
                 productColorChartData: productColorChartData ?? [],
-                pricePerUnitMagnitude: pricePerUnit?.magnitude ?? 0,
+                pricePerUnitMagnitude: parseMagnitude(pricePerUnit?.magnitude),
                 pricePerUnitId: pricePerUnit?.unit || null,
             },
         });
@@ -36,22 +40,28 @@ router.post('/create-product', async (req, res) => {
 
 // Upload product color chart image
 router.post('/upload-product-chart', upload.single('color-chart-product'), async (req, res) => {
-    cloudinary.uploader.upload(req.file.path, { folder: "color-chart-product" }, (err, result) => {
-        if (err) {
-            return res.status(500).json({ success: false, message: "Error uploading image" });
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: "No image file received" });
         }
-        res.status(200).json({ success: true, message: "Image uploaded successfully!", url: result.secure_url });
-    });
+        const url = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+        res.status(200).json({ success: true, message: "Image uploaded successfully!", url });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error uploading image", error: error.message });
+    }
 });
 
 // Upload challan chart image
 router.post('/upload-challan-chart', upload.single('color-chart-challan'), async (req, res) => {
-    cloudinary.uploader.upload(req.file.path, { folder: "color-chart-challan" }, (err, result) => {
-        if (err) {
-            return res.status(500).json({ success: false, message: "Error uploading image" });
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: "No image file received" });
         }
-        res.status(200).json({ success: true, message: "Image uploaded successfully!", url: result.secure_url });
-    });
+        const url = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+        res.status(200).json({ success: true, message: "Image uploaded successfully!", url });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error uploading image", error: error.message });
+    }
 });
 
 // Get all products
@@ -107,7 +117,7 @@ router.patch('/edit-product/:id', async (req, res) => {
                 categoryId: categoryId || null,
                 productAttributes,
                 productColorChartData,
-                pricePerUnitMagnitude: pricePerUnit?.magnitude,
+                pricePerUnitMagnitude: parseMagnitude(pricePerUnit?.magnitude),
                 pricePerUnitId: pricePerUnit?.unit || null,
             },
         });

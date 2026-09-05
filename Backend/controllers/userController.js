@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import prisma from "../configs/prismaClient.js";
-import cloudinary from "../configs/cloudinaryConfig.js";
 
 
 export const registerUser = async (req, res) => {
@@ -89,23 +88,20 @@ export const getCurrentUser = async (req, res) => {
 }
 
 export const uploadProfileImage = async (req, res)=> {
-    cloudinary.uploader.upload(req.file.path, {
-        folder: "profile-images",
-    }, function (err, result) {
-        if (err) {
-            console.log(err);
-            return res.status(500).json({
-                success: false,
-                message: "Error"
-            })
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: "No image file received" });
         }
-
+        const url = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
         res.status(200).json({
             success: true,
             message: "Your Image Uploaded Successfully!",
-            url: result.secure_url
-        })
-    })
+            url,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Error uploading image", error: error.message });
+    }
 };
 export const updateUser = async (req,res,next)=>{
     try {
