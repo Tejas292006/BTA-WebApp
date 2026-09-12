@@ -52,7 +52,7 @@ export const login = async (req, res) => {
         else {
             throw new Error("user not found");
         }
-        const token = jwt.sign({ userId: user.id, email: user.email }, `${process.env.SECRET}`, { expiresIn: "24h" });
+        const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET || process.env.SECRET, { expiresIn: "24h" });
 
         const { password: _, ...userWithoutPassword } = user;
         res.status(200).json({

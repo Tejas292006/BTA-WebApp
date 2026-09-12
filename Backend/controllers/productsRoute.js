@@ -4,6 +4,11 @@ import upload from '../middlewares/multer.js';
 
 const router = express.Router();
 
+const parseMagnitude = (value) => {
+    const num = Number(value);
+    return value !== null && value !== undefined && value !== '' && !Number.isNaN(num) ? num : 0;
+};
+
 // Create a new product
 router.post('/create-product', async (req, res) => {
     try {
@@ -16,11 +21,6 @@ router.post('/create-product', async (req, res) => {
             pricePerUnit,
         } = req.body;
 
-        const parseMagnitude = (value) => {
-            const num = Number(value);
-            return value !== null && value !== undefined && value !== '' && !Number.isNaN(num) ? num : 0;
-        };
-
         const product = await prisma.product.create({
             data: {
                 supplierId: supplierId || null,
@@ -30,6 +30,11 @@ router.post('/create-product', async (req, res) => {
                 productColorChartData: productColorChartData ?? [],
                 pricePerUnitMagnitude: parseMagnitude(pricePerUnit?.magnitude),
                 pricePerUnitId: pricePerUnit?.unit || null,
+            },
+            include: {
+                supplier: true,
+                category: true,
+                pricePerUnit: true,
             },
         });
         res.status(201).json({ success: true, message: 'Product created successfully', product });
@@ -115,10 +120,15 @@ router.patch('/edit-product/:id', async (req, res) => {
                 supplierId: supplierId || null,
                 productName,
                 categoryId: categoryId || null,
-                productAttributes,
-                productColorChartData,
+                productAttributes: productAttributes ?? [],
+                productColorChartData: productColorChartData ?? [],
                 pricePerUnitMagnitude: parseMagnitude(pricePerUnit?.magnitude),
                 pricePerUnitId: pricePerUnit?.unit || null,
+            },
+            include: {
+                supplier: true,
+                category: true,
+                pricePerUnit: true,
             },
         });
         res.status(200).json({ success: true, message: 'Product updated successfully', product });

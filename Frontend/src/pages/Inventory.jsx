@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import './Inventory.css'
 import { Tabs, Tab, Chip } from "@nextui-org/react";
 import { FaCut } from "react-icons/fa";
@@ -27,11 +28,19 @@ import PaymentMode from '../components/PaymentMode';
 import { paymentModeState } from '../store';
 
 const Inventory = () => {
+    const [searchParams] = useSearchParams();
+    const tabParam = searchParams.get('tab');
 
     const scrollRef = useRef(null);
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
-    const [activeTab, setActiveTab] = useState("Products");
+    const [activeTab, setActiveTab] = useState(tabParam || "Products");
+
+    useEffect(() => {
+        if (tabParam) {
+            setActiveTab(tabParam);
+        }
+    }, [tabParam]);
 
     useRecoilValue(waitForAll([
         productsDataState,

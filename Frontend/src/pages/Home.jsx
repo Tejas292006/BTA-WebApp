@@ -35,10 +35,10 @@ const Home = () => {
   const categoryData = useRecoilValue(categoryDataState)
 
   const cards = [
-    { title: 'Products', count: productsData?.length || 0, href: '/inventory', color: 'bg-blue-500' },
-    { title: 'Suppliers', count: suppliersData?.length || 0, href: '/inventory', color: 'bg-purple-500' },
+    { title: 'Products', count: productsData?.length || 0, href: '/inventory?tab=Products', color: 'bg-blue-500' },
+    { title: 'Suppliers', count: suppliersData?.length || 0, href: '/inventory?tab=Suppliers', color: 'bg-purple-500' },
     { title: 'Customers', count: customerData?.length || 0, href: '/customers', color: 'bg-green-500' },
-    { title: 'Categories', count: categoryData?.length || 0, href: '/inventory', color: 'bg-orange-500' },
+    { title: 'Categories', count: categoryData?.length || 0, href: '/inventory?tab=Category', color: 'bg-orange-500' },
     { title: 'Challans', count: challansData?.length || 0, href: '/challan', color: 'bg-red-500' },
     { title: 'Quick Challans', count: quickChallansData?.length || 0, href: '/quick-challan', color: 'bg-yellow-500' },
     { title: 'Invoices', count: invoiceData?.length || 0, href: '/invoice', color: 'bg-indigo-500' },

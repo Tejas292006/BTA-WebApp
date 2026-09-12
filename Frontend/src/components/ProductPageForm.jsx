@@ -6,7 +6,8 @@ import { toast } from 'react-hot-toast';
 import AutoComplete from './AutoComplete';
 import { useFormik } from 'formik';
 import * as z from 'zod';
-import { CreateProduct, UpdateProduct, UploadImage } from '../api';
+import { CreateProduct, UpdateProduct, UploadImage, GetProductById } from '../api';
+import { UilAngleLeft } from '@iconscout/react-unicons';
 // import Arrowsvg from "../assets/arrow.svg"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { suppliersDataState } from '../store'
@@ -91,31 +92,35 @@ const ProductPageForm = () => {
     };
     const handleUpdate = async (productId) => {
         try {
-
-            // changed from todoListState to filteredTodoListState
-            const singleProductData = productsData.find((element) => element.id == productId);
-            console.log(singleProductData)
-            setProductChartImageData(singleProductData?.productColorChartData);
-            formik.setValues({
-                supplierName: singleProductData?.supplier?.id || "",
-                productName: singleProductData?.productName || "",
-                category: singleProductData?.category?.id || null,
-                productAttributes: singleProductData?.productAttributes?.map(attr => ({
-                    attrType: attr.attrType,
-                    attrValue: attr.attrValue
-                })),
-                pricePerUnit: {
-                    magnitude: singleProductData?.pricePerUnitMagnitude ?? null,
-                    unit: singleProductData?.pricePerUnit?.id || null,
-                },
-                productColorChartData: singleProductData?.productColorChartData || []
-            });
-
-
-            setUpdateId(productId);
-
+            let singleProductData = productsData?.find((element) => element.id == productId);
+            if (!singleProductData) {
+                const response = await GetProductById(productId);
+                if (response.success && response.product) {
+                    singleProductData = response.product;
+                }
+            }
+            if (singleProductData) {
+                console.log("Product to update:", singleProductData);
+                const colorCharts = singleProductData?.productColorChartData || [];
+                setProductChartImageData(Array.isArray(colorCharts) ? colorCharts : []);
+                formik.setValues({
+                    supplierName: singleProductData?.supplier?.id || singleProductData?.supplierId || "",
+                    productName: singleProductData?.productName || "",
+                    category: singleProductData?.category?.id || singleProductData?.categoryId || null,
+                    productAttributes: singleProductData?.productAttributes?.map(attr => ({
+                        attrType: attr.attrType,
+                        attrValue: attr.attrValue
+                    })) || [],
+                    pricePerUnit: {
+                        magnitude: singleProductData?.pricePerUnitMagnitude ?? null,
+                        unit: singleProductData?.pricePerUnit?.id || singleProductData?.pricePerUnitId || null,
+                    },
+                    productColorChartData: Array.isArray(colorCharts) ? colorCharts : []
+                });
+                setUpdateId(productId);
+            }
         } catch (error) {
-            console.error("Error updating finishtype:", error.message);
+            console.error("Error updating product:", error.message);
             toast.error(error.message);
         }
     };
@@ -124,7 +129,7 @@ const ProductPageForm = () => {
         if (productURL) {
             handleUpdate(productURL);
         }
-    }, [])
+    }, [productURL, productsData])
 
     const updateDependentFields = (value) => {
         const updatedProductAttributes = productAttributeValueFirst.map(attr => ({
@@ -418,8 +423,12 @@ const ProductPageForm = () => {
                 if (response.success) {
                     navigate('/inventory');
                     toast.success(response.message);
-                    // setUpdateId(null); // Reset update ID when modal is closed
-                    setProductsData((prevValue) => [...prevValue, response.product])
+                    setProductsData((prevValue) => {
+                        if (updateId) {
+                            return prevValue.map((p) => (p.id === updateId ? response.product : p));
+                        }
+                        return [...prevValue, response.product];
+                    });
 
                 } else {
                     throw new Error(response.message);
@@ -454,6 +463,13 @@ const ProductPageForm = () => {
             <main className="demo-page-content">
                 <div className="flex h-full overflow-auto max-w-full">
                     <div className="w-full  rounded-[24px] shadow-md p-6 overflow-auto">
+                        <button
+                            type="button"
+                            onClick={() => navigate('/inventory')}
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors mb-4 cursor-pointer w-fit"
+                        >
+                            <UilAngleLeft className="w-5 h-5" /> Back to Inventory
+                        </button>
                         <h2 className="text-3xl font-bold mb-4 font-font2">{updateId ? "Update " : "Create "}Product</h2>
                         <form onSubmit={formik.handleSubmit} className="flex flex-wrap font-font1 flex-col gap-10 mt-5">
                             <div className="flex flex-col">
@@ -702,15 +718,28 @@ const ProductPageForm = () => {
                                 </div>
 
                                 {/* Image Showing if it is there  */}
-                                <div className="grid grid-cols-3 p-2 gap-4 h-full w-full mt-4">
+                                <div className="grid grid-cols-2 md:grid-cols-4 p-2 gap-4 h-full w-full mt-4">
                                     {
-                                        productChartImageData && productChartImageData.length > 0 && productChartImageData.map((item, index) => (
-                                            <>
-                                                <div className='h-full rounded-xl  w-full'>
-                                                    <img className='w-full rounded-xl h-full object-cover' src={item.src} alt="" />
+                                        productChartImageData && productChartImageData.length > 0 && productChartImageData.map((item, index) => {
+                                            const imgSrc = item?.src || item?.url || (typeof item === 'string' ? item : '');
+                                            return (
+                                                <div key={index} className='relative group h-36 rounded-xl border border-gray-200 overflow-hidden shadow-sm'>
+                                                    <img className='w-full h-full object-cover rounded-xl' src={imgSrc} alt={`Product Image ${index + 1}`} />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setProductChartImageData((prev) => prev.filter((_, i) => i !== index));
+                                                        }}
+                                                        className="absolute top-2 right-2 bg-red-600 text-white p-1.5 rounded-full opacity-80 hover:opacity-100 transition-opacity"
+                                                        title="Remove image"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                    </button>
                                                 </div>
-                                            </>
-                                        ))
+                                            );
+                                        })
                                     }
                                 </div>
                             </div>
