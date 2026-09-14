@@ -106,18 +106,27 @@ export const uploadProfileImage = async (req, res)=> {
 export const updateUser = async (req,res,next)=>{
     try {
         const userId = req.params.id;
-        const salt = await bcrypt.genSalt(10);
-        const hashedpassword = await bcrypt.hash(req.body.password,salt);
 
-       const user = await prisma.user.update({
+        const data = {};
+        if (req.body.username) data.username = req.body.username;
+        if (req.body.email) data.email = req.body.email;
+        if (req.body.avatar) data.avatar = req.body.avatar;
+        if (req.body.password) {
+            const salt = await bcrypt.genSalt(10);
+            data.password = await bcrypt.hash(req.body.password, salt);
+        }
+
+        const user = await prisma.user.update({
             where: { id: userId },
-            data: { ...req.body, password: hashedpassword }
+            data
         })
         if(user) {
-            res.send("user updated successfully")}
-        if(!user) res.send("user not found")
+            res.json({ success: true, message: "user updated successfully" })
+        } else {
+            res.json({ success: false, message: "user not found" })
+        }
       } catch (error) {
-        res.send(error)
+        res.json({ success: false, message: error.message })
       }
     
 }

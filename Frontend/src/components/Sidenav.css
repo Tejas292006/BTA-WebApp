@@ -18,8 +18,19 @@
     background: #0b3cc1;
 }
 
-body.dark::-webkit-scrollbar-thumb:hover,
-body.dark .activity-data::-webkit-scrollbar-thumb:hover {
+html.dark ::-webkit-scrollbar-track {
+    background: #1b1a2b;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+    background: #3a3950;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+    background: #5a587a;
+}
+
+html.dark .activity-data::-webkit-scrollbar-thumb:hover {
     background: #3A3B3C;
 }
 
@@ -34,6 +45,11 @@ nav {
     background-color: var(--bg-color);
     transition: var(--tran-05);
     border-radius: 24px;
+}
+
+html.dark nav {
+    border-right: 1px solid rgba(255,255,255,0.04);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.25);
 }
 
 nav.close {
@@ -128,12 +144,12 @@ nav.close .menu-items li a {
 
 }
 
-body.dark li a:hover:before {
+html.dark li a:hover:before {
     background-color: var(--primary-color);
 }
 
 .menu-items li a:hover .link-name {
-    color: #000;
+    color: var(--primary-color);
 }
 
 .menu-items li a svg {
@@ -175,6 +191,10 @@ nav.close li a .link-name {
     border-top: 1px solid #fff;
 }
 
+html.dark .menu-items .logout-mode {
+    border-top-color: rgba(255,255,255,0.08);
+}
+
 .menu-items .mode {
     display: flex;
     align-items: center;
@@ -201,6 +221,10 @@ nav.close li a .link-name {
     background-color: #fff;
 }
 
+html.dark .mode-toggle .switch {
+    background-color: #2b2a3f;
+}
+
 .switch:before {
     content: "";
     position: absolute;
@@ -212,6 +236,10 @@ nav.close li a .link-name {
     background-color: #000;
     border-radius: 50%;
     transition: var(--tran-03);
+}
+
+html.dark .switch:before {
+    background-color: var(--primary-color);
 }
 
 .main-dashboard.dark .switch:before {

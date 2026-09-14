@@ -215,10 +215,12 @@ const Suppliers = () => {
                     isOpen={isOpen}
                     scrollBehavior={"inside"}
                     size={"xl"}
+                    className="dark:bg-[#1e1d2e]"
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
                         if (!newState) {
-                            formik.setValues({})
+                            setUpdateId(null);
+                            formik.resetForm();
                         }
                     }}
                 >
@@ -229,55 +231,63 @@ const Suppliers = () => {
                                     {updateId ? "Update Supplier" : "Create Supplier"}
                                 </ModalHeader>
                                 <ModalBody>
-                                    <div className="max-w-full rounded-2xl bg-[#1f1e30]">
-                                        <div className="flex flex-col gap-2 p-8">
-                                            <input
-                                                autoFocus
-                                                {...formik.getFieldProps('name')}
-                                                className="bg-slate-900 font-font2 font-[400] w-full rounded-lg border border-gray-300 px-4 py-3  text-[#fff]"
-                                                placeholder="Supplier name.."
-                                            />
-                                            <input
-                                                autoFocus
-                                                {...formik.getFieldProps('brand')}
-                                                className="bg-slate-900 font-font2 font-[400] w-full rounded-lg border border-gray-300 px-4 py-3  text-[#fff] mt-2"
-                                                placeholder="Brand name.."
-                                            />
-                                            <input
-                                                autoFocus
-                                                {...formik.getFieldProps('address')}
-                                                className="bg-slate-900 font-font2 font-[400] w-full rounded-lg border border-gray-300 px-4 py-3  text-[#fff] mt-2"
-                                                placeholder="Address.."
-                                            />
+                                    <div className="max-w-full rounded-2xl bg-gray-50 dark:bg-[#1f1e30] border border-gray-200 dark:border-[#2b2a3f]">
+                                        <div className="flex flex-col gap-4 p-6">
+                                            <div className="flex flex-col gap-1">
+                                                <label className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 font-font1">Supplier Name</label>
+                                                <input
+                                                    autoFocus
+                                                    {...formik.getFieldProps('name')}
+                                                    className="bg-white dark:bg-[#232233] font-font2 font-[400] w-full rounded-xl border border-gray-200 dark:border-[#3a3950] px-4 py-3 text-gray-900 dark:text-[#f7f7f5] placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#d8f275] focus:border-transparent transition"
+                                                    placeholder="e.g. Ram Textiles"
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-1">
+                                                <label className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 font-font1">Brand Name</label>
+                                                <input
+                                                    {...formik.getFieldProps('brand')}
+                                                    className="bg-white dark:bg-[#232233] font-font2 font-[400] w-full rounded-xl border border-gray-200 dark:border-[#3a3950] px-4 py-3 text-gray-900 dark:text-[#f7f7f5] placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#d8f275] focus:border-transparent transition"
+                                                    placeholder="e.g. Cotton King"
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-1">
+                                                <label className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 font-font1">Address</label>
+                                                <input
+                                                    {...formik.getFieldProps('address')}
+                                                    className="bg-white dark:bg-[#232233] font-font2 font-[400] w-full rounded-xl border border-gray-200 dark:border-[#3a3950] px-4 py-3 text-gray-900 dark:text-[#f7f7f5] placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#d8f275] focus:border-transparent transition"
+                                                    placeholder="e.g. Surat, Gujarat"
+                                                />
+                                            </div>
 
-                                            <label className="flex cursor-pointer items-center justify-between p-1 text-[#fff]">
-                                                Experienced
+                                            <label className="flex cursor-pointer items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-[#3a3950] bg-white dark:bg-[#232233] text-gray-800 dark:text-[#f7f7f5]">
+                                                <span className="font-font1 text-sm font-medium">Experienced Supplier</span>
                                                 <div className="relative inline-block">
                                                     <input
                                                         onChange={(e) => formik.setFieldValue("experienced", e.target.checked)}
-                                                        name="experienced" // Associate the input with the form field 'verified'
-                                                        checked={formik.values.experienced} // Set the checked state from formik values
-                                                        className="peer h-6 w-12 cursor-pointer appearance-none rounded-full border border-gray-300 bg-gary-400 checked:border-green-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+                                                        name="experienced"
+                                                        checked={formik.values.experienced}
+                                                        className="peer h-6 w-12 cursor-pointer appearance-none rounded-full border border-gray-200 dark:border-[#3a3950] bg-gray-200 dark:bg-[#1f1e30] checked:border-[#d8f275] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d8f275] focus-visible:ring-offset-2"
                                                         type="checkbox"
                                                     />
-                                                    <span className="pointer-events-none absolute left-1 top-1 block h-4 w-4 rounded-full bg-slate-600 transition-all duration-200 peer-checked:left-7 peer-checked:bg-green-300" />
+                                                    <span className="pointer-events-none absolute left-1 top-1 block h-4 w-4 rounded-full bg-slate-400 dark:bg-slate-500 transition-all duration-200 peer-checked:left-7 peer-checked:bg-[#d8f275]" />
                                                 </div>
                                             </label>
                                         </div>
                                     </div>
                                 </ModalBody>
-                                <ModalFooter>
+                                <ModalFooter className="border-t border-gray-100 dark:border-[#2b2a3f]">
                                     <Button
                                         color="danger" variant="light"
+                                        className="font-font1"
                                         onPress={onClose}
                                     >
                                         Close
                                     </Button>
-                                    <Button color="primary"
-                                        className="bg-foreground text-background font-font1"
-                                        onClick={formik.handleSubmit}
+                                    <Button
+                                        className="bg-[#d8f275] text-[#1f1e30] font-font1 font-semibold hover:bg-[#c5e05c] transition"
+                                        onPress={formik.handleSubmit}
                                     >
-                                        {updateId ? "Update" : "Create "}
+                                        {updateId ? "Update" : "Save"}
                                     </Button>
                                 </ModalFooter>
                             </>

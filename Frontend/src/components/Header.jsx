@@ -8,12 +8,14 @@ import { useFormik } from 'formik'
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, RadioGroup, Radio, Input } from "@nextui-org/react";
 import { updateUser, UploadProfileImage } from '../api';
 import toast from 'react-hot-toast';
+import { FiEye, FiEyeOff, FiUser } from 'react-icons/fi'
 
 const Header = ({ toggleSidebar }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [user, setUser] = useRecoilState(userAtom);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [showPassword, setShowPassword] = useState(false);
 
     const formik = useFormik({
         initialValues: {
@@ -26,16 +28,20 @@ const Header = ({ toggleSidebar }) => {
         validateOnBlur: false,
         validateOnChange: false,
         onSubmit: async values => {
+            if (!values.password) {
+                delete values.password;
+            }
+
             values = await Object.assign(values, { avatar: file })
 
-            await updateUser(values, user.id).then(() => {
-                toast.success('user updated succesfully')
+            const response = await updateUser(values, user.id)
+
+            if (response?.success) {
+                toast.success(response.message || 'user updated sucessfully')
                 window.location.reload();
-            }).catch((error) => {
-                toast.error(error)
-            })
-
-
+            } else {
+                toast.error(typeof response === 'string' ? response : response?.message || 'Update failed. Please try again.')
+            }
         },
 
     })
@@ -56,7 +62,6 @@ const Header = ({ toggleSidebar }) => {
                 toast.success('image uplaoded successfully')
                 const url = response.url;
                 setFile(url);
-                setImg(url);
 
             } else {
                 console.log(response.message);
@@ -74,8 +79,6 @@ const Header = ({ toggleSidebar }) => {
         fileInputRef.current.click();
     };
     const [file, setFile] = useState(user?.avatar);
-
-    const [img, setImg] = useState(user?.avatar);
 
 
     return (
@@ -100,19 +103,21 @@ const Header = ({ toggleSidebar }) => {
                         {location.pathname !== '/' && (
                             <button
                                 onClick={() => navigate(-1)}
-                                className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all shadow-sm border border-gray-200 cursor-pointer"
+                                className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all shadow-sm border border-gray-200 cursor-pointer dark:text-white dark:bg-[#1e1d2e] dark:hover:bg-[#232233] dark:border-[#2b2a3f]"
                                 title="Go Back"
                             >
-                                <UilAngleLeft className="w-5 h-5 text-gray-700" />
+                                <UilAngleLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
                                 <span className="font-font1 font-semibold">Back</span>
                             </button>
                         )}
                     </div>
-                    <div className="search-box">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth={0} /><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" /><g id="SVGRepo_iconCarrier"> <path opacity="0.1" d="M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" fill="#000" /> <path d="M15 15L21 21" stroke="#000" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" /> <path d="M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="#000" strokeWidth={2} /> </g></svg>
-                        <input type="text" placeholder="Search here..." />
-                    </div>
-                    <img onClick={onOpen} className="cursor-pointer" src={user?.avatar ? user?.avatar : "https://i.pinimg.com/736x/ba/89/13/ba89133ce6ceae7d58168ab96b68e3e4.jpg"} alt />
+                    <button onClick={onOpen} className="profile-trigger" title="Profile">
+                        {user?.avatar ? (
+                            <img src={user?.avatar} alt="Profile" />
+                        ) : (
+                            <FiUser size={20} />
+                        )}
+                    </button>
                 </div>
             </section>
 
@@ -121,7 +126,7 @@ const Header = ({ toggleSidebar }) => {
                 placement={"bottom"}
                 size={'5xl'}
                 onOpenChange={onOpenChange}
-                className="bg-[#000] text-[#fff] font-font1"
+                className="bg-white text-black dark:bg-[#1e1d2e] dark:text-white font-font1"
 
             >
                 <ModalContent>
@@ -132,14 +137,13 @@ const Header = ({ toggleSidebar }) => {
                                 <div className="max-w-fit flex flex-col gap-8 items-start">
                                     <Input
                                         {...formik.getFieldProps('username')}
-                                        type="email"
+                                        type="text"
                                         label="Name"
-                                        defaultValue={user?.username}
                                         className="max-w-xs font-sans font-black "
                                         classNames={{
-                                            label: "max-w-xs font-font1 text-[#000] mb-1 font-[600]",
+                                            label: "max-w-xs font-font1 text-gray-700 dark:text-gray-300 mb-1 font-[600]",
                                             input: [
-                                                "font-sans font-semibold"
+                                                "font-sans font-semibold text-gray-800 dark:text-white"
                                             ]
                                         }}
                                     />
@@ -147,32 +151,41 @@ const Header = ({ toggleSidebar }) => {
                                     <Input
                                         {...formik.getFieldProps('email')}
                                         type="email"
-                                        label="Email"
-                                        disabled
-                                        value={user?.email}
-                                        description="you can't change email! contact admin."
+                                        label="Email (Login ID)"
+                                        description="Use this email to log in."
                                         classNames={{
-                                            label: "max-w-xs font-font1 text-[#000] mb-1 font-[600]",
+                                            label: "max-w-xs font-font1 text-gray-700 dark:text-gray-300 mb-1 font-[600]",
                                             input: [
-                                                "font-sans font-semibold"
+                                                "font-sans font-semibold text-gray-800 dark:text-white"
                                             ],
                                             description: [
-                                                "font-font1 font-[#fff] font-[400] "
+                                                "font-font1 text-gray-500 dark:text-gray-400 font-[400] "
                                             ]
                                         }}
                                     />
                                     <Input
                                         {...formik.getFieldProps('password')}
-                                        type="password"
+                                        type={showPassword ? "text" : "password"}
                                         label="New Password"
-                                        description="We'll never share your password with anyone else."
+                                        description="Enter a new password to change the one you use to log in. Leave blank to keep the current password."
+                                        endContent={
+                                            <button
+                                                type="button"
+                                                className="cursor-pointer text-gray-600 dark:text-gray-300"
+                                                onClick={() => setShowPassword((prev) => !prev)}
+                                                tabIndex={-1}
+                                                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                            >
+                                                {showPassword ? <FiEyeOff /> : <FiEye />}
+                                            </button>
+                                        }
                                         classNames={{
-                                            label: "max-w-xs font-sans text-[#000] mb-1 font-[600]",
+                                            label: "max-w-xs font-sans text-gray-700 dark:text-gray-300 mb-1 font-[600]",
                                             input: [
-                                                "font-sans font-semibold"
+                                                "font-sans font-semibold text-gray-800 dark:text-white"
                                             ],
                                             description: [
-                                                "font-font1 font-[#fff] font-[400] "
+                                                "font-font1 text-gray-500 dark:text-gray-400 font-[400] "
                                             ]
                                         }}
                                     />
@@ -191,7 +204,7 @@ const Header = ({ toggleSidebar }) => {
                                         <Button type="button"
                                             variant='flat'
                                             onClick={handleSelectPhoto}
-                                            className="mt-2 font-font1 font-bold bg-[#fff]"
+                                            className="mt-2 font-font1 font-bold bg-white dark:bg-[#232233] text-gray-800 dark:text-white"
                                         >
                                             Select New Profile
                                         </Button>
@@ -202,7 +215,7 @@ const Header = ({ toggleSidebar }) => {
                                 <Button color="warning" variant="light" onPress={onClose}>
                                     Close
                                 </Button>
-                                <Button className='bg-[#d8f275]' onPress={onClose}>
+                                <Button className='bg-[#d8f275] text-[#1f1e30]' onPress={formik.handleSubmit}>
                                     Update
                                 </Button>
                             </ModalFooter>

@@ -9,6 +9,15 @@ export const loginUser = async (payload) => {
   }
 };
 
+export const registerUser = async (payload) => {
+  try {
+    const response = await apiClient.post("/api/register", payload);
+    return response.data;
+  } catch (error) {
+    return { success: false, message: error.response?.data?.message || error.message };
+  }
+};
+
 export const GetCurrentUser = async () => {
   try {
     const response = await apiClient.get("/api/get-current-user");
