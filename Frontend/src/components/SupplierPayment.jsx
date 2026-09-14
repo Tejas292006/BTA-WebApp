@@ -64,6 +64,7 @@ import NewReferenceTable from "./SupplierNewReferenceTable.jsx";
 import { paymentModeState } from '../store';
 import axios from "axios";
 import { supplierpaymentDataState } from '../store';
+import apiClient from '../api/client';
 // import { Createpayment } from '../api';
 
 const SupplierPayment = () => {
@@ -93,6 +94,15 @@ const SupplierPayment = () => {
     const allChallanData = [...challansData, ...quickchallansData];
 
     console.log(invoiceData, '--------------------');
+
+    const refreshData = async () => {
+        try {
+            const res = await apiClient.get('/api/supplierpayment/get-all-supplierpayment');
+            if (res.data?.supplierpayments) setSupplierPaymentData(res.data.supplierpayments);
+        } catch (e) {
+            toast.error('Failed to refresh data');
+        }
+    };
 
     const [selectedBalanceAmount, setSelectedBalanceAmount] = useState(0);
 
@@ -1533,6 +1543,7 @@ const SupplierPayment = () => {
                 users={supplierPaymentData}
                 onOpen={onOpen}
                 section={"invoice"}
+                onRefresh={refreshData}
             />
         </>
     );

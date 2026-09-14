@@ -65,6 +65,7 @@ import { paymentModeState } from '../store';
 import axios from "axios";
 // import { Createpayment } from '../api';
 import { customerpaymentDataState } from '../store';
+import apiClient from '../api/client';
 
 const CustomerPayment = () => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -109,6 +110,15 @@ const CustomerPayment = () => {
 
     console.log(customerPaymentData,"customer payment data")
     console.log(invoiceData,"invoicedata data")
+
+    const refreshData = async () => {
+        try {
+            const res = await apiClient.get('/api/customerpayment/get-all-customerpayment');
+            if (res.data?.customerpayments) setCustomerPaymentData(res.data.customerpayments);
+        } catch (e) {
+            toast.error('Failed to refresh data');
+        }
+    };
 
     const columns = [
         { name: "ID", uid: "_id", sortable: true },
@@ -1560,6 +1570,7 @@ const CustomerPayment = () => {
                 users={customerPaymentData}
                 onOpen={onOpen}
                 section={"invoice"}
+                onRefresh={refreshData}
             />
         </>
     );

@@ -9,6 +9,7 @@ import { globalLoaderAtom } from '../store';
 import { customerDataState } from '../store';
 import { Createcustomer, Deletecustomer, Updatecustomer } from '../api';
 import { categoryDataState } from '../store';
+import apiClient from '../api/client';
 
 
 const CustomerPage = () => {
@@ -20,7 +21,15 @@ const CustomerPage = () => {
     const [categoriesData, setCategoriesData] = useRecoilState(categoryDataState)
     const [refcat, setrefcat] = useState('')
     const [updated, setUpdated] = useState(false)
-    
+
+    const refreshData = async () => {
+        try {
+            const res = await apiClient.get('/api/customer/get-all-customer');
+            if (res.data?.customers) setcustomerData(res.data.customers);
+        } catch (e) {
+            toast.error('Failed to refresh data');
+        }
+    };
     
 
     // Data Format
@@ -252,7 +261,7 @@ const setUpdate = ()=>{
                     </ModalContent>
                 </Modal>
             </div>
-            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={customerData} onOpen={onOpen} section={'customer'} />
+            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={customerData} onOpen={onOpen} section={'customer'} onRefresh={refreshData} />
         </>
     )
 }

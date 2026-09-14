@@ -47,34 +47,36 @@ const Cut = () => {
     // Create The cut
     const createcut = async (values) => {
         try {
+            // Client-side duplicate check — same name (case-insensitive)
+            const duplicate = cutData.find(
+                c => c.name?.trim().toLowerCase() === values.name?.trim().toLowerCase()
+            );
+            if (duplicate) {
+                toast.error('A cut with this name already exists.');
+                return;
+            }
 
             values.ref = refcat;
             setIsLoading(true)
             const response = await Createcut(values);
-            console.log(values)
-
             setIsLoading(false)
+
             if (response.success) {
                 toast.success(response.message);
-                navigate('/inventory');
-                console.log(response.cutDoc)
-                setcutData([...cutData, response.cutDoc]);
-                onOpenChange(false)
-                setUpdateId(null); // Reset update ID when modal is closed
-
-
+                // Use functional updater so we always append to latest state
+                setcutData(prev => [...prev, response.cutDoc]);
+                onOpenChange(false);
+                setUpdateId(null);
+                formik.resetForm();
+                setrefcat('');
             } else {
                 throw new Error(response.message);
-
             }
         } catch (error) {
-            // dispatch(SetLoader(false));
-            toast.error(error.message,);
-
-
+            setIsLoading(false);
+            toast.error(error.message);
         }
     }
-
 
 
     // Delete cut
@@ -123,6 +125,17 @@ const Cut = () => {
     // Handle update form submission
     const handleUpdateSubmit = async (values) => {
         try {
+            // Client-side duplicate check (exclude the current item being edited)
+            const duplicate = cutData.find(
+                c => c.name?.trim().toLowerCase() === values.name?.trim().toLowerCase()
+                    && c.ref?.id === refcat
+                    && c.id !== updateId
+            );
+            if (duplicate) {
+                toast.error('A cut with this name already exists in this category.');
+                return;
+            }
+
             values.ref = refcat;
             setIsLoading(true);
             const response = await Updatecut(updateId, values);
@@ -179,10 +192,17 @@ const Cut = () => {
     });
     const setUpdate = () => {
         setUpdateId(false)
-        formik.resetForm(); 
+        formik.resetForm();
         setrefcat('')
-
     }
+
+    // Wrapped onOpen for the "Add New" button — always clears form first
+    const handleOpenForCreate = () => {
+        setUpdateId(null);
+        formik.resetForm();
+        setrefcat('');
+        onOpen();
+    };
 
     const refreshData = async () => {
         try {
@@ -263,6 +283,7 @@ const Cut = () => {
                                                 placeholder="Enter an Category"
                                                 popoverProps={{
                                                     offset: 10,
+                                                    shouldCloseOnInteractOutside: () => true,
                                                     classNames: {
                                                         base: "rounded-large",
                                                         content: "p-1  border-none bg-background",
@@ -360,7 +381,7 @@ const Cut = () => {
                     </ModalContent>
                 </Modal>
             </div>
-            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={cutData} onOpen={onOpen} section={'cut'} onRefresh={refreshData} />
+            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={cutData} onOpen={handleOpenForCreate} section={'cut'} onRefresh={refreshData} />
         </>
     )
 }

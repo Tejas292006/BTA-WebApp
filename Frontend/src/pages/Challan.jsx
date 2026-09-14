@@ -276,6 +276,14 @@ const Challan = () => {
 
   const addProductToTable2 = () => {
     if (productref && cutref && unit && rate) {
+      // Duplicate check: same product + cut combo
+      const isDuplicate = (formik.values.products || []).some(
+        p => p.product === productref && p.cut === cutref
+      );
+      if (isDuplicate) {
+        toast.error("This product + cut combination is already added.");
+        return;
+      }
       let overall = 0;
       if (unit === '1') {
         overall = isNaN(rate) ? 0 : Math.floor(parseFloat(qty) * parseFloat(rate));
@@ -287,7 +295,7 @@ const Challan = () => {
       formik.setValues(prevValues => ({
         ...prevValues,
         supplier: getProductSupplierId(productsData.find(product => product?.id === productref)),
-        products: [...(prevValues?.products || []), newProduct] // Ensure products is initialized as an array
+        products: [...(prevValues?.products || []), newProduct]
       }));
       setUnit("")
       setproductref("")
@@ -305,7 +313,14 @@ const Challan = () => {
   };
   const addProductToTable = () => {
     if (productref && cutref && unit && rate) {
-
+      // Duplicate check: same product + cut combo
+      const isDuplicate = (formik.values.products || []).some(
+        p => p.product === productref && p.cut === cutref
+      );
+      if (isDuplicate) {
+        toast.error("This product + cut combination is already added.");
+        return;
+      }
       let overall = 0;
       let due = 0;
       if (unit === '1') {
@@ -317,7 +332,7 @@ const Challan = () => {
       const newProduct = { product: productref, cut: cutref, qtyPcs: qty, qtyMtr: qtymeter, due: unit === '1' ? qty : qtymeter, challanChartImages: productChartImageData, rate: rate || 0, unit: unit, overall: overall, remarkDesc: remark };
       formik.setValues(prevValues => ({
         ...prevValues,
-        products: [...(prevValues?.products || []), newProduct] // Ensure products is initialized as an array
+        products: [...(prevValues?.products || []), newProduct]
       }));
 
       setUnit("")
@@ -383,7 +398,6 @@ const Challan = () => {
     formik.setValues((prevValues) => ({ ...prevValues, products: updatedProducts, totalBill: newTotal }));
   };
 
-  // Explicit close handler so the cross / close button always resets the form reliably
   const handleCloseModal = () => {
     onOpenChange(false);
     formik.resetForm();
@@ -403,6 +417,30 @@ const Challan = () => {
     setqtymeter("");
     setProductChartImageData([]);
     setProductChartImage("");
+    setProductCategory(null);
+  };
+
+  // Wrapped onOpen for Add New — always clears all state first
+  const handleOpenForCreate = () => {
+    formik.resetForm();
+    setsupplierRef("");
+    setcustomerRef("");
+    setfilterkeys([]);
+    setproductref("");
+    setprodcutkey("");
+    setUpdateId(null);
+    setSelectedKeys("");
+    setRemark("");
+    settotalbill("");
+    setcutref("");
+    setUnit("");
+    setqty("");
+    setrate("");
+    setqtymeter("");
+    setProductChartImageData([]);
+    setProductChartImage("");
+    setProductCategory(null);
+    onOpen();
   };
   const generateToatl = () => {
     // Accessing products from formik values
@@ -582,10 +620,27 @@ const Challan = () => {
           size={"full"}
           className="!mx-20 !rounded-xl"
           onOpenChange={(newState) => {
+            onOpenChange(newState);
             if (!newState) {
-              handleCloseModal();
-            } else {
-              onOpenChange(newState);
+              // Reset all form state when modal is closed
+              formik.resetForm();
+              setsupplierRef("");
+              setcustomerRef("");
+              setfilterkeys([]);
+              setproductref("");
+              setprodcutkey("");
+              setUpdateId("");
+              setSelectedKeys("");
+              setRemark("");
+              settotalbill("");
+              setcutref("");
+              setUnit("");
+              setqty("");
+              setrate("");
+              setqtymeter("");
+              setProductChartImageData([]);
+              setProductChartImage("");
+              setProductCategory(null);
             }
           }}
         >
@@ -684,6 +739,7 @@ const Challan = () => {
                                   placeholder="Enter an Customer "
                                   popoverProps={{
                                     offset: 10,
+                                    shouldCloseOnInteractOutside: () => true,
                                     classNames: {
                                       base: "rounded-large",
                                       content: "p-1  border-none bg-background",
@@ -771,6 +827,7 @@ const Challan = () => {
                                   placeholder="Enter an Supplier"
                                   popoverProps={{
                                     offset: 10,
+                                    shouldCloseOnInteractOutside: () => true,
                                     classNames: {
                                       base: "rounded-large",
                                       content: "p-1  border-none bg-background",
@@ -834,7 +891,7 @@ const Challan = () => {
 
                                   onSelectionChange={(value) => setproductchange(value)}
                                   value={productref}
-                                  items={(supplierRef && productsData?.filter(product => getProductSupplierId(product) === supplierRef) || [])}
+                                  defaultItems={supplierRef ? (productsData?.filter(product => getProductSupplierId(product) === supplierRef) || productsData) : productsData}
                                   selectedKey={productref}
                                   inputProps={{
                                     classNames: {
@@ -863,6 +920,7 @@ const Challan = () => {
                                   placeholder="Enter an Product"
                                   popoverProps={{
                                     offset: 10,
+                                    shouldCloseOnInteractOutside: () => true,
                                     classNames: {
                                       base: "rounded-large",
                                       content: "p-1  border-none bg-background",
@@ -919,7 +977,7 @@ const Challan = () => {
 
                                   onSelectionChange={setcutref}
                                   value={cutref}
-                                  defaultItems={cutData?.filter(item => item?.ref?.id === productCategory) || cutData}
+                                  defaultItems={(productCategory && cutData?.filter(item => item?.ref?.id === productCategory)?.length > 0) ? cutData.filter(item => item?.ref?.id === productCategory) : cutData}
                                   // items={(productref && cutData?.filter(cut => cut?.ref === productref) || [] )}
                                   selectedKey={cutref}
                                   inputProps={{
@@ -949,6 +1007,7 @@ const Challan = () => {
                                   placeholder="Enter an Cut"
                                   popoverProps={{
                                     offset: 10,
+                                    shouldCloseOnInteractOutside: () => true,
                                     classNames: {
                                       base: "rounded-large",
                                       content: "p-1  border-none bg-background",
@@ -1077,6 +1136,7 @@ const Challan = () => {
                                   placeholder="Enter Unit"
                                   popoverProps={{
                                     offset: 10,
+                                    shouldCloseOnInteractOutside: () => true,
                                     classNames: {
                                       base: "rounded-large",
                                       content: "p-1  border-none bg-background",
@@ -1345,6 +1405,7 @@ const Challan = () => {
                                       }}
                                       popoverProps={{
                                         offset: 10,
+                                        shouldCloseOnInteractOutside: () => true,
                                         classNames: {
                                           base: "rounded-large",
                                           content: "p-1  border-none bg-background",
@@ -1493,6 +1554,7 @@ const Challan = () => {
                                 placeholder="Enter an Customer "
                                 popoverProps={{
                                   offset: 10,
+                                  shouldCloseOnInteractOutside: () => true,
                                   classNames: {
                                     base: "rounded-large",
                                     content: "p-1  border-none bg-background",
@@ -1594,7 +1656,7 @@ const Challan = () => {
 
                                 onSelectionChange={setcutref}
                                 value={cutref}
-                                defaultItems={cutData?.filter(item => item?.ref?.id === productCategory) || cutData}
+                                defaultItems={(productCategory && cutData?.filter(item => item?.ref?.id === productCategory)?.length > 0) ? cutData.filter(item => item?.ref?.id === productCategory) : cutData}
                                 // items={(productref && cutData?.filter(cut => cut?.ref === productref) || [] )}
                                 selectedKey={cutref}
                                 inputProps={{
@@ -1624,6 +1686,7 @@ const Challan = () => {
                                 placeholder="Enter an Cut"
                                 popoverProps={{
                                   offset: 10,
+                                  shouldCloseOnInteractOutside: () => true,
                                   classNames: {
                                     base: "rounded-large",
                                     content: "p-1  border-none bg-background",
@@ -1763,6 +1826,7 @@ const Challan = () => {
                                 placeholder="Enter Unit"
                                 popoverProps={{
                                   offset: 10,
+                                  shouldCloseOnInteractOutside: () => true,
                                   classNames: {
                                     base: "rounded-large",
                                     content: "p-1  border-none bg-background",
@@ -2010,7 +2074,7 @@ const Challan = () => {
           </ModalContent>
         </Modal>
       </div >
-      <DataTableModel filltername={"challanNo"} visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={challansData} onOpen={onOpen} section={'supplier'} />
+      <DataTableModel filltername={"challanNo"} visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={challansData} onOpen={handleOpenForCreate} section={'supplier'} onRefresh={async () => { const apiClient = (await import('../api/client')).default; const res = await apiClient.get('/api/challan/get-all-challan'); if (res.data?.challans) setChallansData(res.data.challans); }} />
     </>
   )
 }

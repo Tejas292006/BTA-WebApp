@@ -9,6 +9,7 @@ import { useRecoilState, useRecoilValue } from "recoil"
 import { globalLoaderAtom } from '../store';
 import { transportDataState } from '../store';
 import { Createtransport, Deletetransport, Updatetransport } from '../api';
+import apiClient from '../api/client';
 
 const Transport = () => {
 
@@ -17,6 +18,15 @@ const Transport = () => {
 
     const [updateId, setUpdateId] = useState(null)
     const [transportData, settransportData] = useRecoilState(transportDataState)
+
+    const refreshData = async () => {
+        try {
+            const res = await apiClient.get('/api/transport/get-all-transport');
+            if (res.data?.transports) settransportData(res.data.transports);
+        } catch (e) {
+            toast.error('Failed to refresh data');
+        }
+    };
 
 
 
@@ -257,7 +267,7 @@ const Transport = () => {
                     </ModalContent>
                 </Modal>
             </div>
-            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={transportData} onOpen={onOpen} section={'transport'} />
+            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={transportData} onOpen={onOpen} section={'transport'} onRefresh={refreshData} />
         </>
     )
 }

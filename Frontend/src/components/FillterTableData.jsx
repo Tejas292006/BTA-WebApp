@@ -57,7 +57,16 @@ export default function FillterTableData({ rows, productref, setproductchange, c
             aria-label="Controlled table example with dynamic content"
             selectionMode="single"
             selectedKeys={[productref]}
-            onSelectionChange={(value) => setproductchange(value.currentKey)}
+            onSelectionChange={(value) => {
+                setproductchange(value.currentKey);
+                // Release focus so other form inputs can be clicked immediately
+                setTimeout(() => {
+                    if (document.activeElement instanceof HTMLElement) {
+                        document.activeElement.blur();
+                    }
+                }, 0);
+            }}
+            onKeyDown={(e) => e.stopPropagation()}
             classNames={{
                 wrapper: "max-h-[200px] overflow-scroll",
                 th: ["font-font1 font-[400]"],

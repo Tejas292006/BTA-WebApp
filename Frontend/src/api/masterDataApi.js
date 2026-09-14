@@ -54,8 +54,41 @@ export const GetattributeValueData = attributeValueApi.getAll;
 export const DeleteattributeValue = attributeValueApi.delete;
 export const UpdateattributeValue = attributeValueApi.update;
 
-// Category
-const categoryApi = createMasterDataApi("categories");
+// Category - backend uses /api/category/create-category, /api/category/get-all-category, etc.
+const categoryApi = {
+  create: async (payload) => {
+    try {
+      const response = await apiClient.post(`/api/category/create-category`, payload);
+      return response.data;
+    } catch (error) {
+      return error.response?.data || { success: false, message: error.message };
+    }
+  },
+  getAll: async () => {
+    try {
+      const response = await apiClient.get(`/api/category/get-all-category`);
+      return response.data;
+    } catch (error) {
+      return error.response?.data || { success: false, message: error.message };
+    }
+  },
+  delete: async (id) => {
+    try {
+      const response = await apiClient.delete(`/api/category/delete-category/${id}`);
+      return response.data;
+    } catch (error) {
+      return error.response?.data || { success: false, message: error.message };
+    }
+  },
+  update: async (id, payload) => {
+    try {
+      const response = await apiClient.put(`/api/category/update-category/${id}`, payload);
+      return response.data;
+    } catch (error) {
+      return error.response?.data || { success: false, message: error.message };
+    }
+  },
+};
 export const Createcategories = categoryApi.create;
 export const GetcategoriesData = categoryApi.getAll;
 export const Deletecategories = categoryApi.delete;

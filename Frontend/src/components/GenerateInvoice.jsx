@@ -56,6 +56,7 @@ import { UpdateProductsDue, UpdatechallanProducts } from '../api';
 import { productsDataState } from '../store';
 import { UpdateQuickChallanProducts, UpdateQuickProductsDue } from '../api';
 import { cutDataState } from '../store';
+import apiClient from '../api/client';
 
 const GenerateInvoice = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -88,6 +89,15 @@ const GenerateInvoice = () => {
   const [selectedCut, setSelectedCut] = useState(null);
 
   console.log(invoiceData, "iniiiiiiiii")
+
+  const refreshData = async () => {
+    try {
+      const res = await apiClient.get('/api/invoice/get-all-invoice');
+      if (res.data?.invoices) setInvoiceData(res.data.invoices);
+    } catch (e) {
+      toast.error('Failed to refresh data');
+    }
+  };
 
   const columns = [
     { name: "ID", uid: "_id", sortable: true },
@@ -1215,6 +1225,7 @@ const GenerateInvoice = () => {
         users={invoiceData}
         onOpen={onOpen}
         section={"invoice"}
+        onRefresh={refreshData}
       />
     </>
   );

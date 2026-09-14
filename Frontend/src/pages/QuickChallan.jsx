@@ -272,22 +272,22 @@ const QuickChallan = () => {
 
   const addProductToTable2 = () => {
     if (productref && cutref && unit && bale && price) {
-      // let overall = 0;
-      // if (unit === '1') {
-      //   overall = isNaN(price) ? 0 : Math.floor(parseFloat(qty) * parseFloat(price));
-      // }
-      // if (unit === '2') {
-      //   overall = isNaN(price) ? 0 : Math.floor(parseFloat(qtymeter) * parseFloat(price));
-      // }
+      // Duplicate check: same product + cut combo
+      const isDuplicate = (formik.values.products || []).some(
+        p => p.product === productref && p.cut === cutref
+      );
+      if (isDuplicate) {
+        toast.error("This product + cut combination is already added.");
+        return;
+      }
       const newProduct = { product: productref, cut: cutref, bales: bale, challanChartImages: productChartImageData, price: price || 0, unit: unit, remarkDesc: remark };
       formik.setValues(prevValues => ({
         ...prevValues,
         supplier: productsData.find(product => product?.id === productref)?.supplierName?.id,
-        products: [...(prevValues?.products || []), newProduct] // Ensure products is initialized as an array
+        products: [...(prevValues?.products || []), newProduct]
       }));
 
       settotalbill(price)
-      // formik.setFieldValue('totalBill', price);
       setUnit("")
       setproductref("")
       setProductChartImageData([])
@@ -295,7 +295,6 @@ const QuickChallan = () => {
       setcutref("")
       setbale("")
       setprice("")
-      // setqtymeter("")
       setRemark("")
       setfilterkeys([])
     } else {
@@ -304,22 +303,21 @@ const QuickChallan = () => {
   };
   const addProductToTable = () => {
     if (productref && cutref && unit && bale && price) {
-
-      // let overall = 0;
-      // if (unit === '1') {
-      //   overall = isNaN(price) ? 0 : Math.floor(parseFloat(qty) * parseFloat(price));
-      // }
-      // if (unit === '2') {
-      //   overall = isNaN(price) ? 0 : Math.floor(parseFloat(qtymeter) * parseFloat(price));
-      // }
+      // Duplicate check: same product + cut combo
+      const isDuplicate = (formik.values.products || []).some(
+        p => p.product === productref && p.cut === cutref
+      );
+      if (isDuplicate) {
+        toast.error("This product + cut combination is already added.");
+        return;
+      }
       const newProduct = { product: productref, cut: cutref, bales: bale, challanChartImages: productChartImageData, price: price || 0, unit: unit, remarkDesc: remark };
       formik.setValues(prevValues => ({
         ...prevValues,
-        products: [...(prevValues?.products || []), newProduct] // Ensure products is initialized as an array
+        products: [...(prevValues?.products || []), newProduct]
       }));
 
       settotalbill(price)
-      // formik.setFieldValue('totalBill', price);
       setUnit("")
       setproductref("")
       setProductChartImageData([])
@@ -327,7 +325,6 @@ const QuickChallan = () => {
       setcutref("")
       setbale("")
       setprice("")
-      // setqtymeter("")
       setRemark("")
     } else {
       toast.error("Please select all fields");
@@ -387,7 +384,48 @@ const QuickChallan = () => {
       updatedProducts.splice(index, 1);
       return { ...prevValues, products: updatedProducts };
     });
-    // generateToatl();
+  };
+
+  // Full reset + close
+  const handleCloseModal = () => {
+    onOpenChange(false);
+    formik.resetForm();
+    setsupplierRef(null);
+    setcustomerRef(null);
+    setfilterkeys([]);
+    setproductref("");
+    setprodcutkey("");
+    setUpdateId("");
+    setRemark("");
+    settotalbill("");
+    setcutref("");
+    setUnit("");
+    setbale("");
+    setprice("");
+    setProductChartImageData([]);
+    setProductChartImage("");
+    setProductCategory(null);
+  };
+
+  // Wrapped onOpen for Add New — always clears all state first
+  const handleOpenForCreate = () => {
+    formik.resetForm();
+    setsupplierRef(null);
+    setcustomerRef(null);
+    setfilterkeys([]);
+    setproductref("");
+    setprodcutkey("");
+    setUpdateId(null);
+    setRemark("");
+    settotalbill("");
+    setcutref("");
+    setUnit("");
+    setbale("");
+    setprice("");
+    setProductChartImageData([]);
+    setProductChartImage("");
+    setProductCategory(null);
+    onOpen();
   };
   // const generateToatl = () => {
   //   // Accessing products from formik values
@@ -586,9 +624,21 @@ const QuickChallan = () => {
             onOpenChange(newState);
             if (!newState) {
               formik.resetForm();
-              setUpdateId("")
+              setUpdateId("");
               setRemark("");
               settotalbill("");
+              setcutref("");
+              setproductref("");
+              setprodcutkey("");
+              setUnit("");
+              setbale("");
+              setprice("");
+              setProductChartImageData([]);
+              setProductChartImage("");
+              setfilterkeys([]);
+              setsupplierRef(null);
+              setcustomerRef(null);
+              setProductCategory(null);
             }
           }}
         >
@@ -687,6 +737,7 @@ const QuickChallan = () => {
                                   placeholder="Enter an Customer "
                                   popoverProps={{
                                     offset: 10,
+                                    shouldCloseOnInteractOutside: () => true,
                                     classNames: {
                                       base: "rounded-large",
                                       content: "p-1  border-none bg-background",
@@ -774,6 +825,7 @@ const QuickChallan = () => {
                                   placeholder="Enter an Supplier"
                                   popoverProps={{
                                     offset: 10,
+                                    shouldCloseOnInteractOutside: () => true,
                                     classNames: {
                                       base: "rounded-large",
                                       content: "p-1  border-none bg-background",
@@ -837,7 +889,7 @@ const QuickChallan = () => {
 
                                   onSelectionChange={(value) => setproductchange(value)}
                                   value={productref}
-                                  items={(supplierRef && productsData?.filter(product => product?.supplierName?.id === supplierRef) || [])}
+                                  defaultItems={supplierRef ? (productsData?.filter(product => product?.supplierName?.id === supplierRef) || productsData) : productsData}
                                   selectedKey={productref}
                                   inputProps={{
                                     classNames: {
@@ -866,6 +918,7 @@ const QuickChallan = () => {
                                   placeholder="Enter an Product"
                                   popoverProps={{
                                     offset: 10,
+                                    shouldCloseOnInteractOutside: () => true,
                                     classNames: {
                                       base: "rounded-large",
                                       content: "p-1  border-none bg-background",
@@ -922,7 +975,7 @@ const QuickChallan = () => {
 
                                   onSelectionChange={setcutref}
                                   value={cutref}
-                                  defaultItems={cutData?.filter(item => item?.ref?.id === productCategory) || cutData}
+                                  defaultItems={(productCategory && cutData?.filter(item => item?.ref?.id === productCategory)?.length > 0) ? cutData.filter(item => item?.ref?.id === productCategory) : cutData}
                                   // items={(productref && cutData?.filter(cut => cut?.ref === productref) || [] )}
                                   selectedKey={cutref}
                                   inputProps={{
@@ -952,6 +1005,7 @@ const QuickChallan = () => {
                                   placeholder="Enter an Cut"
                                   popoverProps={{
                                     offset: 10,
+                                    shouldCloseOnInteractOutside: () => true,
                                     classNames: {
                                       base: "rounded-large",
                                       content: "p-1  border-none bg-background",
@@ -1080,6 +1134,7 @@ const QuickChallan = () => {
                                   placeholder="Enter Unit"
                                   popoverProps={{
                                     offset: 10,
+                                    shouldCloseOnInteractOutside: () => true,
                                     classNames: {
                                       base: "rounded-large",
                                       content: "p-1  border-none bg-background",
@@ -1350,6 +1405,7 @@ const QuickChallan = () => {
                                       }}
                                       popoverProps={{
                                         offset: 10,
+                                        shouldCloseOnInteractOutside: () => true,
                                         classNames: {
                                           base: "rounded-large",
                                           content: "p-1  border-none bg-background",
@@ -1498,6 +1554,7 @@ const QuickChallan = () => {
                                 placeholder="Enter an Customer "
                                 popoverProps={{
                                   offset: 10,
+                                  shouldCloseOnInteractOutside: () => true,
                                   classNames: {
                                     base: "rounded-large",
                                     content: "p-1  border-none bg-background",
@@ -1599,7 +1656,7 @@ const QuickChallan = () => {
 
                                 onSelectionChange={setcutref}
                                 value={cutref}
-                                defaultItems={cutData?.filter(item => item?.ref?.id === productCategory) || cutData}
+                                defaultItems={(productCategory && cutData?.filter(item => item?.ref?.id === productCategory)?.length > 0) ? cutData.filter(item => item?.ref?.id === productCategory) : cutData}
                                 // items={(productref && cutData?.filter(cut => cut?.ref === productref) || [] )}
                                 selectedKey={cutref}
                                 inputProps={{
@@ -1629,6 +1686,7 @@ const QuickChallan = () => {
                                 placeholder="Enter an Cut"
                                 popoverProps={{
                                   offset: 10,
+                                  shouldCloseOnInteractOutside: () => true,
                                   classNames: {
                                     base: "rounded-large",
                                     content: "p-1  border-none bg-background",
@@ -1744,6 +1802,7 @@ const QuickChallan = () => {
                                 placeholder="Enter Unit"
                                 popoverProps={{
                                   offset: 10,
+                                  shouldCloseOnInteractOutside: () => true,
                                   classNames: {
                                     base: "rounded-large",
                                     content: "p-1  border-none bg-background",
@@ -1964,7 +2023,7 @@ const QuickChallan = () => {
                   </div>
                 </ModalBody>
                 <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
+                  <Button color="danger" variant="light" onPress={handleCloseModal}>
                     Close
                   </Button>
                   <Button
@@ -1978,7 +2037,7 @@ const QuickChallan = () => {
           </ModalContent>
         </Modal>
       </div >
-      <DataTableModel filltername={"quickchallanNo"} visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={quickchallansData} onOpen={onOpen} section={'supplier'} />
+      <DataTableModel filltername={"quickchallanNo"} visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={quickchallansData} onOpen={handleOpenForCreate} section={'supplier'} onRefresh={async () => { const apiClient = (await import('../api/client')).default; const res = await apiClient.get('/api/quickchallan/get-all-quickchallan'); if (res.data?.quickchallans) setquickchallansData(res.data.quickchallans); }} />
     </>
   )
 }

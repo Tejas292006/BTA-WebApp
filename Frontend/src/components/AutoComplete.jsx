@@ -17,7 +17,7 @@ const AutoComplete = (props) => {
                 onSelectionChange={selectionChange}
                 classNames={{
                     base: " border border- bg-transparent",
-                    listboxWrapper: "max-h-[70px]",
+                    listboxWrapper: "max-h-[320px]",
                     selectorButton: "text-default-500",
                 }}
                 defaultItems={users}
@@ -40,6 +40,7 @@ const AutoComplete = (props) => {
                 placeholder={placeholder}
                 popoverProps={{
                     offset: 10,
+                    shouldCloseOnInteractOutside: () => true,
                     classNames: {
                         base: "",
                         content: "p-1  border-default-100 ",
