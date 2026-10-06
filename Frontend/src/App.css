@@ -32,7 +32,7 @@
 
 body {
   min-height: 100vh;
-  background-color: var(--text-color);
+  background-color: var(--content-bg);
   font-family: var(--font1);
   overflow: hidden;
 }
@@ -47,6 +47,16 @@ body {
   --primary-color: #d8f275;
   --text-color: #f7f7f5;
   --bg-color: #1f1e30;
+  --panel-color: #f7f7f5;
+  --content-bg: #f7f7f5;
+  --title-icon-color: #1f1e30;
+  --black-light-color: #94929e;
+  --box1-color: #1f1e30;
+  --box2-color: #1f1e30;
+  --box3-color: #1f1e30;
+  --card-bg: #ffffff;
+  --card-border: #f1f1f1;
+  --input-bg: #17162a;
   --font1: 'Fira Sans', sans-serif;
   --font2: jost, sans-serif;
   --font3: jost2, sans-serif;
@@ -56,15 +66,27 @@ body {
   /* ====== Transition ====== */
   --tran-05: all 0.5s ease;
   --tran-03: all 0.3s ease;
-  --tran-03: all 0.2s ease;
+  --tran-02: all 0.2s ease;
 }
 
 
+/* Theme variables for dark mode (applied to <html> and the dashboard root) */
+html.dark,
 .main-dashboard.dark {
   /* ===== Colors ===== */
   --primary-color: #d8f275;
-  --text-color: #000;
-  --bg-color: #fff;
+  --text-color: #f7f7f5;
+  --bg-color: #1f1e30;
+  --panel-color: #15141f;
+  --content-bg: #12111c;
+  --title-icon-color: #f7f7f5;
+  --black-light-color: #9a97ad;
+  --box1-color: #232233;
+  --box2-color: #232233;
+  --box3-color: #232233;
+  --card-bg: #1e1d2e;
+  --card-border: #2b2a3f;
+  --input-bg: #232233;
   --font1: 'Fira Sans', sans-serif;
   --font2: jost, sans-serif;
   --font3: jost2, sans-serif;
@@ -74,7 +96,34 @@ body {
   /* ====== Transition ====== */
   --tran-05: all 0.5s ease;
   --tran-03: all 0.3s ease;
-  --tran-03: all 0.2s ease;
+  --tran-02: all 0.2s ease;
+
+  /* Native controls (date pickers, selects, spin buttons) render dark */
+  color-scheme: dark;
+}
+
+/* Rectangular lime text selection for dark mode */
+html.dark ::selection {
+  background-color: rgba(216, 242, 117, 0.4);
+  color: #12111c;
+}
+
+/* Smooth background/color fade when switching themes */
+body,
+.main-dashboard,
+.dash-content,
+nav,
+.top {
+  transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+}
+
+html.dark .table__body::-webkit-scrollbar-thumb {
+  background-color: #3a3950;
+  visibility: hidden;
+}
+
+html.dark .table__body:hover::-webkit-scrollbar-thumb {
+  visibility: visible;
 }
 
 .main-dashboard {
@@ -92,6 +141,10 @@ body {
   border-radius: .6rem;
   overflow: auto;
   overflow: overlay;
+}
+
+html.dark .table__body {
+  background-color: #1b1a2b;
 }
 
 
@@ -244,3 +297,116 @@ th{
 tbody td.active {
   color: #6c00bd;
 }
+
+/* ============ Dark Mode Overrides ============ */
+
+/* Flip hard-coded black autocomplete / dropdown text to light in dark mode */
+html.dark .text-\[\#000\] {
+  color: #f7f7f5 !important;
+}
+
+/* Invoice / print tables */
+html.dark .table-invoice td {
+  color: #f7f7f5;
+  border-left-color: #2c2b40;
+  border-top-color: #2c2b40;
+}
+
+html.dark .table-invoice thead th {
+  background-color: #232233;
+  color: var(--primary-color);
+}
+
+html.dark .table-invoice td input {
+  background-color: var(--input-bg);
+  color: #f7f7f5;
+  border-color: #3a3950;
+}
+
+html.dark .table-invoice tbody tr:nth-child(even) {
+  background-color: #1e1d2e;
+}
+
+html.dark .table-invoice tbody tr:nth-child(odd) {
+  background-color: #171625;
+}
+
+/* Global scrollbar in dark mode */
+html.dark::-webkit-scrollbar-thumb:hover,
+html.dark body::-webkit-scrollbar-thumb:hover,
+html.dark .activity-data::-webkit-scrollbar-thumb:hover {
+  background: #3a3b3c;
+}
+
+/* Legacy dashboard boxes */
+.main-dashboard.dark .boxes .box {
+  background-color: var(--box1-color);
+}
+
+.main-dashboard.dark .dash-content .title .text {
+  color: var(--text-color);
+}
+
+/* ============ NextUI Modal Dark Mode Overrides ============ */
+
+/* Modal backdrop */
+html.dark [data-slot="backdrop"] {
+  background: rgba(12, 11, 20, 0.75) !important;
+  backdrop-filter: blur(4px);
+}
+
+/* Modal wrapper / container */
+html.dark [data-slot="wrapper"] .nextui-modal,
+html.dark .dark[data-slot="base"] {
+  background-color: #1e1d2e !important;
+  border: 1px solid #2b2a3f;
+}
+
+/* Modal header */
+html.dark [data-slot="header"] {
+  color: #f7f7f5 !important;
+}
+
+/* Modal body */
+html.dark [data-slot="body"] {
+  color: #f7f7f5 !important;
+}
+
+/* Modal footer */
+html.dark [data-slot="footer"] {
+  border-top-color: #2b2a3f !important;
+}
+
+/* The × close button inside NextUI Modal */
+html.dark [data-slot="close-button"] {
+  color: #9a97ad !important;
+}
+html.dark [data-slot="close-button"]:hover {
+  background-color: #2b2a3f !important;
+  color: #f7f7f5 !important;
+}
+
+/* Light mode: make sure cross button is visible */
+[data-slot="close-button"] {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+[data-slot="close-button"]:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+/* Smooth transitions for all modal inputs */
+html.dark input[type="text"],
+html.dark input[type="number"],
+html.dark input[type="email"],
+html.dark input[type="password"],
+html.dark textarea,
+html.dark select {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Focus ring in dark mode */
+html.dark input:focus,
+html.dark textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(216, 242, 117, 0.4);
+}

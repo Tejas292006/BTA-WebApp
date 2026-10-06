@@ -217,6 +217,7 @@ const Quality = () => {
                     isOpen={isOpen}
                     scrollBehavior={"inside"}
                     size={"xl"}
+                    className="dark:bg-[#1e1d2e]"
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
                         if (!newState) {
@@ -233,14 +234,17 @@ const Quality = () => {
                                     {updateId ? "Update quality" : "Create quality"}
                                 </ModalHeader>
                                 <ModalBody>
-                                    <div className="max-w-full rounded-2xl bg-[#1f1e30]">
-                                        <div className="flex flex-col gap-2 p-8">
+                                    <div className="max-w-full rounded-2xl bg-gray-50 dark:bg-[#1f1e30] border border-gray-200 dark:border-[#2b2a3f]">
+                                        <div className="flex flex-col gap-3 p-6">
+                                            <div className="flex flex-col gap-1">
+                                            <label className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 font-font1">Quality Name</label>
                                             <input
                                                 autoFocus
                                                 {...formik.getFieldProps('name')}
-                                                className="bg-slate-900 font-font2 font-[400] w-full rounded-lg border border-gray-300 px-4 py-3  text-[#fff]"
-                                                placeholder="quality name.."
+                                                className="bg-white dark:bg-[#232233] font-font2 font-[400] w-full rounded-xl border border-gray-200 dark:border-[#3a3950] px-4 py-3 text-gray-900 dark:text-[#f7f7f5] placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#d8f275] focus:border-transparent transition"
+                                                placeholder="e.g. Premium, Standard, Economy"
                                             />
+                                            </div>
                                             <Autocomplete
                                                 classNames={{
                                                     base: "max-w-full border-[#fff] ",
@@ -328,21 +332,19 @@ const Quality = () => {
                                         </div>
                                     </div>
                                 </ModalBody>
-                                <ModalFooter>
+                                <ModalFooter className="border-t border-gray-100 dark:border-[#2b2a3f]">
                                     <Button
                                         color="danger" variant="light"
+                                        className="font-font1"
                                         onPress={onClose}
                                     >
                                         Close
                                     </Button>
-                                    <Button color="primary"
-                                        className="bg-foreground text-background font-font1"
-                                        onClick={formik.handleSubmit}
-
-
-
+                                    <Button
+                                        className="bg-[#d8f275] text-[#1f1e30] font-font1 font-semibold hover:bg-[#c5e05c] transition"
+                                        onPress={formik.handleSubmit}
                                     >
-                                        {updateId ? "Update" : "Create "}
+                                        {updateId ? "Update" : "Save"}
                                     </Button>
                                 </ModalFooter>
                             </>

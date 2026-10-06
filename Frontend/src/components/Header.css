@@ -27,11 +27,10 @@
     margin-left: 10px;
 }
 
-.top .search-box {
-    position: relative;
-    height: 45px;
-    max-width: 600px;
-    width: 100%;
+/* Override hardcoded fill="#000000" on the hamburger SVG in dark mode */
+html.dark .sidebar-toggle g,
+html.dark .sidebar-toggle path {
+    fill: currentColor;
 }
 
 .top .box-head {
@@ -46,36 +45,44 @@
     font-size: 2rem;
 }
 
-.top .search-box input {
-    position: absolute;
-    border: 1px solid rgb(136, 135, 135);
-    background-color: var(--text-color);
-    padding: 0 25px 0 50px;
-    border-radius: 12px;
-    height: 100%;
-    width: 100%;
-    color: var(--bg-color);
-    font-size: 15px;
-    font-weight: 400;
-    outline: none;
-    font-family: var(--font2);
-}
-
-.top .search-box svg {
-    position: absolute;
-    left: 15px;
-    font-size: 22px;
-    height: 20px;
-    z-index: 10;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--black-light-color);
-}
-
-.top img {
+.profile-trigger {
     width: 40px;
+    height: 40px;
+    border: none;
     border-radius: 50%;
+    background-color: #e9e8ef;
+    color: #262535;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
     margin-right: 10px;
+    flex-shrink: 0;
+    transition: var(--tran-03);
+    overflow: hidden;
+}
+
+.profile-trigger:hover {
+    background-color: var(--primary-color);
+}
+
+.main-dashboard.dark .profile-trigger,
+html.dark .profile-trigger {
+    background-color: #2b2a3f;
+    color: #f7f7f5;
+}
+
+.main-dashboard.dark .profile-trigger:hover,
+html.dark .profile-trigger:hover {
+    background-color: var(--primary-color);
+    color: #1f1e30;
+}
+
+.profile-trigger img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .dashboard .dash-content {
@@ -187,9 +194,5 @@
     .top {
         padding: 10px 2px;
         gap: 0px;
-    }
-
-    .top .search-box {
-        max-width: 200px;
     }
 }

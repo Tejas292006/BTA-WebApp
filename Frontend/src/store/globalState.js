@@ -2,7 +2,7 @@ import { atom } from "recoil";
 
 export const darkmodeAtom = atom({
   key: "darkmodeAtom",
-  default: false,
+  default: localStorage.getItem("darkmode") === "true",
 });
 
 export const globalLoaderAtom = atom({
