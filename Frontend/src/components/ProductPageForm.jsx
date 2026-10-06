@@ -543,6 +543,9 @@ const ProductPageForm = () => {
                                             return (
                                                 <>
                                                     <div className='flex flex-col items-start gap-2'>
+                                                        <label className="text-sm font-semibold font-font1 capitalize text-gray-700">
+                                                            {attr?.attributeRef?.name || 'Attribute'}
+                                                        </label>
 
                                                         <Autocomplete
                                                             selectedKey={formik.values.productAttributes[attrIndex]?.attrValue}

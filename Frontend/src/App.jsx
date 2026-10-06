@@ -18,6 +18,7 @@ import Invoice from './pages/Invoice';
 import InvoicePreview from './pages/InvoicePreview';
 import Report from './pages/Report';
 import Payments from './pages/Payments';
+import Supplier from './pages/Supplier';
 const routesConfig = [
   { path: '/', element: <Home /> },
   { path: '/inventory', element: <Inventory /> },
@@ -28,6 +29,7 @@ const routesConfig = [
   { path: '/invoice-preview/:id', element: <InvoicePreview /> },
   { path: '/payments', element: <Payments /> },
   { path: '/reports', element: <Report /> },
+  { path: '/suppliers', element: <Supplier /> },
   {
     path: '/product/:id',
     element: <ProductPageForm />,

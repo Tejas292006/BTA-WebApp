@@ -6,6 +6,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { darkmodeAtom } from '../store';
 import { userAtom } from '../store';
 import { FaUserAlt } from "react-icons/fa";
+import { FaStore } from "react-icons/fa";
 // Component for individual menu item
 const MenuItem = ({ icon, title, classNames, href }) => (
     <li>
@@ -116,6 +117,15 @@ const Sidenav = () => {
                             classNames={`${path == '/customers' && 'active-tab'}`}
                             icon={(
                                 <FaUserAlt />
+                            )}
+                        />
+
+                        <MenuItem
+                            href="/suppliers"
+                            title="Suppliers"
+                            classNames={`${path == '/suppliers' && 'active-tab'}`}
+                            icon={(
+                                <FaStore />
                             )}
                         />
 

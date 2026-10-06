@@ -108,7 +108,7 @@ const Cut = () => {
         try {
             const cutDataexist = cutData.find((element) => element.id === cutId);
             console.log(cutDataexist, 'existssssssssssssssssssssss');
-            setrefcat(() => (cutDataexist?.ref))
+            setrefcat(() => (cutDataexist?.ref?.id || cutDataexist?.ref || ''))
     
             formik.setValues({
                 name: cutDataexist?.name,
@@ -362,7 +362,12 @@ const Cut = () => {
                                 <ModalFooter>
                                     <Button
                                         color="danger" variant="light"
-                                        onPress={onClose}
+                                        onPress={() => {
+                                            setUpdateId(null);
+                                            formik.resetForm();
+                                            setrefcat('');
+                                            onClose();
+                                        }}
                                     >
                                         Close
                                     </Button>

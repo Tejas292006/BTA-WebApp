@@ -4,15 +4,13 @@ import './Inventory.css'
 import { Tabs, Tab, Chip } from "@nextui-org/react";
 import { FaCut } from "react-icons/fa";
 import { GrTransaction } from "react-icons/gr";
-import { UilRuler,UilCube, UilUsersAlt, UilCreateDashboard, UilAngleLeft, UilAngleRight } from '@iconscout/react-unicons'
+import { UilRuler,UilCube, UilCreateDashboard, UilAngleLeft, UilAngleRight } from '@iconscout/react-unicons'
 import ProductPage from '../components/ProductPage';
-import Suppliers from '../components/Suppliers';
 import Categories from '../components/Categories';
 import Unit from '../components/Unit';
 import Cut from '../components/Cut';
 import { waitForAll, useRecoilValue } from 'recoil';
 import { productsDataState } from '../store';
-import { suppliersDataState } from '../store';
 import { categoryDataState } from '../store';
 import { unitDataState } from '../store';
 import { cutDataState } from '../store';
@@ -44,7 +42,6 @@ const Inventory = () => {
 
     useRecoilValue(waitForAll([
         productsDataState,
-        suppliersDataState,
         categoryDataState,
         attributeDataState,
         attributeValueDataState,
@@ -54,7 +51,6 @@ const Inventory = () => {
     ]));
 
     const productsData = useRecoilValue(productsDataState);
-    const supplierData = useRecoilValue(suppliersDataState);
     const categoryData = useRecoilValue(categoryDataState);
     const attributeData = useRecoilValue(attributeDataState);
     const attributeValueData = useRecoilValue(attributeValueDataState);
@@ -92,7 +88,6 @@ const Inventory = () => {
 
     const tabContent = {
         Products: <ProductPage />,
-        Suppliers: <Suppliers />,
         Category: <Categories />,
         Attributes: <Attribute />,
         AttributeValues: <AttributeValue />,
@@ -137,17 +132,6 @@ const Inventory = () => {
                                     <UilCube />
                                     <span>Products</span>
                                     <Chip size="sm" variant="light">{productsData?.length}</Chip>
-                                </div>
-                            }
-                            className="max-h-max px-5 "
-                        />
-                        <Tab
-                            key="Suppliers"
-                            title={
-                                <div className="flex items-center space-x-2 ">
-                                    <UilUsersAlt />
-                                    <span>Suppliers</span>
-                                    <Chip size="sm" variant="light">{supplierData?.length}</Chip>
                                 </div>
                             }
                             className="max-h-max px-5 "
