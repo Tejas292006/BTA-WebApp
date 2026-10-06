@@ -28,7 +28,11 @@ router.get("/get-all-attributevalue", async (req, res) => {
             include: { attribute: true },
             orderBy: { createdAt: "desc" },
         });
-        res.status(200).json({ success: true, attributeValues });
+        const formatted = attributeValues.map((av) => ({
+            ...av,
+            attributeRef: av.attribute || av.attributeRef || null,
+        }));
+        res.status(200).json({ success: true, attributeValues: formatted });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
@@ -38,7 +42,11 @@ router.get("/get-all-attributevalue", async (req, res) => {
 router.delete("/delete-attributevalue/:id", async (req, res) => {
     try {
         const attributeValue = await prisma.attributeValue.delete({ where: { id: req.params.id } });
-        res.status(200).json({ success: true, message: "AttributeValue deleted successfully!", attributeValue, attributeValueDoc: attributeValue });
+        const formatted = {
+            ...attributeValue,
+            attributeRef: attributeValue.attribute || attributeValue.attributeRef || null,
+        };
+        res.status(200).json({ success: true, message: "AttributeValue deleted successfully!", attributeValue: formatted, attributeValueDoc: formatted });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
@@ -53,7 +61,11 @@ router.put("/update-attributevalue/:id", async (req, res) => {
             data: { attributeId: attributeId || attributeRef || null, valuesCombo, verified },
             include: { attribute: true },
         });
-        res.status(200).json({ success: true, message: "AttributeValue updated successfully!", attributeValue, attributeValueDoc: attributeValue });
+        const formatted = {
+            ...attributeValue,
+            attributeRef: attributeValue.attribute || attributeValue.attributeRef || null,
+        };
+        res.status(200).json({ success: true, message: "AttributeValue updated successfully!", attributeValue: formatted, attributeValueDoc: formatted });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }

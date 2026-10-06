@@ -132,10 +132,13 @@ const ProductPageForm = () => {
     }, [productURL, productsData])
 
     const updateDependentFields = (value) => {
-        const updatedProductAttributes = productAttributeValueFirst.map(attr => ({
-            attrType: attr.attributeRef?.id || attr.attributeRef,
-            attrValue: null
-        }));
+        const updatedProductAttributes = (productAttributeValueFirst || []).map(attr => {
+            const attrObj = attr?.attribute || attr?.attributeRef;
+            return {
+                attrType: attrObj?.id || attr?.attributeId || attrObj,
+                attrValue: null
+            };
+        });
         formik.setValues({
             ...formik.values,
             category: value,
@@ -318,13 +321,14 @@ const ProductPageForm = () => {
     const [isLoading, setIsLoading] = useRecoilState(globalLoaderAtom);
 
     const initialProductAttributes = useMemo(() => {
-        // if (!updateId) {
-        return productAttributeValueFirst.map(attr => ({
-            attrType: attr.attributeRef?.id || attr.attributeRef,
-            attrValue: null
-        }));
-        // }
-    }, []);
+        return (productAttributeValueFirst || []).map(attr => {
+            const attrObj = attr?.attribute || attr?.attributeRef;
+            return {
+                attrType: attrObj?.id || attr?.attributeId || attrObj,
+                attrValue: null
+            };
+        });
+    }, [productAttributeValueFirst]);
 
 
     console.log(initialProductAttributes);
@@ -357,36 +361,6 @@ const ProductPageForm = () => {
                 errors.category = "Category is required";
             }
 
-            // if (!values.design) {
-            //     errors.design = "Design is required";
-            // }
-
-            // if (!values.quality) {
-            //     errors.quality = "Quality is required";
-            // }
-
-            // if (!values.feeltype) {
-            //     errors.feeltype = "Feel Type is required";
-            // }
-
-            // if (!values.finishtype) {
-            //     errors.finishtype = "Finish Type is required";
-            // }
-
-            // if (!values.weave) {
-            //     errors.weave = "Weave is required";
-            // }
-
-            // if (!values.width) {
-            //     errors.width = "Width is required";
-            // }
-            // if (!values.pricePerUnit || values.pricePerUnit.magnitude === null || values.pricePerUnit.unit === null) {
-            //     errors.pricePerUnit = "Both Magnitude and Unit are required for Price Per Unit";
-            // }
-
-
-            // Add validation for other fields...
-
             return errors;
         },
         onSubmit: async (values) => {
@@ -395,9 +369,14 @@ const ProductPageForm = () => {
 
             const payload = {
                 supplierId: values.supplierName || null,
-                productName: values.productName,
+                productName: (values.productName || '').toUpperCase().trim(),
                 categoryId: values.category || null,
-                productAttributes: (values.productAttributes || []).filter(attr => attr.attrValue !== null && attr.attrValue !== undefined),
+                productAttributes: (values.productAttributes || [])
+                    .filter(attr => attr.attrValue !== null && attr.attrValue !== undefined && attr.attrValue !== '')
+                    .map(attr => ({
+                        attrType: attr.attrType,
+                        attrValue: typeof attr.attrValue === 'string' ? attr.attrValue.toUpperCase().trim() : attr.attrValue,
+                    })),
                 productColorChartData: values.productColorChartData || [],
                 pricePerUnit: {
                     magnitude: values.pricePerUnit?.magnitude === null || values.pricePerUnit?.magnitude === '' ? null : Number(values.pricePerUnit.magnitude),
@@ -474,11 +453,10 @@ const ProductPageForm = () => {
                         <form onSubmit={formik.handleSubmit} className="flex flex-wrap font-font1 flex-col gap-10 mt-5">
                             <div className="flex flex-col">
                                 <AutoComplete
-                                    placeholder={"Supplier Name"}
+                                    placeholder={"SUPPLIER NAME"}
                                     users={supplierData}
                                     values={formik.values.supplierName}
                                     selectionChange={(value) => formik.setFieldValue('supplierName', value)}
-
                                 />
                                 {formik.touched.supplierName && formik.errors.supplierName ? (
                                     <div className="text-red-500 text-[0.8rem] font-semibold italic">*{formik.errors.supplierName}</div>
@@ -486,37 +464,41 @@ const ProductPageForm = () => {
                                 <br />
                                 <Input
                                     type="text"
-                                    placeholder="Product name..."
+                                    placeholder="PRODUCT NAME..."
                                     labelPlacement="outside"
                                     classNames={{
-                                        label: '!text-[#fff]  font-font1',
+                                        label: '!text-[#fff] font-font1 uppercase',
                                         base: "max-w-full",
-                                        input: 'font-font1 text-[1rem]',
-                                        inputWrapper: "h-[48px]  w-full",
+                                        input: 'font-font1 text-[1rem] uppercase',
+                                        inputWrapper: "h-[48px] w-full",
                                     }}
+                                    style={{ textTransform: 'uppercase' }}
                                     variant="flat"
                                     id="productName"
                                     name="productName"
-                                    value={formik.values.productName}
-                                    onChange={formik.handleChange}
+                                    value={formik.values.productName || ''}
+                                    onChange={(e) => formik.setFieldValue('productName', e.target.value.toUpperCase())}
                                     onBlur={formik.handleBlur}
                                 />
                                 {formik.touched.productName && formik.errors.productName ? (
                                     <div className="text-red-500 text-[0.8rem] font-semibold italic">*{formik.errors.productName}</div>
                                 ) : null}
 
-                                <div className='mt-12 mb-4 flex gap-2 font-bold border-b border-black pb-2 border-dashed  text-base font-sans'>
+                                <div className='mt-12 mb-4 flex gap-2 font-bold border-b border-black pb-2 border-dashed text-base font-sans'>
                                     More Details about product
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M17 15.586 6.707 5.293 5.293 6.707 15.586 17H7v2h12V7h-2v8.586z" /></svg>
                                 </div>
                                 {/* select form for category , width , feel type etc */}
-                                <div className="grid grid-cols-1  md:grid-cols-3 gap-6 w-full   ">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
 
 
                                     <div className='flex flex-col items-start gap-2'>
+                                        <label className="text-sm font-semibold font-font1 uppercase text-gray-700 dark:text-gray-200">
+                                            CATEGORY
+                                        </label>
                                         {/* AutoComplete for category */}
                                         <AutoComplete
-                                            placeholder={"Enter category"}
+                                            placeholder={"CATEGORY"}
                                             users={categoryData}
                                             values={formik.values.category}
                                             selectionChange={(value) => {
@@ -533,146 +515,119 @@ const ProductPageForm = () => {
 
                                     {
                                         productAttributeValueFirst && productAttributeValueFirst.map((attr, attrIndex) => {
-                                            // const attributeValues = productAttributesValue.find(value => value.attributeType.name === attr.name)?.attributesValues;
-                                            console.log(attr?.attributeRef?.name)
+                                            const attrObj = attr?.attribute || attr?.attributeRef;
+                                            const rawAttrName = attrObj?.name || attr?.name || 'Attribute';
+                                            const attrName = rawAttrName.trim();
+                                            const attrId = attrObj?.id || attr?.attributeId || attrObj;
 
-                                            if (attr?.attributeRef?.name === "cut") {
-                                                return;
+                                            if (attrName.toLowerCase() === "cut") {
+                                                return null;
                                             }
 
+                                            const currentAttrEntry = (formik.values.productAttributes || []).find(
+                                                a => a?.attrType === attrId
+                                            );
+                                            const selectedValue = currentAttrEntry?.attrValue || formik.values.productAttributes?.[attrIndex]?.attrValue || null;
+
                                             return (
-                                                <>
-                                                    <div className='flex flex-col items-start gap-2'>
-                                                        <label className="text-sm font-semibold font-font1 capitalize text-gray-700">
-                                                            {attr?.attributeRef?.name || 'Attribute'}
-                                                        </label>
+                                                <div key={attrIndex} className='flex flex-col items-start gap-2'>
+                                                    <label className="text-sm font-semibold font-font1 uppercase text-gray-700 dark:text-gray-200">
+                                                        {attrName}
+                                                    </label>
 
-                                                        <Autocomplete
-                                                            selectedKey={formik.values.productAttributes[attrIndex]?.attrValue}
-                                                            onSelectionChange={(value) => {
-                                                                formik.setFieldValue(`productAttributes[${attrIndex}].attrType`, attr.attributeRef?.id || attr.attributeRef)
-                                                                // Find the matching attributesValue object based on the selected value
-                                                                const selectedAttributesValue = attr.valuesCombo.find(item => item.attributeValue === value);
+                                                    <Autocomplete
+                                                        selectedKey={selectedValue}
+                                                        onSelectionChange={(value) => {
+                                                            const updatedAttributes = [...(formik.values.productAttributes || [])];
+                                                            const existingIdx = updatedAttributes.findIndex(a => a?.attrType === attrId);
+                                                            const selectedAttributesValue = attr.valuesCombo?.find(item => item.attributeValue === value);
+                                                            const finalValue = selectedAttributesValue
+                                                                ? selectedAttributesValue.attributeValue.toUpperCase()
+                                                                : (value ? String(value).toUpperCase() : null);
 
-                                                                // Set the attrValue to the value of the selected attributesValue object
-                                                                if (selectedAttributesValue) {
-                                                                    formik.setFieldValue(`productAttributes[${attrIndex}].attrValue`, selectedAttributesValue.attributeValue);
-                                                                } else {
-                                                                    // Handle the case where the selected value is not found in attributesValues
-                                                                    formik.setFieldValue(`productAttributes[${attrIndex}].attrValue`, null);
-                                                                    console.error('Selected value not found in attributesValues:', value);
-                                                                }
-                                                            }}
-                                                            classNames={{
-                                                                base: " border border- bg-transparent",
-                                                                listboxWrapper: "max-h-[70px]",
-                                                                selectorButton: "text-default-500",
-                                                            }}
-                                                            defaultItems={getFilteredItems(attr?.valuesCombo, formik.values.category)}
-                                                            inputProps={{
-                                                                classNames: {
-                                                                    input: "text-[0.9rem] ",
-                                                                    inputWrapper: " bg-[#fff] font-font1 h-[40px] max-w-full ",
-                                                                },
-                                                            }}
-                                                            // listboxProps={{
-                                                            //     hideSelectedIcon: true,
-                                                            //     itemClasses: {
-                                                            //         base: [
-
-                                                            //         ],
-                                                            //     },
-                                                            // }}
-                                                            aria-label="Select an employee"
-                                                            placeholder={"Enter " + attr?.attributeRef?.name}
-                                                            popoverProps={{
-                                                                offset: 10,
-                                                                classNames: {
-                                                                    base: "",
-                                                                    content: "p-1  border-default-100 ",
-                                                                },
-                                                            }}
-                                                            variant="flat"
-                                                        >
-                                                            {(item) => (
-                                                                <AutocompleteItem key={item.attributeValue} textValue={item.attributeValue}>
-                                                                    <div className="flex justify-between items-center">
-                                                                        <div className="flex gap-2 items-center">
-                                                                            <div className="flex flex-col">
-                                                                                <span className="text-small">{item.attributeValue}</span>
-                                                                            </div>
+                                                            if (existingIdx >= 0) {
+                                                                updatedAttributes[existingIdx] = { attrType: attrId, attrValue: finalValue };
+                                                            } else {
+                                                                updatedAttributes.push({ attrType: attrId, attrValue: finalValue });
+                                                            }
+                                                            formik.setFieldValue('productAttributes', updatedAttributes);
+                                                        }}
+                                                        classNames={{
+                                                            base: "border bg-transparent",
+                                                            listboxWrapper: "max-h-[220px]",
+                                                            selectorButton: "text-default-500",
+                                                        }}
+                                                        defaultItems={getFilteredItems(attr?.valuesCombo || [], formik.values.category)}
+                                                        inputProps={{
+                                                            style: { textTransform: 'uppercase' },
+                                                            classNames: {
+                                                                input: "text-[0.9rem] uppercase",
+                                                                inputWrapper: "bg-[#fff] font-font1 h-[40px] max-w-full uppercase",
+                                                            },
+                                                        }}
+                                                        aria-label={`Select ${attrName}`}
+                                                        placeholder={`ENTER ${attrName.toUpperCase()}`}
+                                                        popoverProps={{
+                                                            offset: 10,
+                                                            classNames: {
+                                                                base: "",
+                                                                content: "p-1 border-default-100 uppercase",
+                                                            },
+                                                        }}
+                                                        variant="flat"
+                                                    >
+                                                        {(item) => (
+                                                            <AutocompleteItem key={item.attributeValue} textValue={item.attributeValue ? item.attributeValue.toUpperCase() : ""}>
+                                                                <div className="flex justify-between items-center">
+                                                                    <div className="flex gap-2 items-center">
+                                                                        <div className="flex flex-col">
+                                                                            <span className="text-small uppercase">{item.attributeValue}</span>
                                                                         </div>
                                                                     </div>
-                                                                </AutocompleteItem>
-                                                            )}
-                                                        </Autocomplete>
-
-                                                        {/* <AutoComplete
-                                                                placeholder={"Enter quality"}
-                                                                // users={getFilteredItems(qualityData, formik.values.category)}
-                                                                users={attr.attributeType}
-                                                                values={formik.values.quality}
-                                                                selectionChange={(value) => formik.setFieldValue('quality', value)}
-                                                            />
-                                                            {formik.touched.quality && formik.errors.quality ? (
-                                                                <div className="text-red-500 text-[0.8rem] font-semibold italic">*{formik.errors.quality}</div>
-                                                            ) : null} */}
-                                                    </div>
-                                                </>
-                                            )
-
+                                                                </div>
+                                                            </AutocompleteItem>
+                                                        )}
+                                                    </Autocomplete>
+                                                </div>
+                                            );
                                         })
                                     }
 
 
-                                    {/* Input for Prce Per piece */}
+                                    {/* Input for Price Per piece */}
                                     <div className='flex flex-col items-start gap-2'>
+                                        <label className="text-sm font-semibold font-font1 uppercase text-gray-700 dark:text-gray-200">
+                                            PRICE PER UNIT
+                                        </label>
                                         <div className='flex gap-2 h-full items-center'>
                                             Rs.
                                             <input
                                                 type="number"
-                                                value={formik.values?.pricePerUnit?.magnitude}
+                                                value={formik.values?.pricePerUnit?.magnitude || ''}
                                                 onChange={(e) => formik.setFieldValue('pricePerUnit.magnitude', e.target.value)}
                                                 onBlur={formik.handleBlur}
                                                 id="pricePerUnit"
                                                 name="pricePerUnit"
-                                                className='border h-full outline-none w-[180px] px-2'
-                                                placeholder='Price per Piece'
+                                                className='border h-[40px] outline-none w-[180px] px-2 rounded-lg'
+                                                placeholder='PRICE PER PIECE'
                                             />
                                             /
                                             <div>
                                                 <AutoComplete
-                                                    placeholder={"Unit"}
+                                                    placeholder={"UNIT"}
                                                     users={units}
                                                     values={formik.values?.pricePerUnit?.unit}
                                                     selectionChange={(value) => formik.setFieldValue('pricePerUnit.unit', value)}
                                                 />
-
                                             </div>
                                         </div>
-                                        {/* <Input
-                                            type="number"
-                                            placeholder="Price Per Piece (in rs.)"
-                                            labelPlacement="outside"
-                                            classNames={{
-                                                label: '!text-[#fff]  font-font1',
-                                                base: "max-w-[272px]",
-                                                input: 'font-font1 text-[1rem]',
-                                                inputWrapper: "h-[48px]  w-full",
-                                            }}
-                                            variant="flat"
-                                            id="pricePerPiece"
-                                            name="pricePerPiece"
-                                            value={formik.values.pricePerPiece}
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                        /> */}
                                         {formik.touched.pricePerUnit && formik.errors.pricePerUnit ? (
                                             <div className="text-red-500 text-[0.8rem] font-semibold italic">
                                                 *{formik.errors.pricePerUnit}
                                             </div>
                                         ) : null}
                                     </div>
+
 
                                 </div>
                                 <div className='mt-12 mb-4 flex gap-2 font-bold border-b border-black pb-2 border-dashed  text-base font-sans'>
