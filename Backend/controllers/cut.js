@@ -3,7 +3,7 @@ import prisma from "../configs/prismaClient.js";
 
 const router = express.Router();
 
-// Create cut
+// Create cutt
 router.post("/create-cut", async (req, res) => {
     try {
         const { name, isNameNumerical } = req.body;
