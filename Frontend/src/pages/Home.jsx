@@ -1,5 +1,5 @@
 import React from 'react'
-import { useRecoilValue, waitForAll } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import {
   userAtom,
   productsDataState,
@@ -13,26 +13,23 @@ import {
 import { Link } from 'react-router-dom'
 
 const Home = () => {
+  const user = useRecoilValue(userAtom);
 
-  useRecoilValue(waitForAll([
-    userAtom,
-    productsDataState,
-    suppliersDataState,
-    customerDataState,
-    challanDataState,
-    invoiceDataState,
-    quickchallanDataState,
-    categoryDataState
-  ]));
+  const productsLoadable = useRecoilValueLoadable(productsDataState);
+  const suppliersLoadable = useRecoilValueLoadable(suppliersDataState);
+  const customerLoadable = useRecoilValueLoadable(customerDataState);
+  const challansLoadable = useRecoilValueLoadable(challanDataState);
+  const invoiceLoadable = useRecoilValueLoadable(invoiceDataState);
+  const quickChallansLoadable = useRecoilValueLoadable(quickchallanDataState);
+  const categoryLoadable = useRecoilValueLoadable(categoryDataState);
 
-  const user = useRecoilValue(userAtom)
-  const productsData = useRecoilValue(productsDataState)
-  const suppliersData = useRecoilValue(suppliersDataState)
-  const customerData = useRecoilValue(customerDataState)
-  const challansData = useRecoilValue(challanDataState)
-  const invoiceData = useRecoilValue(invoiceDataState)
-  const quickChallansData = useRecoilValue(quickchallanDataState)
-  const categoryData = useRecoilValue(categoryDataState)
+  const productsData = productsLoadable.state === 'hasValue' ? productsLoadable.contents : [];
+  const suppliersData = suppliersLoadable.state === 'hasValue' ? suppliersLoadable.contents : [];
+  const customerData = customerLoadable.state === 'hasValue' ? customerLoadable.contents : [];
+  const challansData = challansLoadable.state === 'hasValue' ? challansLoadable.contents : [];
+  const invoiceData = invoiceLoadable.state === 'hasValue' ? invoiceLoadable.contents : [];
+  const quickChallansData = quickChallansLoadable.state === 'hasValue' ? quickChallansLoadable.contents : [];
+  const categoryData = categoryLoadable.state === 'hasValue' ? categoryLoadable.contents : [];
 
   const cards = [
     { title: 'Products', count: productsData?.length || 0, href: '/inventory?tab=Products', color: 'bg-blue-500' },

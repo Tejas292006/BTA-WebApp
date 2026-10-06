@@ -35,6 +35,7 @@ const Sidenav = () => {
 
     const logout = () => {
         localStorage.removeItem("token"); // Remove the token from localStorage
+        localStorage.removeItem("user");  // Remove cached user data
         setUser(null); // Reset the user state in the Recoil atom
         navigate("/login"); // Redirect to the login page
     };

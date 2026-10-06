@@ -37,22 +37,6 @@ const routesConfig = [
   },
 ];
 
-function generateRoutes(config) {
-  return config.map((route, index) => (
-    <Route
-      key={index}
-      path={route.path}
-      element={
-        <PrivateRoute>
-          <DashBoardLayout>
-            {route.element}
-          </DashBoardLayout>
-        </PrivateRoute>
-      }
-    />
-  ));
-}
-
 function App() {
 
   const mode = useRecoilValue(darkmodeAtom);
@@ -73,24 +57,30 @@ function App() {
       {/* <Sidenav /> */}
       <div className='h-screen overflow-scroll w-screen border-green-400'>
         <Routes>
-          {generateRoutes(routesConfig)}
+          <Route
+            element={
+              <PrivateRoute>
+                <DashBoardLayout />
+              </PrivateRoute>
+            }
+          >
+            {routesConfig.map((route, index) => (
+              <Route key={index} path={route.path} element={route.element} />
+            ))}
+            <Route
+              path='/404'
+              element={
+                <div className="flex flex-col items-center justify-center h-full gap-4">
+                  <h1 className="text-6xl font-bold font-font2 text-gray-400 dark:text-gray-300">404</h1>
+                  <p className="text-xl font-font1 text-gray-500 dark:text-gray-400">Page not found</p>
+                  <a href="/" className="px-6 py-2 bg-black text-white rounded-lg font-font1 hover:bg-gray-800 transition dark:bg-[#d8f275] dark:text-[#1f1e30] dark:hover:bg-white">Go Home</a>
+                </div>
+              }
+            />
+          </Route>
           <Route
             path='/login'
             element={<LoginPage />}
-          />
-          <Route
-            path='/404'
-            element={
-              <PrivateRoute>
-                <DashBoardLayout>
-                  <div className="flex flex-col items-center justify-center h-full gap-4">
-                    <h1 className="text-6xl font-bold font-font2 text-gray-400 dark:text-gray-300">404</h1>
-                    <p className="text-xl font-font1 text-gray-500 dark:text-gray-400">Page not found</p>
-                    <a href="/" className="px-6 py-2 bg-black text-white rounded-lg font-font1 hover:bg-gray-800 transition dark:bg-[#d8f275] dark:text-[#1f1e30] dark:hover:bg-white">Go Home</a>
-                  </div>
-                </DashBoardLayout>
-              </PrivateRoute>
-            }
           />
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>

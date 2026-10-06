@@ -7,8 +7,12 @@ import { useFormik } from 'formik'
 import { loginUser, registerUser } from '../api'
 import { FiEye, FiEyeOff } from 'react-icons/fi'
 
+import { useSetRecoilState } from 'recoil'
+import { userAtom } from '../store'
+
 const LoginPage = () => {
 
+  const setUser = useSetRecoilState(userAtom);
   const [activeBullet, setActiveBullet] = useState(1); // Add state for active bullet
   const [showPassword, setShowPassword] = useState(false);
   const [showSignUpPassword, setShowSignUpPassword] = useState(false);
@@ -34,6 +38,11 @@ const LoginPage = () => {
 
       if (response.success) {
         localStorage.setItem("token", response.token);
+        const userData = response.data || response.user;
+        if (userData) {
+          localStorage.setItem("user", JSON.stringify(userData));
+          setUser(userData);
+        }
         toast.success('Logged In successfully')
         navigate("/")
       }
