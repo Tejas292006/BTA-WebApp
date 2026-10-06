@@ -1,4 +1,4 @@
-import axios from 'axios';
+import apiClient from '../api/client';
 import { IndianRupee } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
 
@@ -65,7 +65,7 @@ export default function NewReferenceTable({ customerData, balanceUsed, currentBa
 
   const handleInitialize = async () => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_SERVER}/api/customer/initialize-balance`, {
+      const response = await apiClient.post('/api/customer/initialize-balance', {
         customerId: currentCustomerId,
         supplierId: currentSupplierId,
       });

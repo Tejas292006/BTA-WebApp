@@ -399,6 +399,9 @@ const Challan = () => {
   };
 
   const handleCloseModal = () => {
+    if (document.activeElement && typeof document.activeElement.blur === 'function') {
+      document.activeElement.blur();
+    }
     onOpenChange(false);
     formik.resetForm();
     setsupplierRef("");
@@ -419,6 +422,30 @@ const Challan = () => {
     setProductChartImage("");
     setProductCategory(null);
   };
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleGlobalCloseCapture = (e) => {
+      const closeBtn = e.target.closest(
+        'button[aria-label="Close"], [data-slot="close-button"], [data-modal-close="true"], .close-modal-trigger'
+      );
+      if (closeBtn) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (document.activeElement && typeof document.activeElement.blur === 'function') {
+          document.activeElement.blur();
+        }
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        handleCloseModal();
+      }
+    };
+
+    document.addEventListener('pointerdown', handleGlobalCloseCapture, true);
+    return () => {
+      document.removeEventListener('pointerdown', handleGlobalCloseCapture, true);
+    };
+  }, [isOpen]);
 
   // Wrapped onOpen for Add New — always clears all state first
   const handleOpenForCreate = () => {
@@ -622,32 +649,16 @@ const Challan = () => {
           onOpenChange={(newState) => {
             onOpenChange(newState);
             if (!newState) {
-              // Reset all form state when modal is closed
-              formik.resetForm();
-              setsupplierRef("");
-              setcustomerRef("");
-              setfilterkeys([]);
-              setproductref("");
-              setprodcutkey("");
-              setUpdateId("");
-              setSelectedKeys("");
-              setRemark("");
-              settotalbill("");
-              setcutref("");
-              setUnit("");
-              setqty("");
-              setrate("");
-              setqtymeter("");
-              setProductChartImageData([]);
-              setProductChartImage("");
-              setProductCategory(null);
+              handleCloseModal();
             }
           }}
         >
           <ModalContent>
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col gap-1 text-2xl font-bold font-font2  mb-3">{updateId ? "Update Challan" : "Create Challan"}</ModalHeader>
+                <ModalHeader className="flex flex-col gap-1 text-2xl font-bold font-font2 mb-3">
+                  {updateId ? "Update Challan" : "Create Challan"}
+                </ModalHeader>
 
                 <ModalBody className='flex flex-col gap-6'>
                   <div className="flex flex-col w-full">
@@ -2060,7 +2071,18 @@ const Challan = () => {
                   </div>
                 </ModalBody>
                 <ModalFooter>
-                  <Button color="danger" variant="light" onPress={handleCloseModal}>
+                  <Button
+                    color="danger"
+                    variant="light"
+                    data-modal-close="true"
+                    className="close-modal-trigger font-font1"
+                    onPointerDown={(e) => {
+                      e.stopPropagation();
+                      handleCloseModal();
+                    }}
+                    onPress={handleCloseModal}
+                    onClick={handleCloseModal}
+                  >
                     Close
                   </Button>
                   <Button

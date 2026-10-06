@@ -212,7 +212,18 @@ const Header = ({ toggleSidebar }) => {
                                 </div>
                             </ModalBody>
                             <ModalFooter>
-                                <Button color="warning" variant="light" onPress={onClose}>
+                                <Button
+                                    color="warning"
+                                    variant="light"
+                                    data-modal-close="true"
+                                    className="close-modal-trigger font-font1"
+                                    onPointerDown={(e) => {
+                                        e.stopPropagation();
+                                        onClose();
+                                    }}
+                                    onPress={onClose}
+                                    onClick={onClose}
+                                >
                                     Close
                                 </Button>
                                 <Button className='bg-[#d8f275] text-[#1f1e30]' onPress={formik.handleSubmit}>

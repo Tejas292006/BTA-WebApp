@@ -180,7 +180,18 @@ const ViewArea = ({ isOpen, onOpen, onOpenChange, onClose, data, section }) => {
                                 </div>
                             </ModalBody>
                             <ModalFooter className="border-t border-gray-100 dark:border-[#2b2a3f]">
-                                <Button color="danger" variant="light" className="font-font1" onPress={onClose}>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    data-modal-close="true"
+                                    className="close-modal-trigger font-font1"
+                                    onPointerDown={(e) => {
+                                        e.stopPropagation();
+                                        onClose();
+                                    }}
+                                    onPress={onClose}
+                                    onClick={onClose}
+                                >
                                     Close
                                 </Button>
                             </ModalFooter>

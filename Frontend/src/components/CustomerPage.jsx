@@ -192,14 +192,55 @@ const CustomerPage = () => {
             } else {
                 setIsLoading(true)
                 await createcustomer(values);
-                setIsLoading(false)
+                setIsLoading(false);
             }
         },
     });
-const setUpdate = ()=>{
-    setUpdateId(false)
-    formik.resetForm();  
-}
+
+    const handleCloseModal = () => {
+        if (document.activeElement && typeof document.activeElement.blur === 'function') {
+            document.activeElement.blur();
+        }
+        onOpenChange(false);
+        setUpdateId(null);
+        formik.resetForm();
+    };
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleGlobalCloseCapture = (e) => {
+            const closeBtn = e.target.closest(
+                'button[aria-label="Close"], [data-slot="close-button"], [data-modal-close="true"], .close-modal-trigger'
+            );
+            if (closeBtn) {
+                e.stopPropagation();
+                e.preventDefault();
+                if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                    document.activeElement.blur();
+                }
+                window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+                handleCloseModal();
+            }
+        };
+
+        document.addEventListener('pointerdown', handleGlobalCloseCapture, true);
+        return () => {
+            document.removeEventListener('pointerdown', handleGlobalCloseCapture, true);
+        };
+    }, [isOpen]);
+
+    const setUpdate = () => {
+        setUpdateId(false);
+        formik.resetForm();  
+    };
+
+    const handleOpenForCreate = () => {
+        setUpdateId(null);
+        formik.resetForm();
+        onOpen();
+    };
+
     return (
         <>
             <div className="flex flex-col gap-2">
@@ -207,11 +248,11 @@ const setUpdate = ()=>{
                     isOpen={isOpen}
                     scrollBehavior={"inside"}
                     size={"xl"}
+                    className="dark:bg-[#1e1d2e]"
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
                         if (!newState) {
-                            setUpdateId(null);
-                            formik.resetForm();
+                            handleCloseModal();
                         }
                     }}
                 >
@@ -247,8 +288,14 @@ const setUpdate = ()=>{
                                 <ModalFooter className="border-t border-gray-100 dark:border-[#2b2a3f]">
                                     <Button
                                         color="danger" variant="light"
-                                        className="font-font1"
-                                        onPress={onClose}
+                                        data-modal-close="true"
+                                        className="close-modal-trigger font-font1"
+                                        onPointerDown={(e) => {
+                                            e.stopPropagation();
+                                            handleCloseModal();
+                                        }}
+                                        onPress={handleCloseModal}
+                                        onClick={handleCloseModal}
                                     >
                                         Close
                                     </Button>
@@ -264,7 +311,7 @@ const setUpdate = ()=>{
                     </ModalContent>
                 </Modal>
             </div>
-            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={customerData} onOpen={onOpen} section={'customer'} onRefresh={refreshData} />
+            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={customerData} onOpen={handleOpenForCreate} section={'customer'} onRefresh={refreshData} />
         </>
     )
 }

@@ -247,6 +247,48 @@ const AttributeValue = () => {
       }
     },
   });
+  const handleCloseModal = () => {
+    if (document.activeElement && typeof document.activeElement.blur === 'function') {
+      document.activeElement.blur();
+    }
+    onOpenChange(false);
+    setUpdateId(null);
+    setrefatt('');
+    setcategoryAndValueInputs([
+      {
+        category: "",
+        attributeValue: "",
+        isNameNumerical: false
+      },
+    ]);
+    setrefattName('');
+    formik.resetForm();
+  };
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleGlobalCloseCapture = (e) => {
+      const closeBtn = e.target.closest(
+        'button[aria-label="Close"], [data-slot="close-button"], [data-modal-close="true"], .close-modal-trigger'
+      );
+      if (closeBtn) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (document.activeElement && typeof document.activeElement.blur === 'function') {
+          document.activeElement.blur();
+        }
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        handleCloseModal();
+      }
+    };
+
+    document.addEventListener('pointerdown', handleGlobalCloseCapture, true);
+    return () => {
+      document.removeEventListener('pointerdown', handleGlobalCloseCapture, true);
+    };
+  }, [isOpen]);
+
   const setUpdate = () => {
     setUpdateId(false);
     setrefatt(() => (''))
@@ -258,6 +300,20 @@ const AttributeValue = () => {
       },
     ]);
     setrefattName('');
+  };
+
+  const handleOpenForCreate = () => {
+    setUpdateId(null);
+    setrefatt('');
+    setcategoryAndValueInputs([
+      {
+        category: "",
+        attributeValue: "",
+        isNameNumerical: false
+      },
+    ]);
+    setrefattName('');
+    onOpen();
   };
 
   const refreshData = async () => {
@@ -282,16 +338,7 @@ const AttributeValue = () => {
           onOpenChange={(newState) => {
             onOpenChange(newState);
             if (!newState) {
-              setUpdateId(null);
-              setrefatt('');
-              setcategoryAndValueInputs([
-                {
-                  category: "",
-                  attributeValue: "",
-                  isNameNumerical: false
-                },
-              ]);
-              setrefattName('');
+              handleCloseModal();
             }
           }}
         >
@@ -306,43 +353,35 @@ const AttributeValue = () => {
                     <div className="flex flex-col gap-3 p-6">
                       <Autocomplete
                         classNames={{
-                          base: "max-w-full border-[#fff] ",
+                          base: "max-w-full",
                           listboxWrapper: "max-h-[320px]",
-                          selectorButton: "text-[#fff]",
+                          selectorButton: "text-gray-600 dark:text-gray-300",
                         }}
                         onSelectionChange={(selectedId) => {
-                          // Find the item in attributeData with the matching ID
                           const selectedItem = attributeData.find(item => (item.id === selectedId));
                           if (selectedItem) {
-                            // If the item is found, set refatt to an object containing both ID and name
-                            // setrefatt({ id: selectedId, name: selectedItem.name });
-                            console.log(selectedItem, 'vvvvvvvvvvvvvv')
                             setrefatt(selectedItem.id)
                             setrefattName(selectedItem.name)
                           } else {
-                            // Handle the case where the item is not found (optional)
                             setrefattName("")
-
-                            console.error("Item not found in attributeData:", selectedItem);
-
+                            setrefatt("")
                           }
                         }}
-                        value={refatt}
-                        defaultItems={Array.isArray(attributeData) ? attributeData : []}
-                        selectedKey={refatt}
+                        items={Array.isArray(attributeData) ? attributeData : []}
+                        selectedKey={refatt ? String(refatt) : null}
                         inputProps={{
                           classNames: {
-                            input: "ml-1 text-[#fff] font-font1",
-                            inputWrapper: "h-[50px]",
-                            label: "text-[#fff]",
+                            input: "ml-1 text-gray-900 dark:text-white font-font1 font-medium",
+                            inputWrapper: "h-[50px] bg-white dark:bg-[#232233] border border-gray-200 dark:border-[#3a3950]",
+                            label: "text-gray-700 dark:text-gray-300 font-font1",
                           },
                         }}
                         listboxProps={{
-                          hideSelectedIcon: true,
+                          hideSelectedIcon: false,
                           itemClasses: {
                             base: [
                               "rounded-medium",
-                              "text-[#000]",
+                              "text-gray-900 dark:text-white",
                               "transition-opacity",
                               "data-[hover=true]:text-foreground",
                               "dark:data-[hover=true]:bg-default-50",
@@ -357,88 +396,56 @@ const AttributeValue = () => {
                         placeholder="Enter an Attribute"
                         popoverProps={{
                           offset: 10,
+                          shouldCloseOnInteractOutside: () => true,
                           classNames: {
                             base: "rounded-large",
-                            content: "p-1  border-none bg-background",
+                            content: "p-1 border border-gray-200 dark:border-[#3a3950] bg-white dark:bg-[#1e1d2e] shadow-lg",
                           },
                         }}
-                        startContent={
-                          <svg
-                            aria-hidden="true"
-                            fill="none"
-                            focusable="false"
-                            height={20}
-                            role="presentation"
-                            viewBox="0 0 24 24"
-                            attributeValue={20}
-                            color={"#fff"}
-                          >
-                            <path
-                              d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
-                              stroke="currentColor"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeattributeValue={2.5}
-                            />
-                            <path
-                              d="M22 22L20 20"
-                              stroke="currentColor"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeattributeValue={2.5}
-                            />
-                          </svg>
-                        }
                         variant="bordered"
                       >
                         {(item) => (
                           <AutocompleteItem
-                            key={item.id}
+                            key={String(item.id)}
                             textValue={item.name}
                           >
-                            <div className="flex justify-between items-center">
-                              <div className="flex gap-2 items-center">
-                                <div className="flex flex-col">
-                                  <span className="text-small">
-                                    {item.name}
-                                  </span>
-                                </div>
-                              </div>
+                            <div className="flex justify-between items-center text-gray-900 dark:text-white">
+                              <span className="text-small font-font1">
+                                {item.name}
+                              </span>
                             </div>
                           </AutocompleteItem>
                         )}
                       </Autocomplete>
                       {categoryAndValueInputs?.map((input, index) => (
-                        <div key={index} className="flex flex-col  gap-2">
+                        <div key={index} className="flex flex-col gap-2">
                           <div className="flex gap-2">
                             <Autocomplete
                               classNames={{
-                                base: "max-w-full border-[#fff] ",
+                                base: "max-w-full",
                                 listboxWrapper: "max-h-[320px]",
-                                selectorButton: "text-[#fff]",
+                                selectorButton: "text-gray-600 dark:text-gray-300",
                               }}
                               onSelectionChange={(selectedItem) => {
-                                // Update the category for the corresponding input
                                 const updatedInputs = [...categoryAndValueInputs];
-                                updatedInputs[index].category = selectedItem;
-                                setcategoryAndValueInputs(() => (updatedInputs))
+                                updatedInputs[index].category = selectedItem ? String(selectedItem) : "";
+                                setcategoryAndValueInputs(updatedInputs);
                               }}
-                              value={categoryAndValueInputs[index].category}
-                              defaultItems={Array.isArray(categoriesData) ? categoriesData : []}
-                              selectedKey={categoryAndValueInputs[index].category}
+                              items={Array.isArray(categoriesData) ? categoriesData : []}
+                              selectedKey={input?.category ? String(input.category) : null}
                               inputProps={{
                                 classNames: {
-                                  input: "ml-1 text-[#fff] font-font1",
-                                  inputWrapper: "h-[50px]",
-                                  label: "text-[#fff]",
+                                  input: "ml-1 text-gray-900 dark:text-white font-font1 font-medium",
+                                  inputWrapper: "h-[50px] bg-white dark:bg-[#232233] border border-gray-200 dark:border-[#3a3950]",
+                                  label: "text-gray-700 dark:text-gray-300 font-font1",
                                 },
                               }}
                               listboxProps={{
-                                hideSelectedIcon: true,
+                                hideSelectedIcon: false,
                                 itemClasses: {
                                   base: [
                                     "rounded-medium",
-                                    "text-[#000]",
+                                    "text-gray-900 dark:text-white",
                                     "transition-opacity",
                                     "data-[hover=true]:text-foreground",
                                     "dark:data-[hover=true]:bg-default-50",
@@ -449,57 +456,27 @@ const AttributeValue = () => {
                                   ],
                                 },
                               }}
-                              aria-label="Select an Category"
+                              aria-label="Select a Category"
                               placeholder="Category"
                               popoverProps={{
                                 offset: 10,
+                                shouldCloseOnInteractOutside: () => true,
                                 classNames: {
                                   base: "rounded-large",
-                                  content: "p-1  border-none bg-background",
+                                  content: "p-1 border border-gray-200 dark:border-[#3a3950] bg-white dark:bg-[#1e1d2e] shadow-lg",
                                 },
                               }}
-                              startContent={
-                                <svg
-                                  aria-hidden="true"
-                                  fill="none"
-                                  focusable="false"
-                                  height={20}
-                                  role="presentation"
-                                  viewBox="0 0 24 24"
-                                  attributeValue={20}
-                                  color={"#fff"}
-                                >
-                                  <path
-                                    d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeattributeValue={2.5}
-                                  />
-                                  <path
-                                    d="M22 22L20 20"
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeattributeValue={2.5}
-                                  />
-                                </svg>
-                              }
                               variant="bordered"
                             >
                               {(item) => (
                                 <AutocompleteItem
-                                  key={item.id}
+                                  key={String(item.id)}
                                   textValue={item.name}
                                 >
-                                  <div className="flex justify-between items-center">
-                                    <div className="flex gap-2 items-center">
-                                      <div className="flex flex-col">
-                                        <span className="text-small">
-                                          {item.name}
-                                        </span>
-                                      </div>
-                                    </div>
+                                  <div className="flex justify-between items-center text-gray-900 dark:text-white">
+                                    <span className="text-small font-font1">
+                                      {item.name}
+                                    </span>
                                   </div>
                                 </AutocompleteItem>
                               )}
@@ -507,17 +484,12 @@ const AttributeValue = () => {
                             <input
                               autoFocus
                               onChange={(event) => {
-
                                 const updatedInputs = [...categoryAndValueInputs];
                                 updatedInputs[index] = {
                                   ...updatedInputs[index],
                                   attributeValue: event.target.value
                                 };
-                                setcategoryAndValueInputs(() => (updatedInputs))
-                                // formik.setFieldValue(
-                                //   "attributeValue",
-                                //   event.target.value
-                                // );
+                                setcategoryAndValueInputs(updatedInputs);
                               }}
                               value={categoryAndValueInputs[index]?.attributeValue}
                               className="bg-white dark:bg-[#232233] font-font2 font-[400] w-full rounded-xl border border-gray-200 dark:border-[#3a3950] px-4 py-3 text-gray-900 dark:text-[#f7f7f5] placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#d8f275] focus:border-transparent transition"
@@ -531,10 +503,9 @@ const AttributeValue = () => {
                               Remove
                             </Button>
                           </div>
-                          {/* Button to remove category input */}
                           {refattName === "cut" && (
                             <div className="flex">
-                              <label className="flex cursor-pointer items-center justify-between p-1 text-[#fff]">
+                              <label className="flex cursor-pointer items-center justify-between p-1 text-gray-700 dark:text-gray-300 font-font1 font-semibold">
                                 isNameNumerical
                                 <div className="relative inline-block">
                                   <input
@@ -546,20 +517,18 @@ const AttributeValue = () => {
                                       };
                                       setcategoryAndValueInputs(updatedInputs);
                                     }}
-                                    name="isNameNumercal" // Associate the input with the form field 'verified'
-                                    checked={input?.isNameNumerical} // Set the checked state from formik values
-                                    className="peer h-6 w-12 cursor-pointer appearance-none rounded-full border border-gray-300 bg-gary-400 checked:border-green-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+                                    name="isNameNumercal"
+                                    checked={input?.isNameNumerical}
+                                    className="peer h-6 w-12 cursor-pointer appearance-none rounded-full border border-gray-300 bg-gray-400 checked:border-green-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
                                     type="checkbox"
                                   />
                                   <span className="pointer-events-none absolute left-1 top-1 block h-4 w-4 rounded-full bg-slate-600 transition-all duration-200 peer-checked:left-7 peer-checked:bg-green-300" />
                                 </div>
                               </label>
-
-                            </div>)}
+                            </div>
+                          )}
                         </div>
                       ))}
-                      {/* Button to add new categoryAndValue input */}
-
                       <Button onClick={addcategoryAndValueInput}>
                         Add Category And Value
                       </Button>
@@ -570,8 +539,14 @@ const AttributeValue = () => {
                   <Button
                     color="danger"
                     variant="light"
-                    className="font-font1"
-                    onPress={onClose}
+                    data-modal-close="true"
+                    className="close-modal-trigger font-font1"
+                    onPointerDown={(e) => {
+                      e.stopPropagation();
+                      handleCloseModal();
+                    }}
+                    onPress={handleCloseModal}
+                    onClick={handleCloseModal}
                   >
                     Close
                   </Button>
@@ -594,7 +569,7 @@ const AttributeValue = () => {
         columns={columns}
         statusOptions={statusOptions}
         users={attributeValueData}
-        onOpen={onOpen}
+        onOpen={handleOpenForCreate}
         section={"attributeValue"}
         onRefresh={refreshData}
       />

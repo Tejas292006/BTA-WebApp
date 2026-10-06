@@ -188,7 +188,7 @@ export default function DataTableModel({ columns, update, deleteItem, users, sta
             case "ref":
                 return (
                     <div className="flex max-w-max ml-2 items-center ">
-                        <p className="text-bold text-tiny capitalize text-default-800">{typeof user?.ref === 'object' ? user?.ref?.name : user?.ref || '-'}</p>
+                        <p className="text-bold text-tiny capitalize text-default-800">{user?.category?.name || (typeof user?.ref === 'object' ? user?.ref?.name : user?.ref) || '-'}</p>
                     </div>
                 );
             case "brand":

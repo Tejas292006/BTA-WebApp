@@ -185,6 +185,39 @@ const Attribute = () => {
 
     }
 
+    const handleCloseModal = () => {
+        if (document.activeElement && typeof document.activeElement.blur === 'function') {
+            document.activeElement.blur();
+        }
+        onOpenChange(false);
+        setUpdateId(null);
+        formik.resetForm();
+    };
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleGlobalCloseCapture = (e) => {
+            const closeBtn = e.target.closest(
+                'button[aria-label="Close"], [data-slot="close-button"], [data-modal-close="true"], .close-modal-trigger'
+            );
+            if (closeBtn) {
+                e.stopPropagation();
+                e.preventDefault();
+                if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                    document.activeElement.blur();
+                }
+                window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+                handleCloseModal();
+            }
+        };
+
+        document.addEventListener('pointerdown', handleGlobalCloseCapture, true);
+        return () => {
+            document.removeEventListener('pointerdown', handleGlobalCloseCapture, true);
+        };
+    }, [isOpen]);
+
     const refreshData = async () => {
         try {
             const res = await apiClient.get('/api/attribute/get-all-attribute');
@@ -207,8 +240,7 @@ const Attribute = () => {
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
                         if (!newState) {
-                            setUpdateId(null);
-                            formik.resetForm();
+                            handleCloseModal();
                         }
                     }}
                 >
@@ -234,8 +266,14 @@ const Attribute = () => {
                                 <ModalFooter className="border-t border-gray-100 dark:border-[#2b2a3f]">
                                     <Button
                                         color="danger" variant="light"
-                                        className="font-font1"
-                                        onPress={onClose}
+                                        data-modal-close="true"
+                                        className="close-modal-trigger font-font1"
+                                        onPointerDown={(e) => {
+                                            e.stopPropagation();
+                                            handleCloseModal();
+                                        }}
+                                        onPress={handleCloseModal}
+                                        onClick={handleCloseModal}
                                     >
                                         Close
                                     </Button>

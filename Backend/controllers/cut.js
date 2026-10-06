@@ -6,15 +6,18 @@ const router = express.Router();
 // Create cut
 router.post("/create-cut", async (req, res) => {
     try {
-        const { name, categoryId, isNameNumerical } = req.body;
+        const { name, isNameNumerical } = req.body;
+        const categoryId = req.body.categoryId || (typeof req.body.ref === 'object' ? req.body.ref?.id : req.body.ref) || null;
         const cut = await prisma.cut.create({
             data: {
                 name,
                 categoryId: categoryId || null,
                 isNameNumerical: isNameNumerical ?? false,
             },
+            include: { category: true },
         });
-        res.status(201).json({ message: "Created Successfully", success: true, cut, cutDoc: cut });
+        const cutDoc = { ...cut, ref: cut.category };
+        res.status(201).json({ message: "Created Successfully", success: true, cut: cutDoc, cutDoc });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
@@ -27,7 +30,8 @@ router.get("/get-all-cut", async (req, res) => {
             include: { category: true },
             orderBy: { createdAt: "desc" },
         });
-        res.status(200).json({ success: true, cuts });
+        const formattedCuts = cuts.map((c) => ({ ...c, ref: c.category }));
+        res.status(200).json({ success: true, cuts: formattedCuts });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
@@ -46,12 +50,15 @@ router.delete("/delete-cut/:id", async (req, res) => {
 // Update cut
 router.put("/update-cut/:id", async (req, res) => {
     try {
-        const { name, categoryId, isNameNumerical } = req.body;
+        const { name, isNameNumerical } = req.body;
+        const categoryId = req.body.categoryId || (typeof req.body.ref === 'object' ? req.body.ref?.id : req.body.ref) || null;
         const cut = await prisma.cut.update({
             where: { id: req.params.id },
             data: { name, categoryId: categoryId || null, isNameNumerical },
+            include: { category: true },
         });
-        res.status(200).json({ success: true, message: "Cut updated successfully!", cut, cutDoc: cut });
+        const cutDoc = { ...cut, ref: cut.category };
+        res.status(200).json({ success: true, message: "Cut updated successfully!", cut: cutDoc, cutDoc });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }

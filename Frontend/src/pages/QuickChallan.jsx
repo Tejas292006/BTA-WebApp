@@ -388,6 +388,9 @@ const QuickChallan = () => {
 
   // Full reset + close
   const handleCloseModal = () => {
+    if (document.activeElement && typeof document.activeElement.blur === 'function') {
+      document.activeElement.blur();
+    }
     onOpenChange(false);
     formik.resetForm();
     setsupplierRef(null);
@@ -406,6 +409,30 @@ const QuickChallan = () => {
     setProductChartImage("");
     setProductCategory(null);
   };
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleGlobalCloseCapture = (e) => {
+      const closeBtn = e.target.closest(
+        'button[aria-label="Close"], [data-slot="close-button"], [data-modal-close="true"], .close-modal-trigger'
+      );
+      if (closeBtn) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (document.activeElement && typeof document.activeElement.blur === 'function') {
+          document.activeElement.blur();
+        }
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        handleCloseModal();
+      }
+    };
+
+    document.addEventListener('pointerdown', handleGlobalCloseCapture, true);
+    return () => {
+      document.removeEventListener('pointerdown', handleGlobalCloseCapture, true);
+    };
+  }, [isOpen]);
 
   // Wrapped onOpen for Add New — always clears all state first
   const handleOpenForCreate = () => {
@@ -623,22 +650,7 @@ const QuickChallan = () => {
           onOpenChange={(newState) => {
             onOpenChange(newState);
             if (!newState) {
-              formik.resetForm();
-              setUpdateId("");
-              setRemark("");
-              settotalbill("");
-              setcutref("");
-              setproductref("");
-              setprodcutkey("");
-              setUnit("");
-              setbale("");
-              setprice("");
-              setProductChartImageData([]);
-              setProductChartImage("");
-              setfilterkeys([]);
-              setsupplierRef(null);
-              setcustomerRef(null);
-              setProductCategory(null);
+              handleCloseModal();
             }
           }}
         >
@@ -2023,7 +2035,18 @@ const QuickChallan = () => {
                   </div>
                 </ModalBody>
                 <ModalFooter>
-                  <Button color="danger" variant="light" onPress={handleCloseModal}>
+                  <Button
+                    color="danger"
+                    variant="light"
+                    data-modal-close="true"
+                    className="close-modal-trigger font-font1"
+                    onPointerDown={(e) => {
+                      e.stopPropagation();
+                      handleCloseModal();
+                    }}
+                    onPress={handleCloseModal}
+                    onClick={handleCloseModal}
+                  >
                     Close
                   </Button>
                   <Button

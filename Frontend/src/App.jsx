@@ -18,11 +18,8 @@ import Invoice from './pages/Invoice';
 import InvoicePreview from './pages/InvoicePreview';
 import Report from './pages/Report';
 import Payments from './pages/Payments';
-<<<<<<< HEAD
 import Supplier from './pages/Supplier';
-=======
 import { useEffect } from 'react';
->>>>>>> 9bdc905d4602de46730b8316e2cc432af3cd5fe4
 const routesConfig = [
   { path: '/', element: <Home /> },
   { path: '/inventory', element: <Inventory /> },

@@ -104,20 +104,21 @@ const Finishtype = () => {
 
     const updateFormWithfinishtypeData = (finishtypeId, updatedfinishtypeData) => {
         const finishtypeDataexist = updatedfinishtypeData.find((element) => element.id === finishtypeId);
-        console.log(finishtypeDataexist, updatedfinishtypeData, 'existssssssssssssssssssssss');
-        setrefcat(() => (finishtypeDataexist?.ref))
+        const catId = finishtypeDataexist?.categoryId || finishtypeDataexist?.category?.id || (typeof finishtypeDataexist?.ref === 'object' ? finishtypeDataexist?.ref?.id : finishtypeDataexist?.ref) || '';
+        setrefcat(catId ? String(catId) : '');
 
         formik.setValues({
-            name: finishtypeDataexist?.name,
-           
+            name: finishtypeDataexist?.name || '',
         });
     };
     // ...
 
     // Use updateFormWithfinishtypeData in the useEffect
     useEffect(() => {
-        updateFormWithfinishtypeData(updateId, finishtypeData);
-        setUpdated(false);
+        if (updateId) {
+            updateFormWithfinishtypeData(updateId, finishtypeData);
+            setUpdated(false);
+        }
     }, [updated]);
 
     // ...
@@ -192,12 +193,53 @@ const Finishtype = () => {
             }
         },
     });
-    const setUpdate = () => {
-        setUpdateId(false)
-        formik.resetForm(); 
-        setrefcat('')
 
-    }
+    const handleCloseModal = () => {
+        if (document.activeElement && typeof document.activeElement.blur === 'function') {
+            document.activeElement.blur();
+        }
+        onOpenChange(false);
+        setUpdateId(null);
+        formik.resetForm();
+        setrefcat('');
+    };
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleGlobalCloseCapture = (e) => {
+            const closeBtn = e.target.closest(
+                'button[aria-label="Close"], [data-slot="close-button"], [data-modal-close="true"], .close-modal-trigger'
+            );
+            if (closeBtn) {
+                e.stopPropagation();
+                e.preventDefault();
+                if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                    document.activeElement.blur();
+                }
+                window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+                handleCloseModal();
+            }
+        };
+
+        document.addEventListener('pointerdown', handleGlobalCloseCapture, true);
+        return () => {
+            document.removeEventListener('pointerdown', handleGlobalCloseCapture, true);
+        };
+    }, [isOpen]);
+
+    const setUpdate = () => {
+        setUpdateId(false);
+        formik.resetForm(); 
+        setrefcat('');
+    };
+
+    const handleOpenForCreate = () => {
+        setUpdateId(null);
+        formik.resetForm();
+        setrefcat('');
+        onOpen();
+    };
 
     const refreshData = async () => {
         try {
@@ -221,9 +263,7 @@ const Finishtype = () => {
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
                         if (!newState) {
-                            setUpdateId(null);
-                            formik.resetForm();
-                            setrefcat('');
+                            handleCloseModal();
                         }
                     }}
                 >
@@ -245,98 +285,100 @@ const Finishtype = () => {
                                                 placeholder="e.g. Matte, Glossy, Textured"
                                             />
                                             </div>
-                                            <Autocomplete
-                                                classNames={{
-                                                    base: "max-w-full border-[#fff] ",
-                                                    listboxWrapper: "max-h-[320px]",
-                                                    selectorButton: "text-[#fff]",
-                                                }}
-                                                onSelectionChange={setrefcat}
-                                                value={refcat}
-                                                defaultItems={categoriesData}
-                                                selectedKey={refcat}
-                                                inputProps={{
-                                                    classNames: {
-                                                        input: "ml-1 text-[#fff] font-font1",
-                                                        inputWrapper: "h-[50px]",
-                                                        label: "text-[#fff]",
-                                                    },
-                                                }}
-                                                listboxProps={{
-                                                    hideSelectedIcon: true,
-                                                    itemClasses: {
-                                                        base: [
-                                                            "rounded-medium",
-                                                            "text-[#000]",
-                                                            "transition-opacity",
-                                                            "data-[hover=true]:text-foreground",
-                                                            "dark:data-[hover=true]:bg-default-50",
-                                                            "data-[pressed=true]:opacity-70",
-                                                            "data-[hover=true]:bg-default-200",
-                                                            "data-[selectable=true]:focus:bg-default-100",
-                                                            "data-[focus-visible=true]:ring-default-500",
-                                                        ],
-                                                    },
-                                                }}
-                                                aria-label="Select an Category"
-                                                placeholder="Enter an Category"
-                                                popoverProps={{
-                                                    offset: 10,
-                                                    classNames: {
-                                                        base: "rounded-large",
-                                                        content: "p-1  border-none bg-background",
-
-                                                    },
-                                                }}
-                                                startContent={<svg
-                                                    aria-hidden="true"
-                                                    fill="none"
-                                                    focusable="false"
-                                                    height={20}
-                                                    role="presentation"
-                                                    viewBox="0 0 24 24"
-                                                    finishtype={20}
-                                                    color={"#fff"}
+                                            <div className="flex flex-col gap-1">
+                                                <label className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 font-font1">Linked Category</label>
+                                                <Autocomplete
+                                                    classNames={{
+                                                        base: "max-w-full",
+                                                        listboxWrapper: "max-h-[320px]",
+                                                        selectorButton: "text-gray-600 dark:text-gray-300",
+                                                    }}
+                                                    onSelectionChange={(key) => setrefcat(key ? String(key) : '')}
+                                                    items={categoriesData || []}
+                                                    selectedKey={refcat ? String(refcat) : null}
+                                                    inputProps={{
+                                                        classNames: {
+                                                            input: "ml-1 text-gray-900 dark:text-white font-font1 font-medium",
+                                                            inputWrapper: "h-[50px] bg-white dark:bg-[#232233] border border-gray-200 dark:border-[#3a3950]",
+                                                            label: "text-gray-700 dark:text-gray-300",
+                                                        },
+                                                    }}
+                                                    listboxProps={{
+                                                        hideSelectedIcon: false,
+                                                        itemClasses: {
+                                                            base: [
+                                                                "rounded-medium",
+                                                                "text-gray-900 dark:text-white",
+                                                                "transition-opacity",
+                                                                "data-[hover=true]:text-foreground",
+                                                                "dark:data-[hover=true]:bg-default-50",
+                                                                "data-[pressed=true]:opacity-70",
+                                                                "data-[hover=true]:bg-default-200",
+                                                                "data-[selectable=true]:focus:bg-default-100",
+                                                                "data-[focus-visible=true]:ring-default-500",
+                                                            ],
+                                                        },
+                                                    }}
+                                                    aria-label="Select a Category"
+                                                    placeholder="Select a Category"
+                                                    popoverProps={{
+                                                        offset: 10,
+                                                        shouldCloseOnInteractOutside: () => true,
+                                                        classNames: {
+                                                            base: "rounded-large",
+                                                            content: "p-1 border border-gray-200 dark:border-[#3a3950] bg-white dark:bg-[#1e1d2e] shadow-lg",
+                                                        },
+                                                    }}
+                                                    startContent={<svg
+                                                        aria-hidden="true"
+                                                        fill="none"
+                                                        focusable="false"
+                                                        height={20}
+                                                        role="presentation"
+                                                        viewBox="0 0 24 24"
+                                                        width={20}
+                                                        className="text-gray-400 dark:text-gray-300"
+                                                    >
+                                                        <path
+                                                            d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
+                                                            stroke="currentColor"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2.5}
+                                                        />
+                                                        <path
+                                                            d="M22 22L20 20"
+                                                            stroke="currentColor"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2.5}
+                                                        />
+                                                    </svg>}
+                                                    variant="bordered"
                                                 >
-                                                    <path
-                                                        d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
-                                                        stroke="currentColor"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokefinishtype={2.5}
-                                                    />
-                                                    <path
-                                                        d="M22 22L20 20"
-                                                        stroke="currentColor"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokefinishtype={2.5}
-                                                    />
-                                                </svg>}
-                                                variant="bordered"
-                                            >
-                                                {(item) => (
-                                                    <AutocompleteItem key={item.id} textValue={item.name}>
-                                                        <div className="flex justify-between items-center">
-                                                            <div className="flex gap-2 items-center">
-                                                                <div className="flex flex-col">
-                                                                    <span className="text-small">{item.name}</span>
-                                                                </div>
+                                                    {(item) => (
+                                                        <AutocompleteItem key={String(item.id)} textValue={item.name}>
+                                                            <div className="flex justify-between items-center text-gray-900 dark:text-white">
+                                                                <span className="text-small font-font1">{item.name}</span>
                                                             </div>
-                                                        </div>
-                                                    </AutocompleteItem>
-                                                )}
-                                            </Autocomplete>
-
-                            
+                                                        </AutocompleteItem>
+                                                    )}
+                                                </Autocomplete>
+                                            </div>
                                         </div>
                                     </div>
                                 </ModalBody>
                                 <ModalFooter className="border-t border-gray-100 dark:border-[#2b2a3f]">
                                     <Button
                                         color="danger" variant="light"
-                                        className="font-font1"
-                                        onPress={onClose}
+                                        data-modal-close="true"
+                                        className="close-modal-trigger font-font1"
+                                        onPointerDown={(e) => {
+                                            e.stopPropagation();
+                                            handleCloseModal();
+                                        }}
+                                        onPress={handleCloseModal}
+                                        onClick={handleCloseModal}
                                     >
                                         Close
                                     </Button>
@@ -352,7 +394,7 @@ const Finishtype = () => {
                     </ModalContent>
                 </Modal>
             </div>
-            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={finishtypeData} onOpen={onOpen} section={'finishtype'} onRefresh={refreshData} />
+            <DataTableModel visible_columns={INITIAL_VISIBLE_COLUMNS} deleteItem={deleteItem} update={handleUpdate} columns={columns} statusOptions={statusOptions} users={finishtypeData} onOpen={handleOpenForCreate} section={'finishtype'} onRefresh={refreshData} />
         </>
     )
 }

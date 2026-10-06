@@ -480,7 +480,7 @@ const SupplierPayment = () => {
         }));
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_SERVER}/api/invoice/process-supplier-payment`, { invoiceAdjustments });
+            const response = await apiClient.post('/api/invoice/process-supplier-payment', { invoiceAdjustments });
             // Update the state with the new data
             // setInvoices(response.data.updatedInvoices.filter(invoice => !invoice.isCleared));
         } catch (error) {
@@ -497,7 +497,7 @@ const SupplierPayment = () => {
             invoiceAdjustments: adjustment
         }
 
-        const response = await axios.post(`${import.meta.env.VITE_SERVER}/api/customer/update-supplier-balance`, finalData);
+        const response = await apiClient.post('/api/customer/update-supplier-balance', finalData);
 
         if (response.data.success) {
             console.log('Payment processed successfully:', response.data);
@@ -972,6 +972,45 @@ const SupplierPayment = () => {
         setNewRefData(null);
     };
 
+    const handleCloseModal = () => {
+        if (document.activeElement && typeof document.activeElement.blur === 'function') {
+            document.activeElement.blur();
+        }
+        onOpenChange(false);
+        setUpdateId(null);
+        formik.resetForm();
+    };
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleGlobalCloseCapture = (e) => {
+            const closeBtn = e.target.closest(
+                'button[aria-label="Close"], [data-slot="close-button"], [data-modal-close="true"], .close-modal-trigger'
+            );
+            if (closeBtn) {
+                e.stopPropagation();
+                e.preventDefault();
+                if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                    document.activeElement.blur();
+                }
+                window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+                handleCloseModal();
+            }
+        };
+
+        document.addEventListener('pointerdown', handleGlobalCloseCapture, true);
+        return () => {
+            document.removeEventListener('pointerdown', handleGlobalCloseCapture, true);
+        };
+    }, [isOpen]);
+
+    const handleOpenForCreate = () => {
+        setUpdateId(null);
+        formik.resetForm();
+        onOpen();
+    };
+
     return (
         <>
             <div className="flex flex-col gap-2 w-90vw">
@@ -981,6 +1020,9 @@ const SupplierPayment = () => {
                     size={"full"}
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
+                        if (!newState) {
+                            handleCloseModal();
+                        }
                     }}
                 >
                     <ModalContent>
@@ -1517,7 +1559,14 @@ const SupplierPayment = () => {
                                     <Button
                                         color="danger"
                                         variant="light"
-                                        onPress={onClose}
+                                        data-modal-close="true"
+                                        className="close-modal-trigger font-font1"
+                                        onPointerDown={(e) => {
+                                            e.stopPropagation();
+                                            handleCloseModal();
+                                        }}
+                                        onPress={handleCloseModal}
+                                        onClick={handleCloseModal}
                                     >
                                         Close
                                     </Button>
@@ -1541,7 +1590,7 @@ const SupplierPayment = () => {
                 columns={columns}
                 statusOptions={statusOptions}
                 users={supplierPaymentData}
-                onOpen={onOpen}
+                onOpen={handleOpenForCreate}
                 section={"invoice"}
                 onRefresh={refreshData}
             />
