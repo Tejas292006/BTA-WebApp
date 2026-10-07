@@ -3,6 +3,17 @@ import prisma from "../configs/prismaClient.js";
 
 const router = express.Router();
 
+// Helper to extract clean string ID or null
+const toCleanId = (val) => {
+    if (!val) return null;
+    if (typeof val === "object") return val.id || null;
+    if (typeof val === "string") {
+        const trimmed = val.trim();
+        return trimmed.length > 0 ? trimmed : null;
+    }
+    return String(val);
+};
+
 // Create challan
 router.post("/create-challan", async (req, res) => {
     try {
@@ -21,17 +32,21 @@ router.post("/create-challan", async (req, res) => {
             overallremarks,
         } = req.body;
 
-        const supplierId = supplierIdBody || supplier || null;
-        const customerId = customerIdBody || customer || null;
+        const supplierId = toCleanId(supplierIdBody || supplier);
+        const customerId = toCleanId(customerIdBody || customer);
+        const safeTotalBill = totalBill !== undefined && totalBill !== null ? String(totalBill) : "0";
+        const safeChallanNo = challanNo ? String(challanNo) : `CH-${Date.now()}`;
+        const parsedDate = challanDate ? new Date(challanDate) : new Date();
+        const safeChallanDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
 
         const challanDoc = await prisma.challan.create({
             data: {
                 products: products ?? [],
                 supplierId: supplierId || null,
                 customerId: customerId || null,
-                challanNo,
-                totalBill,
-                challanDate: new Date(challanDate),
+                challanNo: safeChallanNo,
+                totalBill: safeTotalBill,
+                challanDate: safeChallanDate,
                 challanType: challanType || "main",
                 type: type || null,
                 verified: verified ?? false,
@@ -42,6 +57,7 @@ router.post("/create-challan", async (req, res) => {
 
         res.status(201).json({ message: "Created Successfully", success: true, challanDoc });
     } catch (error) {
+        console.error("Error creating challan:", error);
         res.status(400).json({ success: false, error: error.message });
     }
 });
@@ -87,28 +103,35 @@ router.put("/update-challan/:id", async (req, res) => {
             overallremarks,
         } = req.body;
 
-        const supplierId = supplierIdBody || supplier || null;
-        const customerId = customerIdBody || customer || null;
+        const supplierId = toCleanId(supplierIdBody || supplier);
+        const customerId = toCleanId(customerIdBody || customer);
+        const safeTotalBill = totalBill !== undefined && totalBill !== null ? String(totalBill) : undefined;
+        let safeChallanDate = undefined;
+        if (challanDate) {
+            const parsed = new Date(challanDate);
+            if (!isNaN(parsed.getTime())) safeChallanDate = parsed;
+        }
 
         const challan = await prisma.challan.update({
             where: { id: req.params.id },
             data: {
-                products,
+                products: products !== undefined ? products : undefined,
                 supplierId: supplierId || null,
                 customerId: customerId || null,
-                challanNo,
-                totalBill,
-                challanDate: challanDate ? new Date(challanDate) : undefined,
-                challanType,
-                type,
-                verified,
-                overallremarks,
+                challanNo: challanNo !== undefined ? String(challanNo) : undefined,
+                totalBill: safeTotalBill,
+                challanDate: safeChallanDate,
+                challanType: challanType !== undefined ? challanType : undefined,
+                type: type !== undefined ? type : undefined,
+                verified: verified !== undefined ? verified : undefined,
+                overallremarks: overallremarks !== undefined ? overallremarks : undefined,
             },
             include: { customer: true, supplier: true },
         });
 
         res.status(200).json({ success: true, message: "Challan updated successfully!", challan });
     } catch (error) {
+        console.error("Error updating challan:", error);
         res.status(400).json({ success: false, error: error.message });
     }
 });

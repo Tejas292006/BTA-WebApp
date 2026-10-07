@@ -3,6 +3,17 @@ import prisma from "../configs/prismaClient.js";
 
 const router = express.Router();
 
+// Helper to extract clean string ID or null
+const toCleanId = (val) => {
+    if (!val) return null;
+    if (typeof val === "object") return val.id || null;
+    if (typeof val === "string") {
+        const trimmed = val.trim();
+        return trimmed.length > 0 ? trimmed : null;
+    }
+    return String(val);
+};
+
 // Create quickchallan
 router.post("/create-quickchallan", async (req, res) => {
     try {
@@ -21,17 +32,20 @@ router.post("/create-quickchallan", async (req, res) => {
             overallremarks,
         } = req.body;
 
-        const supplierId = supplierIdBody || supplier || null;
-        const customerId = customerIdBody || customer || null;
+        const supplierId = toCleanId(supplierIdBody || supplier);
+        const customerId = toCleanId(customerIdBody || customer);
+        const safeChallanNo = quickchallanNo ? String(quickchallanNo) : `QC-${Date.now()}`;
+        const parsedDate = quickchallanDate ? new Date(quickchallanDate) : new Date();
+        const safeDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
 
         const quickchallanDoc = await prisma.quickChallan.create({
             data: {
                 products: products ?? [],
                 supplierId: supplierId || null,
                 customerId: customerId || null,
-                quickchallanNo,
+                quickchallanNo: safeChallanNo,
                 challanChartImages: challanChartImages ?? [],
-                quickchallanDate: new Date(quickchallanDate),
+                quickchallanDate: safeDate,
                 challanType: challanType || "quick",
                 type: type || null,
                 verified: verified ?? false,
@@ -42,6 +56,7 @@ router.post("/create-quickchallan", async (req, res) => {
 
         res.status(201).json({ message: "Created Successfully", success: true, quickchallanDoc });
     } catch (error) {
+        console.error("Error creating quickchallan:", error);
         res.status(400).json({ success: false, error: error.message });
     }
 });
@@ -87,28 +102,34 @@ router.put("/update-quickchallan/:id", async (req, res) => {
             overallremarks,
         } = req.body;
 
-        const supplierId = supplierIdBody || supplier || null;
-        const customerId = customerIdBody || customer || null;
+        const supplierId = toCleanId(supplierIdBody || supplier);
+        const customerId = toCleanId(customerIdBody || customer);
+        let safeDate = undefined;
+        if (quickchallanDate) {
+            const parsed = new Date(quickchallanDate);
+            if (!isNaN(parsed.getTime())) safeDate = parsed;
+        }
 
         const quickchallan = await prisma.quickChallan.update({
             where: { id: req.params.id },
             data: {
-                products,
+                products: products !== undefined ? products : undefined,
                 supplierId: supplierId || null,
                 customerId: customerId || null,
-                quickchallanNo,
-                challanChartImages,
-                quickchallanDate: quickchallanDate ? new Date(quickchallanDate) : undefined,
-                challanType,
-                type,
-                verified,
-                overallremarks,
+                quickchallanNo: quickchallanNo !== undefined ? String(quickchallanNo) : undefined,
+                challanChartImages: challanChartImages !== undefined ? challanChartImages : undefined,
+                quickchallanDate: safeDate,
+                challanType: challanType !== undefined ? challanType : undefined,
+                type: type !== undefined ? type : undefined,
+                verified: verified !== undefined ? verified : undefined,
+                overallremarks: overallremarks !== undefined ? overallremarks : undefined,
             },
             include: { customer: true, supplier: true },
         });
 
         res.status(200).json({ success: true, message: "QuickChallan updated successfully!", quickchallan });
     } catch (error) {
+        console.error("Error updating quickchallan:", error);
         res.status(400).json({ success: false, error: error.message });
     }
 });

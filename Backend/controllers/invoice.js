@@ -3,6 +3,17 @@ import prisma from "../configs/prismaClient.js";
 
 const router = express.Router();
 
+// Helper to extract clean string ID or null
+const toCleanId = (val) => {
+    if (!val) return null;
+    if (typeof val === "object") return val.id || null;
+    if (typeof val === "string") {
+        const trimmed = val.trim();
+        return trimmed.length > 0 ? trimmed : null;
+    }
+    return String(val);
+};
+
 // Create invoice (also creates customer & supplier ledger entries)
 router.post("/create-invoice", async (req, res) => {
     try {
@@ -27,28 +38,42 @@ router.post("/create-invoice", async (req, res) => {
             balance,
         } = req.body;
 
-        const challanRefs = challanRefsBody || challanRef || [];
-        const supplierId = supplierIdBody || supplierRef || null;
-        const customerId = customerIdBody || customerRef || null;
+        const rawChallanRefs = challanRefsBody || challanRef || [];
+        const challanRefs = Array.isArray(rawChallanRefs)
+            ? rawChallanRefs.map(r => typeof r === "object" ? r?.id : r).filter(Boolean)
+            : (rawChallanRefs ? [typeof rawChallanRefs === "object" ? rawChallanRefs?.id : rawChallanRefs] : []);
+
+        const supplierId = toCleanId(supplierIdBody || supplierRef);
+        const customerId = toCleanId(customerIdBody || customerRef);
+
+        const safeGrandTotal = grandTotal != null && grandTotal !== "" ? Number(grandTotal) : null;
+        const safeDiscount = discount != null && discount !== "" ? Number(discount) : null;
+        const safeGst = gst != null && gst !== "" ? Number(gst) : null;
+        const safeOtherExpenses = otherExpenses != null && otherExpenses !== "" ? Number(otherExpenses) : null;
+        const safeTotalBilling = totalBillingAmount != null && totalBillingAmount !== "" ? Number(totalBillingAmount) : null;
+        const safeCurrentTotal = currentTotal != null && currentTotal !== "" ? Number(currentTotal) : safeGrandTotal;
+        const safeBalance = balance != null && balance !== "" ? Number(balance) : 0;
+        const safeInvoiceNo = invoiceNo ? String(invoiceNo) : `INV-${Date.now()}`;
 
         const invoiceDoc = await prisma.invoice.create({
             data: {
-                challanRefs: challanRefs ?? [],
+                challanRefs,
                 supplierId: supplierId || null,
                 customerId: customerId || null,
                 products: products ?? [],
-                grandTotal: grandTotal ?? null,
-                discount: discount ?? null,
-                gst: gst ?? null,
-                otherExpenses: otherExpenses ?? null,
-                totalBillingAmount: totalBillingAmount ?? null,
-                currentTotal: currentTotal ?? null,
+                grandTotal: safeGrandTotal,
+                discount: safeDiscount,
+                gst: safeGst,
+                otherExpenses: safeOtherExpenses,
+                totalBillingAmount: safeTotalBilling,
+                currentTotal: safeCurrentTotal,
                 isCleared: isCleared ?? false,
                 isPaidToSupplier: isPaidToSupplier ?? false,
-                invoiceDate: invoiceDate || null,
-                invoiceNo: invoiceNo || null,
-                balance: balance ?? 0,
+                invoiceDate: invoiceDate || new Date().toISOString().slice(0, 10),
+                invoiceNo: safeInvoiceNo,
+                balance: safeBalance,
             },
+            include: { supplier: true, customer: true },
         });
 
         // Create customer ledger entry
@@ -58,10 +83,10 @@ router.post("/create-invoice", async (req, res) => {
                     customerId,
                     invoiceId: invoiceDoc.id,
                     transactionType: 'invoice',
-                    amount: grandTotal || 0,
-                    debit: grandTotal || 0,
+                    amount: safeGrandTotal || 0,
+                    debit: safeGrandTotal || 0,
                     credit: 0,
-                    balance: -(grandTotal || 0),
+                    balance: -(safeGrandTotal || 0),
                 },
             });
         }
@@ -73,16 +98,17 @@ router.post("/create-invoice", async (req, res) => {
                     supplierId,
                     invoiceId: invoiceDoc.id,
                     transactionType: 'invoice',
-                    amount: grandTotal || 0,
-                    credit: grandTotal || 0,
+                    amount: safeGrandTotal || 0,
+                    credit: safeGrandTotal || 0,
                     debit: 0,
-                    balance: grandTotal || 0,
+                    balance: safeGrandTotal || 0,
                 },
             });
         }
 
         res.status(201).json({ message: "Created Successfully", success: true, invoiceDoc });
     } catch (error) {
+        console.error("Error creating invoice:", error);
         res.status(400).json({ success: false, error: error.message });
     }
 });
@@ -97,8 +123,32 @@ router.get("/get-invoice/:id", async (req, res) => {
         if (!invoice) {
             return res.status(404).json({ success: false, error: "Invoice not found with this ID" });
         }
-        res.status(200).json({ success: true, invoice });
+
+        // Look up related challans referenced in challanRefs
+        let challans = [];
+        if (Array.isArray(invoice.challanRefs) && invoice.challanRefs.length > 0) {
+            const rawChallanIds = invoice.challanRefs.map(r => typeof r === 'object' ? r?.id : r).filter(Boolean);
+            challans = await prisma.challan.findMany({
+                where: { id: { in: rawChallanIds } },
+                include: { customer: true, supplier: true },
+            });
+            if (challans.length === 0) {
+                challans = await prisma.quickChallan.findMany({
+                    where: { id: { in: rawChallanIds } },
+                    include: { customer: true, supplier: true },
+                });
+            }
+        }
+
+        const invoiceWithChallan = {
+            ...invoice,
+            challanRef: challans[0] || null,
+            challans,
+        };
+
+        res.status(200).json({ success: true, invoice: invoiceWithChallan });
     } catch (error) {
+        console.error("Error getting invoice:", error);
         res.status(400).json({ success: false, error: error.message });
     }
 });

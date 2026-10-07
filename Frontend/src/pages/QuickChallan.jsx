@@ -106,25 +106,28 @@ const QuickChallan = () => {
   // Create The Supplier
   const creatsupplier = async (values) => {
     try {
-      setIsLoading(true)
-      const response = await Createquickchallan(values);
-      setIsLoading(false)
-      // dispatch(SetLoader(false));
+      setIsLoading(true);
+      const safeCustomer = typeof values.customer === 'object' ? values.customer?.id : values.customer;
+      const safeSupplier = typeof values.supplier === 'object' ? values.supplier?.id : values.supplier;
+      const payload = {
+        ...values,
+        quickchallanNo: values.quickchallanNo || quickchallanNumber || '1',
+        customer: safeCustomer || customerRef || null,
+        supplier: safeSupplier || supplierRef || null,
+      };
+      const response = await Createquickchallan(payload);
+      setIsLoading(false);
       if (response.success) {
         toast.success(response.message);
-        console.log(response.quickchallanDoc)
         setquickchallansData([...quickchallansData, response.quickchallanDoc]);
         setUpdateId(null); // Reset update ID when modal is closed
-        onOpenChange(false)
+        onOpenChange(false);
       } else {
-        console.log(response.message);
-        toast.error(response.message);
-        // throw new Error(response.error);
+        toast.error(response.message || "Failed to create quick challan");
       }
     } catch (error) {
-      // dispatch(SetLoader(false));
-      setIsLoading(false)
-      console.log(error.message);
+      setIsLoading(false);
+      console.error(error.message);
       toast.error(error.message);
     }
   }
@@ -281,11 +284,15 @@ const QuickChallan = () => {
         return;
       }
       const newProduct = { product: productref, cut: cutref, bales: bale, challanChartImages: productChartImageData, price: price || 0, unit: unit, remarkDesc: remark };
-      formik.setValues(prevValues => ({
-        ...prevValues,
-        supplier: productsData.find(product => product?.id === productref)?.supplierName?.id,
-        products: [...(prevValues?.products || []), newProduct]
-      }));
+      formik.setValues(prevValues => {
+        const foundProd = productsData.find(product => product?.id === productref);
+        const resolvedSupplier = foundProd?.supplier?.id || foundProd?.supplierId || prevValues.supplier;
+        return {
+          ...prevValues,
+          supplier: resolvedSupplier,
+          products: [...(prevValues?.products || []), newProduct]
+        };
+      });
 
       settotalbill(price)
       setUnit("")
@@ -353,13 +360,22 @@ const QuickChallan = () => {
   };
 
   const setproductchange = (value) => {
-    console.log(value)
-    const price = productsData?.filter(item => item?.id === value)[0]?.pricePerUnit?.magnitude;
-    const selectedProductCategory = productsData?.filter(item => item?.id === value)[0]?.category?.id || "";
-    console.log(selectedProductCategory)
+    const selectedProd = productsData?.find(item => item?.id === value);
+    if (!selectedProd) {
+      setproductref(value);
+      return;
+    }
+    const price = selectedProd?.pricePerUnitMagnitude ?? selectedProd?.pricePerUnit?.magnitude;
+    const selectedProductCategory = selectedProd?.category?.id || selectedProd?.categoryId || "";
+    const supplier_id = selectedProd?.supplier?.id || selectedProd?.supplierId || "";
+
     setproductref(value);
+    if (supplier_id && !supplierRef) {
+      setsupplierRef(supplier_id);
+      formik.setFieldValue('supplier', supplier_id);
+    }
     setProductCategory(selectedProductCategory);
-    setprice(price)
+    setprice(price || 0);
   };
 
   console.log(productCategory)
@@ -898,10 +914,9 @@ const QuickChallan = () => {
                                     listboxWrapper: "max-h-[270px]",
                                     selectorButton: "text-[#000]",
                                   }}
-
                                   onSelectionChange={(value) => setproductchange(value)}
                                   value={productref}
-                                  defaultItems={supplierRef ? (productsData?.filter(product => product?.supplierName?.id === supplierRef) || productsData) : productsData}
+                                  defaultItems={productsData || []}
                                   selectedKey={productref}
                                   inputProps={{
                                     classNames: {
@@ -926,8 +941,8 @@ const QuickChallan = () => {
                                       ],
                                     },
                                   }}
-                                  aria-label="Select an Product"
-                                  placeholder="Enter an Product"
+                                  aria-label="Select a Product"
+                                  placeholder="Select or search a Product"
                                   popoverProps={{
                                     offset: 10,
                                     shouldCloseOnInteractOutside: () => true,
@@ -948,7 +963,7 @@ const QuickChallan = () => {
                                     color={"#000"}
                                   >
                                     <path
-                                      d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
+                                      d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 2Z"
                                       stroke="currentColor"
                                       strokeLinecap="round"
                                       strokeLinejoin="round"
@@ -964,17 +979,22 @@ const QuickChallan = () => {
                                   </svg>}
                                   variant="flat"
                                 >
-                                  {(item) => (
-                                    <AutocompleteItem key={item?.id} textValue={item?.productName}>
-                                      <div className="flex justify-between items-center">
-                                        <div className="flex gap-2 items-center">
+                                  {(item) => {
+                                    const suppName = item?.supplier?.name || suppliersData?.find(s => s.id === (item?.supplier?.id || item?.supplierId))?.name || '';
+                                    return (
+                                      <AutocompleteItem key={item?.id} textValue={item?.productName}>
+                                        <div className="flex justify-between items-center w-full">
                                           <div className="flex flex-col">
-                                            <span className="text-small">{item?.productName}</span>
+                                            <span className="text-small font-semibold">{item?.productName}</span>
+                                            {suppName ? <span className="text-tiny text-default-400">{suppName}</span> : null}
                                           </div>
+                                          {item?.pricePerUnitMagnitude ? (
+                                            <span className="text-tiny text-default-500 font-medium ml-2">₹{item.pricePerUnitMagnitude}</span>
+                                          ) : null}
                                         </div>
-                                      </div>
-                                    </AutocompleteItem>
-                                  )}
+                                      </AutocompleteItem>
+                                    );
+                                  }}
                                 </Autocomplete>
                                 <Autocomplete
                                   classNames={{
@@ -1511,7 +1531,7 @@ const QuickChallan = () => {
                                 )
                               }
                             </div>
-                            <FillterTableData productref={productref} setproductchange={setproductchange} rows={supplierRef ? filteredProducts.filter(products => products?.supplierName?.id === supplierRef) : filteredProducts} columnsoffillter={columnsoffillter} />
+                            <FillterTableData productref={productref} setproductchange={setproductchange} rows={supplierRef ? filteredProducts.filter(products => (products?.supplier?.id || products?.supplierId || products?.supplierName?.id) === supplierRef) : filteredProducts} columnsoffillter={columnsoffillter} />
                             <Input size={'md'}
                               classNames={{
                                 label: "font-[600] font-font1",
@@ -1633,7 +1653,7 @@ const QuickChallan = () => {
                                   label: "font-[600] font-font1",
                                   input: "font-[500] font-font1",
                                 }}
-                                value={productsData?.find(product => product?.id === productref)?.supplierName?.name || "Click On Product"}
+                                value={productsData?.find(product => product?.id === productref)?.supplier?.name || suppliersData?.find(s => s.id === productsData?.find(product => product?.id === productref)?.supplierId)?.name || "Click On Product"}
                                 readOnly
                                 className="mt-5 flex-grow"
                               />

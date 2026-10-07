@@ -100,7 +100,8 @@ const GenerateInvoice = () => {
   };
 
   const columns = [
-    { name: "ID", uid: "_id", sortable: true },
+    { name: "ID", uid: "id", sortable: true },
+    { name: "INVOICE NO", uid: "invoiceNo", sortable: true },
     { name: "SUPPLIER_NAME", uid: "supplierName", sortable: true },
     { name: "CUSTOMER_NAME", uid: "customerName", sortable: true },
     { name: "RECEIVED(Total)", uid: "products.received", sortable: true },
@@ -114,6 +115,7 @@ const GenerateInvoice = () => {
   ];
 
   const INITIAL_VISIBLE_COLUMNS = [
+    "invoiceNo",
     "supplierName",
     "customerName",
     "products.received",
@@ -132,22 +134,26 @@ const GenerateInvoice = () => {
 
   useEffect(() => {
     const products = [];
-    selectedChallanData.map((item) => {
-      item.products.map((row) => {
+    selectedChallanData.forEach((item) => {
+      if (!item || !Array.isArray(item.products)) return;
+      item.products.forEach((row) => {
         if (!row?.isProductDispatchedByInvoice) {
           const newRow = { ...row };
           const productId = typeof newRow.product === 'object' ? newRow.product?.id : newRow.product;
+          const foundProduct = productsData?.find(p => p.id === productId || p.productName === newRow.product);
           const cutObj = typeof newRow.cut === 'object' ? newRow.cut : null;
-          const cutName = cutObj?.name || (typeof newRow.cut === 'number' ? newRow.cut : 0);
-          const productObj = typeof newRow.product === 'object' ? newRow.product : null;
+          const foundCut = cutData?.find(c => c.id === newRow.cut || c.name === newRow.cut);
+          const cutName = cutObj?.name || foundCut?.name || (typeof newRow.cut === 'number' ? newRow.cut : (newRow.cut || 0));
+          const productObj = typeof newRow.product === 'object' ? newRow.product : foundProduct;
+          const resolvedProductName = productObj?.productName || foundProduct?.productName || (typeof newRow.product === 'string' && !newRow.product.startsWith('cm') ? newRow.product : 'Product');
+          const resolvedRate = newRow?.price || newRow?.rate || productObj?.pricePerUnitMagnitude || productObj?.pricePerUnit?.magnitude || 0;
 
-          console.log(newRow, "new rowwwwwwww")
           // Update the copied row object
           if (newRow.due !== 0) {
             if (newRow.unit === '1' && (item.challanType === 'main')) {
               //if unit in pcs
               newRow.qtyPcs = newRow.unit === '1' ? newRow.due : newRow.qtyPcs;
-              newRow.qtyMtr = (newRow.qtyPcs * cutName) || newRow.qtyMtr;
+              newRow.qtyMtr = (newRow.qtyPcs * (Number(cutName) || 1)) || newRow.qtyMtr;
 
             } else if (newRow.unit === '2' && (item.challanType === 'main')) {
               //if unit in meter
@@ -155,17 +161,16 @@ const GenerateInvoice = () => {
             }
 
             if (item.challanType === 'quick') {
-              newRow.bales = newRow.due
-              // newRow.price = price 
+              newRow.bales = newRow.due;
             }
           }
 
           products.push({
             id: productId,
             challanId: item.id,
-            unit: newRow?.unit,
-            product: productObj?.productName || "NA",
-            cut: cutObj?.name || "NA",
+            unit: newRow?.unit || '1',
+            product: resolvedProductName,
+            cut: cutName || "NA",
             qtyPcs: newRow.qtyPcs || "NA",
             challanType: item.challanType,
             qtyMtr: newRow.qtyMtr || "NA",
@@ -173,8 +178,8 @@ const GenerateInvoice = () => {
             received_mtr: "", // This will be filled by user input
             received_pcs: "", // This will be filled by user input
             received_bales: "", // This will be filled by user input
-            due: newRow.due || null, // This will be filled by user input
-            rate: newRow?.price || (newRow?.rate ?? (productObj?.pricePerUnit?.magnitude || 0)),
+            due: newRow.due != null ? newRow.due : null,
+            rate: resolvedRate,
             total: "", // This will be filled by user input
             markAsCompleted: false, // This will be filled by user input
             isBeingDispatchedInInvoice: productObj?.isProductDispatchedByInvoice || false,
@@ -183,7 +188,7 @@ const GenerateInvoice = () => {
       });
     });
     setSelectedChallansProducts(products);
-  }, [selectedKeys]);
+  }, [selectedKeys, challansData, quickchallansData, productsData, cutData]);
 
 
   // update due of profucts
@@ -203,13 +208,16 @@ const GenerateInvoice = () => {
       console.error("Error updating product:", error);
     }
   }
-  // Create The width
+  // Create The invoice
   const createinvoice = async (values) => {
     try {
       values.challanRef = [...selectedKeys];
+      values.challanRefs = [...selectedKeys];
       values.products = selectedChallansProducts;
       values.supplierRef = supplierRef;
+      values.supplierId = supplierRef;
       values.customerRef = customerRef;
+      values.customerId = customerRef;
 
       values?.products?.forEach(product => {
         if (product.due === 0) {
@@ -218,7 +226,7 @@ const GenerateInvoice = () => {
         }
         updateProductDue(product.challanId, product.id, product.challanType, product.due);
       });
-      values.grandTotal = values.products?.reduce((acc, product) => (acc + product.total), 0);
+      values.grandTotal = values.products?.reduce((acc, product) => (acc + (Number(product.total) || 0)), 0);
       setIsLoading(true);
       const response = await Createinvoice(values);
       setIsLoading(false);
@@ -233,7 +241,7 @@ const GenerateInvoice = () => {
         throw new Error(response.message);
       }
     } catch (error) {
-      // dispatch(SetLoader(false));
+      setIsLoading(false);
       toast.error(error.message);
     }
   };

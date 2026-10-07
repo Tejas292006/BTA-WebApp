@@ -167,22 +167,26 @@ export default function DataTableModel({ columns, update, deleteItem, users, sta
                         </div>
                     );
                 }
-                    case "customerName":
+                    case "customerName": {
+                        const custName = user?.customer?.name || (typeof user?.customer === 'object' ? user?.customer?.name : null) || customerData?.find(c => c?.id === (user?.customerId || user?.customerRef))?.name || user?.challanRef?.[0]?.customer?.name;
                         return (
                             <div className="flex flex-col">
-                                <p className="text-bold text-tiny capitalize text-default-900">{user?.challanRef?.[0]?.customer?.name}</p>
+                                <p className="text-bold text-tiny capitalize text-default-900">{custName || "-"}</p>
                             </div>
                         );
-                    case "supplierName":
+                    }
+                    case "supplierName": {
+                        const suppName = user?.supplier?.name || (typeof user?.supplier === 'object' ? user?.supplier?.name : null) || suppliersData?.find(s => s?.id === (user?.supplierId || user?.supplierRef))?.name || user?.challanRef?.[0]?.supplier?.name;
                         return (
                             <div className="flex flex-col">
-                                <p className="text-bold text-tiny capitalize text-default-900">{user?.challanRef?.[0]?.supplier?.name}</p>
+                                <p className="text-bold text-tiny capitalize text-default-900">{suppName || "-"}</p>
                             </div>
                         );
+                    }
             case "products":
                 return (
                     <div className="flex max-w-max ml-2 items-center ">
-                        <p className="text-bold text-tiny capitalize text-default-800">{user?.products?.length} Order</p>
+                        <p className="text-bold text-tiny capitalize text-default-800">{user?.products?.length || 0} Order</p>
                     </div>
                 );
             case "ref":
@@ -200,21 +204,25 @@ export default function DataTableModel({ columns, update, deleteItem, users, sta
             case "challanRef":
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-tiny capitalize text-default-400">{user?.challanRef?.customer?.name}</p>
+                        <p className="text-bold text-tiny capitalize text-default-400">{user?.customer?.name || user?.challanRef?.customer?.name || '-'}</p>
                     </div>
                 );
-            case "products.due":
+            case "products.due": {
+                const totalDue = Array.isArray(user?.products) ? user.products.reduce((acc, currVal) => acc + (Number(currVal?.due) || 0), 0) : 0;
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-tiny capitalize text-default-400">{user?.products?.reduce((acc, currVal) =>  acc + currVal.due , 0)}</p>
+                        <p className="text-bold text-tiny capitalize text-default-400">{totalDue}</p>
                     </div>
                 );
-            case "products.received":
+            }
+            case "products.received": {
+                const totalRec = Array.isArray(user?.products) ? user.products.reduce((acc, currVal) => acc + (Number(currVal?.received ?? currVal?.received_pcs ?? currVal?.received_mtr ?? currVal?.received_bales) || 0), 0) : 0;
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-tiny capitalize text-default-400">{user?.products?.reduce((acc, currVal) =>  acc + currVal.received , 0)}</p>
+                        <p className="text-bold text-tiny capitalize text-default-400">{totalRec}</p>
                     </div>
                 );
+            }
             case "verified":
                 return (
                     <Chip className="capitalize" color={statusColorMap[user?.verified]} size="sm" variant="flat">

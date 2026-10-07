@@ -30,7 +30,7 @@ const Invoice = () => {
     };
 
     const getInvoicePaymentStatus = (invoice) => {
-        const ledgerEntries = customerLedger.filter(entry => entry.invoiceRef === invoice?.id);
+        const ledgerEntries = customerLedger.filter(entry => (entry.invoiceId || entry.invoiceRef) === invoice?.id);
         const totalPaid = ledgerEntries.reduce((acc, entry) => acc + (entry.credit || 0), 0);
         return { totalPaid, balance: (invoice.grandTotal || 0) - totalPaid };
     };
@@ -109,8 +109,8 @@ const Invoice = () => {
                                                 <TableRow key={index}>
                                                     <TableCell>{invoice.invoiceNo}</TableCell>
                                                     <TableCell>{formatDate(invoice.invoiceDate)}</TableCell>
-                                                    <TableCell>{suppliersData.find(s => s.id === invoice.supplierRef)?.name || 'N/A'}</TableCell>
-                                                    <TableCell>{customerData.find(c => c.id === invoice.customerRef)?.name || 'N/A'}</TableCell>
+                                                    <TableCell>{invoice.supplier?.name || suppliersData.find(s => s.id === (invoice.supplierId || invoice.supplierRef))?.name || 'N/A'}</TableCell>
+                                                    <TableCell>{invoice.customer?.name || customerData.find(c => c.id === (invoice.customerId || invoice.customerRef))?.name || 'N/A'}</TableCell>
                                                     <TableCell className="font-bold">{invoice.grandTotal}</TableCell>
                                                     <TableCell className="text-green-600 font-bold">{totalPaid}</TableCell>
                                                     <TableCell>
@@ -127,7 +127,7 @@ const Invoice = () => {
                                             );
                                         })}
                                     </TableBody>
-                                </Table>
+                                 </Table>
                             )}
                         </div>
                     </Tab>
@@ -166,8 +166,8 @@ const Invoice = () => {
                                                 <TableRow key={index}>
                                                     <TableCell>{invoice.invoiceNo}</TableCell>
                                                     <TableCell>{formatDate(invoice.invoiceDate)}</TableCell>
-                                                    <TableCell>{suppliersData.find(s => s.id === invoice.supplierRef)?.name || 'N/A'}</TableCell>
-                                                    <TableCell>{customerData.find(c => c.id === invoice.customerRef)?.name || 'N/A'}</TableCell>
+                                                    <TableCell>{invoice.supplier?.name || suppliersData.find(s => s.id === (invoice.supplierId || invoice.supplierRef))?.name || 'N/A'}</TableCell>
+                                                    <TableCell>{invoice.customer?.name || customerData.find(c => c.id === (invoice.customerId || invoice.customerRef))?.name || 'N/A'}</TableCell>
                                                     <TableCell className="font-bold">{invoice.grandTotal}</TableCell>
                                                     <TableCell className="text-green-600">{totalPaid}</TableCell>
                                                     <TableCell className="text-red-600 font-bold">{balance}</TableCell>

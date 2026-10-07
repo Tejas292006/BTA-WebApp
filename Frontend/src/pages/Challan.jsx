@@ -109,26 +109,29 @@ const Challan = () => {
   // Create The Supplier
   const creatsupplier = async (values) => {
     try {
-      setIsLoading(true)
-      const response = await Createchallan(values);
-      setIsLoading(false)
-      // dispatch(SetLoader(false));
+      setIsLoading(true);
+      const safeCustomer = typeof values.customer === 'object' ? values.customer?.id : values.customer;
+      const safeSupplier = typeof values.supplier === 'object' ? values.supplier?.id : values.supplier;
+      const payload = {
+        ...values,
+        challanNo: values.challanNo || challanNumber || '1',
+        customer: safeCustomer || customerRef || null,
+        supplier: safeSupplier || supplierRef || null,
+        totalBill: String(values.totalBill !== undefined && values.totalBill !== '' ? values.totalBill : (totalbill || '0')),
+      };
+      const response = await Createchallan(payload);
+      setIsLoading(false);
       if (response.success) {
         toast.success(response.message);
-        console.log(response.challanDoc)
         setChallansData([...challansData, response.challanDoc]);
-        console.log(response.challanDoc,"responseeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
         setUpdateId(null); // Reset update ID when modal is closed
-        onOpenChange(false)
+        onOpenChange(false);
       } else {
-        console.log(response.message);
-        toast.error(response.message);
-        // throw new Error(response.error);
+        toast.error(response.message || "Failed to create challan");
       }
     } catch (error) {
-      // dispatch(SetLoader(false));
-      setIsLoading(false)
-      console.log(error.message);
+      setIsLoading(false);
+      console.error(error.message);
       toast.error(error.message);
     }
   }
