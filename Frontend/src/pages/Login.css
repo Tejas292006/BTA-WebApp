@@ -327,92 +327,114 @@
 }
 
 /* ============ Dark Mode ============ */
+html.dark .box,
 .main-dashboard.dark .box {
-    background-color: #232233;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    box-shadow: 0 60px 40px -30px rgba(0, 0, 0, 0.6);
+    background-color: #121214;
+    border: 1px solid #222226;
+    box-shadow: 0 40px 60px rgba(0, 0, 0, 0.9);
 }
 
+html.dark .carousel,
 .main-dashboard.dark .carousel {
-    box-shadow: 8px 0 32px rgba(216, 242, 117, 0.12);
+    box-shadow: 0 0 32px rgba(0, 0, 0, 0.6);
 }
 
+html.dark .input-field:focus,
 .main-dashboard.dark .input-field:focus {
     border-bottom-color: var(--primary-color);
     box-shadow: 0 1px 0 0 var(--primary-color);
 }
 
+html.dark .sign-btn,
 .main-dashboard.dark .sign-btn {
     box-shadow: 0 8px 24px -8px rgba(216, 242, 117, 0.45);
 }
 
+html.dark .heading h2,
 .main-dashboard.dark .heading h2 {
-    text-shadow: 0 0 24px rgba(216, 242, 117, 0.18);
+    text-shadow: none;
 }
 
+html.dark .logo h4,
 .main-dashboard.dark .logo h4,
+html.dark .heading h2,
 .main-dashboard.dark .heading h2 {
-    color: #f7f7f5;
+    color: #f4f4f5;
 }
 
+html.dark .heading h6,
 .main-dashboard.dark .heading h6,
+html.dark .text,
 .main-dashboard.dark .text {
-    color: #8b89a0;
+    color: #a1a1aa;
 }
 
+html.dark .text a,
 .main-dashboard.dark .text a {
-    color: #8b89a0;
+    color: #a1a1aa;
 }
 
+html.dark .text a:hover,
 .main-dashboard.dark .text a:hover {
     color: var(--primary-color);
 }
 
+html.dark .toggle,
 .main-dashboard.dark .toggle {
     color: var(--primary-color);
 }
 
+html.dark .toggle:hover,
 .main-dashboard.dark .toggle:hover {
-    color: #f7f7f5;
+    color: #ffffff;
 }
 
+html.dark .input-field,
 .main-dashboard.dark .input-field {
-    color: #f7f7f5;
-    border-bottom-color: #4a4857;
+    color: #f4f4f5;
+    border-bottom-color: #27272a;
 }
 
+html.dark .input-field.active,
 .main-dashboard.dark .input-field.active {
     border-bottom-color: var(--primary-color);
 }
 
+html.dark .password-toggle,
 .main-dashboard.dark .password-toggle {
-    color: #6f6d85;
+    color: #71717a;
 }
 
+html.dark .password-toggle:hover,
 .main-dashboard.dark .password-toggle:hover {
     color: var(--primary-color);
 }
 
+html.dark .sign-btn,
 .main-dashboard.dark .sign-btn {
     background-color: var(--primary-color);
-    color: #1f1e30;
+    color: #000000;
 }
 
+html.dark .sign-btn:hover,
 .main-dashboard.dark .sign-btn:hover {
-    background-color: #f7f7f5;
-    color: #1f1e30;
+    background-color: #ffffff;
+    color: #000000;
 }
 
+html.dark .text-group h2,
 .main-dashboard.dark .text-group h2 {
-    color: #1f1e30;
+    color: #000000;
 }
 
+html.dark .bullets span,
 .main-dashboard.dark .bullets span {
-    background-color: rgba(31, 30, 48, 0.35);
+    background-color: rgba(0, 0, 0, 0.35);
 }
 
+html.dark .bullets span.active,
 .main-dashboard.dark .bullets span.active {
-    background-color: #1f1e30;
+    background-color: #000000;
 }
 
 @media (max-width: 850px) {

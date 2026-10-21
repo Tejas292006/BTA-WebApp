@@ -21,5 +21,34 @@ export default {
     },
   },
   darkMode: "class",
-  plugins: [nextui()],
+  plugins: [
+    nextui({
+      themes: {
+        dark: {
+          colors: {
+            background: "#000000",
+            foreground: "#f4f4f5",
+            content1: "#121214",
+            content2: "#18181b",
+            content3: "#222226",
+            content4: "#2a2a30",
+            divider: "rgba(255, 255, 255, 0.08)",
+            focus: "#d8f275",
+            default: {
+              50: "#18181b",
+              100: "#222226",
+              200: "#27272a",
+              300: "#3f3f46",
+              400: "#52525b",
+              500: "#71717a",
+              600: "#a1a1aa",
+              700: "#d4d4d8",
+              800: "#e4e4e7",
+              900: "#f4f4f5",
+            },
+          },
+        },
+      },
+    }),
+  ],
 };

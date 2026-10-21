@@ -17,7 +17,7 @@ export default function Report() {
                         tabList: "gap-6 w-full ml-3 relative rounded-none p-0 border-b border-divider",
                         cursor: "w-full bg-[#d8f275]",
                         tab: "max-w-fit px-0 h-12 font-font1",
-                        tabContent: "group-data-[selected=true]:text-[#000]"
+                        tabContent: "group-data-[selected=true]:text-[#000] dark:group-data-[selected=true]:text-white"
                     }}
                 >
                     <Tab

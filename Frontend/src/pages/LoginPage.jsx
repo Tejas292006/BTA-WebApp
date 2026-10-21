@@ -113,7 +113,7 @@ const LoginPage = () => {
 
 
   return (
-    <div className='fixed h-screen w-screen bg-[#d8f275] dark:bg-[#15141f] z-50 text-[#fff] flex justify-center items-center'>
+    <div className='fixed h-screen w-screen bg-[#d8f275] dark:bg-black z-50 text-[#fff] flex justify-center items-center'>
       <div className="box">
         <div className="inner-box">
           <div className="forms-wrap">

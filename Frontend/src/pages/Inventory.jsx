@@ -102,9 +102,9 @@ const Inventory = () => {
                 {showLeftArrow && (
                     <button
                         onClick={() => scrollTabs(-1)}
-                        className="absolute left-0 top-0 z-20 h-12 w-10 bg-gradient-to-r from-white via-white/90 to-transparent flex items-center justify-start pl-1 cursor-pointer"
+                        className="absolute left-0 top-0 z-20 h-12 w-10 bg-gradient-to-r from-white via-white/90 to-transparent dark:from-black dark:via-black/90 dark:to-transparent flex items-center justify-start pl-1 cursor-pointer"
                     >
-                        <UilAngleLeft className="h-6 w-6 text-gray-700" />
+                        <UilAngleLeft className="h-6 w-6 text-gray-700 dark:text-gray-200" />
                     </button>
                 )}
                 <div
@@ -122,7 +122,7 @@ const Inventory = () => {
                             tabList: "gap-6 w-max ml-3 relative rounded-none p-0 border-b border-divider",
                             cursor: "w-full bg-[#d8f275]",
                             tab: "max-w-fit px-0 h-12 font-font1",
-                            tabContent: "group-data-[selected=true]:text-[#000]"
+                            tabContent: "group-data-[selected=true]:text-[#000] dark:group-data-[selected=true]:text-white"
                         }}
                     >
                         <Tab
@@ -207,9 +207,9 @@ const Inventory = () => {
                 {showRightArrow && (
                     <button
                         onClick={() => scrollTabs(1)}
-                        className="absolute right-0 top-0 z-20 h-12 w-10 bg-gradient-to-l from-white via-white/90 to-transparent flex items-center justify-end pr-1 cursor-pointer"
+                        className="absolute right-0 top-0 z-20 h-12 w-10 bg-gradient-to-l from-white via-white/90 to-transparent dark:from-black dark:via-black/90 dark:to-transparent flex items-center justify-end pr-1 cursor-pointer"
                     >
-                        <UilAngleRight className="h-6 w-6 text-gray-700" />
+                        <UilAngleRight className="h-6 w-6 text-gray-700 dark:text-gray-200" />
                     </button>
                 )}
             </div>

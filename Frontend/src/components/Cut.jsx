@@ -256,7 +256,7 @@ const Cut = () => {
                     isOpen={isOpen}
                     scrollBehavior={"inside"}
                     size={"xl"}
-                    className="dark:bg-[#1e1d2e]"
+                    className="dark:bg-[#121214]"
                     onOpenChange={(newState) => {
                         onOpenChange(newState);
                         if (!newState) {
@@ -271,14 +271,14 @@ const Cut = () => {
                                     {updateId ? "Update cut" : "Create cut"}
                                 </ModalHeader>
                                 <ModalBody>
-                                    <div className="max-w-full rounded-2xl bg-gray-50 dark:bg-[#1f1e30] border border-gray-200 dark:border-[#2b2a3f]">
+                                    <div className="max-w-full rounded-2xl bg-gray-50 dark:bg-[#161619] border border-gray-200 dark:border-[#222226]">
                                         <div className="flex flex-col gap-4 p-6">
                                             <div className="flex flex-col gap-1">
                                                 <label className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 font-font1">Cut Name</label>
                                                 <input
                                                     autoFocus
                                                     {...formik.getFieldProps('name')}
-                                                    className="bg-white dark:bg-[#232233] font-font2 font-[400] w-full rounded-xl border border-gray-200 dark:border-[#3a3950] px-4 py-3 text-gray-900 dark:text-[#f7f7f5] placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#d8f275] focus:border-transparent transition"
+                                                    className="bg-white dark:bg-[#18181b] font-font2 font-[400] w-full rounded-xl border border-gray-200 dark:border-[#2a2a30] px-4 py-3 text-gray-900 dark:text-[#f7f7f5] placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#d8f275] focus:border-transparent transition"
                                                     placeholder="e.g. Single, Double, Triple"
                                                 />
                                             </div>
@@ -380,7 +380,7 @@ const Cut = () => {
                                         </div>
                                     </div>
                                 </ModalBody>
-                                <ModalFooter className="border-t border-gray-100 dark:border-[#2b2a3f]">
+                                <ModalFooter className="border-t border-gray-100 dark:border-[#222226]">
                                     <Button
                                         color="danger" variant="light"
                                         data-modal-close="true"
@@ -395,7 +395,7 @@ const Cut = () => {
                                         Close
                                     </Button>
                                     <Button
-                                        className="bg-[#d8f275] text-[#1f1e30] font-font1 font-semibold hover:bg-[#c5e05c] transition"
+                                        className="bg-[#d8f275] text-black font-font1 font-semibold hover:bg-[#c5e05c] transition"
                                         onPress={formik.handleSubmit}
                                     >
                                         {updateId ? "Update" : "Save"}

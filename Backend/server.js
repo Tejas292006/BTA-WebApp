@@ -8,6 +8,14 @@ connectDatabase();
 
 const PORT = process.env.PORT || 5001;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
+});
+
+server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.error(`Port ${PORT} is already in use. Please run stop_bta_webapp.bat to clear old processes.`);
+    } else {
+        console.error('Server error:', err);
+    }
 });

@@ -13,6 +13,11 @@
     gap: 30px;
 }
 
+html.dark .top {
+    background-color: #000000;
+    border-bottom: 1px solid #1a1a1e;
+}
+
 .close .top {
     left: 90px;
     width: calc(100% - 90px);
@@ -68,14 +73,16 @@ html.dark .sidebar-toggle path {
 
 .main-dashboard.dark .profile-trigger,
 html.dark .profile-trigger {
-    background-color: #2b2a3f;
-    color: #f7f7f5;
+    background-color: #18181b;
+    border: 1px solid #27272a;
+    color: #f4f4f5;
 }
 
 .main-dashboard.dark .profile-trigger:hover,
 html.dark .profile-trigger:hover {
     background-color: var(--primary-color);
-    color: #1f1e30;
+    color: #000000;
+    border-color: var(--primary-color);
 }
 
 .profile-trigger img {

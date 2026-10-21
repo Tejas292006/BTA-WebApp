@@ -413,7 +413,7 @@ export default function DataTableModel({ columns, update, deleteItem, users, sta
                 <Pagination
                     showControls
                     classNames={{
-                        base: "bg-[#f7f7f5] max-h-[5rem] dark:bg-[#1b1a2b] dark:text-white",
+                        base: "bg-[#f7f7f5] max-h-[5rem] dark:bg-[#121214] dark:border dark:border-[#222226] dark:text-white",
                         cursor: "bg-foreground text-background",
                     }}
                     color="default"

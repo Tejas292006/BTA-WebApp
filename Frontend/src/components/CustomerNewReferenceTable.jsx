@@ -98,23 +98,23 @@ export default function NewReferenceTable({ customerData, balanceUsed, currentBa
   // }
   return (
     <div className="container mx-auto py-6 px-4">
-      <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden dark:bg-[#1b1a2b] dark:shadow-none dark:ring-1 dark:ring-[#2b2a3f]">
-        <thead className="bg-gray-100 dark:bg-[#232233]">
+      <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden dark:bg-[#0e0e11] dark:shadow-none dark:ring-1 dark:ring-[#222226]">
+        <thead className="bg-gray-100 dark:bg-[#18181b]">
           <tr>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-[#9a97ad]">Current Balance</th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-[#9a97ad]">Adjust</th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-[#9a97ad]">New Balance</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-[#a1a1aa]">Current Balance</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-[#a1a1aa]">Adjust</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-[#a1a1aa]">New Balance</th>
           </tr>
         </thead>
         <tbody>
-          <tr className="hover:bg-gray-50 dark:hover:bg-[#232233]/60">
+          <tr className="hover:bg-gray-50 dark:hover:bg-[#18181b]/60">
             <td className="px-4 py-4 whitespace-nowrap text-sm text-blue-600 dark:text-blue-400">
               {currentBalance}
             </td>
             <td className="px-4 py-4 whitespace-nowrap text-sm text-blue-600 dark:text-blue-400">
               <input
                 type="number"
-                className="w-full px-2 py-1 border rounded dark:bg-[#232233] dark:text-white dark:border-[#3a3950]"
+                className="w-full px-2 py-1 border rounded dark:bg-[#18181b] dark:text-white dark:border-[#2a2a30]"
                 value={newRefData.adjust === 0 ? '' : newRefData.adjust}
                 onChange={(e) => handleNewRefAdjustChange(e.target.value)}
               />

@@ -40,17 +40,17 @@ const InvoicePreview = () => {
         <div>
             {invoice ? (
                 <>
-                    <section className='border text-black bg-[#e3e3e3] min-h-[100vh]'>
+                    <section className='border text-black bg-[#e3e3e3] dark:bg-black dark:border-black min-h-[100vh]'>
                         <div className='flex gap-3 fixed top-5 left-5 z-50'>
                             <button
                                 onClick={() => navigate(-1)}
-                                className='flex items-center gap-1 px-4 py-2 text-sm font-semibold text-white bg-black hover:bg-gray-800 rounded-full shadow-lg transition-all cursor-pointer'
+                                className='flex items-center gap-1 px-4 py-2 text-sm font-semibold text-white bg-black hover:bg-gray-800 dark:bg-[#18181b] dark:border dark:border-[#2a2a30] rounded-full shadow-lg transition-all cursor-pointer'
                             >
                                 <UilAngleLeft className="w-5 h-5" />
                                 Back
                             </button>
                         </div>
-                        <div onClick={handlePrint} className=' w-fit text-sm text-white bg-[#202020] create cursor-pointer fixed bottom-5 right-[3.2%] py-2 px-4 rounded-full z-50'>Download</div>
+                        <div onClick={handlePrint} className='w-fit text-sm text-white bg-[#202020] dark:bg-[#d8f275] dark:text-black font-semibold create cursor-pointer fixed bottom-5 right-[3.2%] py-2 px-4 rounded-full z-50'>Download</div>
                         <div className=' max-w-[1290px] mx-auto px-4 my-8'>
                             {/* Page starts here (down) */}
                             <div className='border bg-[#fdfdfd] p-8'>

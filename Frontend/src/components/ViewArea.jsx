@@ -13,12 +13,12 @@ const ViewArea = ({ isOpen, onOpen, onOpenChange, onClose, data, section }) => {
                 onClose={onClose}
                 scrollBehavior={"inside"}
                 size={"3xl"}
-                className="dark:bg-[#1e1d2e]"
+                className="dark:bg-[#121214]"
             >
                 <ModalContent>
                     {(onClose) => (
                         <>
-                            <ModalHeader className="flex items-center gap-1 border-b border-gray-100 dark:border-[#2b2a3f]">Viewing <span className="text-[#d8f275]">{section?.toUpperCase()}</span> / <span className='text-base opacity-70 dark:text-gray-400 text-gray-500'>{data?.name || data?.productName}</span> </ModalHeader>
+                            <ModalHeader className="flex items-center gap-1 border-b border-gray-100 dark:border-[#222226]">Viewing <span className="text-[#d8f275]">{section?.toUpperCase()}</span> / <span className='text-base opacity-70 dark:text-gray-400 text-gray-500'>{data?.name || data?.productName}</span> </ModalHeader>
                             <ModalBody className='max-w-full flex flex-wrap'>
                                 {/* <p>{JSON.stringify(data)}</p> */}
                                 <div>
@@ -145,8 +145,8 @@ const ViewArea = ({ isOpen, onOpen, onOpenChange, onClose, data, section }) => {
 
 
                                             return (
-                                                <div key={index} className='flex flex-col rounded-xl pb-4 bg-gray-50 dark:bg-[#1f1e30] border border-gray-200 dark:border-[#2b2a3f] text-gray-900 dark:text-white min-h-[10rem] overflow-hidden'>
-                                                    <div className='font-semibold p-4 pb-2 bg-[#d8f275] rounded-t-xl text-[#1f1e30]'>{key?.toUpperCase() || key}</div>
+                                                <div key={index} className='flex flex-col rounded-xl pb-4 bg-gray-50 dark:bg-[#161619] border border-gray-200 dark:border-[#222226] text-gray-900 dark:text-white min-h-[10rem] overflow-hidden'>
+                                                    <div className='font-semibold p-4 pb-2 bg-[#d8f275] rounded-t-xl text-black'>{key?.toUpperCase() || key}</div>
                                                     <div className='text-[0.9rem] mt-4 opacity-90 px-4 break-words text-gray-700 dark:text-gray-300'>{value === "" || !value ? "No value" : renderValues(value)}</div>
                                                 </div>
                                             );
@@ -179,7 +179,7 @@ const ViewArea = ({ isOpen, onOpen, onOpenChange, onClose, data, section }) => {
                                     </div>
                                 </div>
                             </ModalBody>
-                            <ModalFooter className="border-t border-gray-100 dark:border-[#2b2a3f]">
+                            <ModalFooter className="border-t border-gray-100 dark:border-[#222226]">
                                 <Button
                                     color="danger"
                                     variant="light"

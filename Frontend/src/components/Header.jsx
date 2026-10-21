@@ -103,7 +103,7 @@ const Header = ({ toggleSidebar }) => {
                         {location.pathname !== '/' && (
                             <button
                                 onClick={() => navigate(-1)}
-                                className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all shadow-sm border border-gray-200 cursor-pointer dark:text-white dark:bg-[#1e1d2e] dark:hover:bg-[#232233] dark:border-[#2b2a3f]"
+                                className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all shadow-sm border border-gray-200 cursor-pointer dark:text-white dark:bg-[#121214] dark:hover:bg-[#18181b] dark:border-[#222226]"
                                 title="Go Back"
                             >
                                 <UilAngleLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
@@ -126,7 +126,7 @@ const Header = ({ toggleSidebar }) => {
                 placement={"bottom"}
                 size={'5xl'}
                 onOpenChange={onOpenChange}
-                className="bg-white text-black dark:bg-[#1e1d2e] dark:text-white font-font1"
+                className="bg-white text-black dark:bg-[#121214] dark:text-white font-font1"
 
             >
                 <ModalContent>
@@ -204,7 +204,7 @@ const Header = ({ toggleSidebar }) => {
                                         <Button type="button"
                                             variant='flat'
                                             onClick={handleSelectPhoto}
-                                            className="mt-2 font-font1 font-bold bg-white dark:bg-[#232233] text-gray-800 dark:text-white"
+                                            className="mt-2 font-font1 font-bold bg-white dark:bg-[#18181b] text-gray-800 dark:text-white dark:border dark:border-[#2a2a30]"
                                         >
                                             Select New Profile
                                         </Button>
@@ -226,7 +226,7 @@ const Header = ({ toggleSidebar }) => {
                                 >
                                     Close
                                 </Button>
-                                <Button className='bg-[#d8f275] text-[#1f1e30]' onPress={formik.handleSubmit}>
+                                <Button className='bg-[#d8f275] text-black font-semibold hover:bg-[#c5e05c]' onPress={formik.handleSubmit}>
                                     Update
                                 </Button>
                             </ModalFooter>

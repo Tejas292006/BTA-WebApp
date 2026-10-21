@@ -76,17 +76,17 @@ html.dark,
   /* ===== Colors ===== */
   --primary-color: #d8f275;
   --text-color: #f7f7f5;
-  --bg-color: #1f1e30;
-  --panel-color: #15141f;
-  --content-bg: #12111c;
-  --title-icon-color: #f7f7f5;
-  --black-light-color: #9a97ad;
-  --box1-color: #232233;
-  --box2-color: #232233;
-  --box3-color: #232233;
-  --card-bg: #1e1d2e;
-  --card-border: #2b2a3f;
-  --input-bg: #232233;
+  --bg-color: #09090b;
+  --panel-color: #000000;
+  --content-bg: #000000;
+  --title-icon-color: #ffffff;
+  --black-light-color: #a1a1aa;
+  --box1-color: #121214;
+  --box2-color: #121214;
+  --box3-color: #121214;
+  --card-bg: #121214;
+  --card-border: #222226;
+  --input-bg: #18181b;
   --font1: 'Fira Sans', sans-serif;
   --font2: jost, sans-serif;
   --font3: jost2, sans-serif;
@@ -105,7 +105,16 @@ html.dark,
 /* Rectangular lime text selection for dark mode */
 html.dark ::selection {
   background-color: rgba(216, 242, 117, 0.4);
-  color: #12111c;
+  color: #ffffff;
+}
+
+/* Root background enforcement for dark mode */
+html.dark,
+html.dark body,
+html.dark #root,
+html.dark .main-dashboard {
+  background-color: #000000;
+  color: #f4f4f5;
 }
 
 /* Smooth background/color fade when switching themes */
@@ -118,7 +127,7 @@ nav,
 }
 
 html.dark .table__body::-webkit-scrollbar-thumb {
-  background-color: #3a3950;
+  background-color: #27272a;
   visibility: hidden;
 }
 
@@ -144,7 +153,8 @@ html.dark .table__body:hover::-webkit-scrollbar-thumb {
 }
 
 html.dark .table__body {
-  background-color: #1b1a2b;
+  background-color: #0c0c0e;
+  border: 1px solid #222226;
 }
 
 
@@ -302,88 +312,207 @@ tbody td.active {
 
 /* Flip hard-coded black autocomplete / dropdown text to light in dark mode */
 html.dark .text-\[\#000\] {
-  color: #f7f7f5 !important;
+  color: #f4f4f5 !important;
+}
+
+/* Ensure main dashboard and layout main stay true pitch black */
+html.dark .layout-main {
+  background-color: #000000 !important;
+}
+
+/* Standard Dark Mode Surface & Border Overrides */
+html.dark .dark\:bg-\[\#1e1d2e\] {
+  background-color: #121214 !important;
+}
+
+html.dark .dark\:bg-\[\#1f1e30\] {
+  background-color: #161619 !important;
+}
+
+html.dark .dark\:bg-\[\#232233\] {
+  background-color: #18181b !important;
+}
+
+html.dark .dark\:bg-\[\#1b1a2b\] {
+  background-color: #101013 !important;
+}
+
+html.dark .dark\:bg-\[\#15141f\] {
+  background-color: #000000 !important;
+}
+
+html.dark .dark\:border-\[\#2b2a3f\] {
+  border-color: #222226 !important;
+}
+
+html.dark .dark\:border-\[\#3a3950\] {
+  border-color: #2a2a30 !important;
+}
+
+html.dark .dark\:hover\:border-\[\#3a3950\]:hover {
+  border-color: #383842 !important;
+}
+
+html.dark .dark\:hover\:bg-\[\#232233\]:hover {
+  background-color: #1c1c20 !important;
+}
+
+html.dark .dark\:text-\[\#1f1e30\],
+html.dark .text-\[\#1f1e30\] {
+  color: #000000 !important;
+}
+
+html.dark .dark\:text-\[\#f7f7f5\] {
+  color: #f4f4f5 !important;
+}
+
+html.dark .dark\:placeholder-gray-500::placeholder {
+  color: #71717a !important;
+}
+
+/* Native form inputs in dark mode */
+html.dark input[type="text"],
+html.dark input[type="number"],
+html.dark input[type="email"],
+html.dark input[type="password"],
+html.dark input[type="search"],
+html.dark textarea,
+html.dark select {
+  background-color: var(--input-bg);
+  border-color: #2a2a30;
+  color: #f4f4f5;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #71717a;
 }
 
 /* Invoice / print tables */
 html.dark .table-invoice td {
-  color: #f7f7f5;
-  border-left-color: #2c2b40;
-  border-top-color: #2c2b40;
+  color: #f4f4f5;
+  border-left-color: #222226;
+  border-top-color: #222226;
 }
 
 html.dark .table-invoice thead th {
-  background-color: #232233;
+  background-color: #141418;
   color: var(--primary-color);
 }
 
 html.dark .table-invoice td input {
   background-color: var(--input-bg);
-  color: #f7f7f5;
-  border-color: #3a3950;
+  color: #f4f4f5;
+  border-color: #2a2a30;
 }
 
 html.dark .table-invoice tbody tr:nth-child(even) {
-  background-color: #1e1d2e;
+  background-color: #121216;
 }
 
 html.dark .table-invoice tbody tr:nth-child(odd) {
-  background-color: #171625;
+  background-color: #0c0c0f;
 }
 
 /* Global scrollbar in dark mode */
 html.dark::-webkit-scrollbar-thumb:hover,
 html.dark body::-webkit-scrollbar-thumb:hover,
 html.dark .activity-data::-webkit-scrollbar-thumb:hover {
-  background: #3a3b3c;
+  background: #3f3f46;
 }
 
 /* Legacy dashboard boxes */
 .main-dashboard.dark .boxes .box {
   background-color: var(--box1-color);
+  border: 1px solid #222226;
 }
 
 .main-dashboard.dark .dash-content .title .text {
   color: var(--text-color);
 }
 
-/* ============ NextUI Modal Dark Mode Overrides ============ */
+/* ============ NextUI Dark Mode Overrides ============ */
 
 /* Modal backdrop */
 html.dark [data-slot="backdrop"] {
-  background: rgba(12, 11, 20, 0.75) !important;
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(8px);
 }
 
 /* Modal wrapper / container */
 html.dark [data-slot="wrapper"] .nextui-modal,
-html.dark .dark[data-slot="base"] {
-  background-color: #1e1d2e !important;
-  border: 1px solid #2b2a3f;
+html.dark .dark[data-slot="base"],
+html.dark [role="dialog"] {
+  background-color: #121214 !important;
+  border: 1px solid #222226;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
 }
 
 /* Modal header */
 html.dark [data-slot="header"] {
-  color: #f7f7f5 !important;
+  color: #f4f4f5 !important;
 }
 
 /* Modal body */
 html.dark [data-slot="body"] {
-  color: #f7f7f5 !important;
+  color: #f4f4f5 !important;
 }
 
 /* Modal footer */
 html.dark [data-slot="footer"] {
-  border-top-color: #2b2a3f !important;
+  border-top: 1px solid #222226 !important;
 }
 
 /* The × close button inside NextUI Modal */
 html.dark [data-slot="close-button"] {
-  color: #9a97ad !important;
+  color: #a1a1aa !important;
 }
 html.dark [data-slot="close-button"]:hover {
-  background-color: #2b2a3f !important;
-  color: #f7f7f5 !important;
+  background-color: #222226 !important;
+  color: #ffffff !important;
+}
+
+/* NextUI Tables in dark mode */
+html.dark [data-slot="table"] {
+  background-color: transparent !important;
+}
+
+html.dark [data-slot="wrapper"]:not(.nextui-modal) {
+  background-color: #0e0e11 !important;
+  border: 1px solid #222226 !important;
+  box-shadow: none !important;
+}
+
+html.dark [data-slot="th"] {
+  background-color: #141418 !important;
+  color: #a1a1aa !important;
+  border-bottom: 1px solid #222226 !important;
+}
+
+html.dark [data-slot="td"] {
+  color: #f4f4f5 !important;
+  border-bottom: 1px solid #18181c !important;
+}
+
+html.dark [data-slot="tr"]:hover {
+  background-color: #18181d !important;
+}
+
+/* NextUI Dropdown, Popover & Select Menus in dark mode */
+html.dark [data-slot="content"],
+html.dark [data-slot="popover"] {
+  background-color: #141418 !important;
+  border: 1px solid #27272a !important;
+  color: #f4f4f5 !important;
+}
+
+html.dark [data-slot="listbox"] {
+  background-color: #141418 !important;
+}
+
+html.dark [data-slot="item"][data-hover="true"] {
+  background-color: #222228 !important;
+  color: #ffffff !important;
 }
 
 /* Light mode: make sure cross button is visible */

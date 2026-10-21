@@ -2089,10 +2089,10 @@ export default QuickChallan
 
 const ImageModal = ({ imageSrc, onClose }) => {
   return (
-    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-[9999]">
-      <div className="bg-white p-4 max-w-screen-lg">
+    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 flex justify-center items-center z-[9999]">
+      <div className="bg-white dark:bg-[#121214] dark:border dark:border-[#222226] p-4 max-w-screen-lg rounded-xl">
         <img src={imageSrc} alt="Clicked Image" />
-        <Button onClick={onClose} className="absolute top-0 right-0 m-2 text-gray-700">
+        <Button onClick={onClose} className="absolute top-0 right-0 m-2 text-gray-700 dark:text-gray-300">
           Close
         </Button>
       </div>
